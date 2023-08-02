@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, Image } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { Color, FontConfig } from '../../../theme'
 import HeaderWhite from '../../../components/header/headerWhite'
 import YellowWarning from '../../../components/warning/yellowWarning'
@@ -8,16 +8,20 @@ import CustomInput from '../../../components/customInput'
 import CustomTextArea from '../../../components/customTextArea'
 import DropDownButton from '../../../components/buttonDropdown'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLocation, setPhotos } from '../../../redux/laporan'
+import { setLocation, setPhotos, setTeman } from '../../../redux/laporan'
 import CustomBottomSheet from '../../../components/bottomSheet'
 import LaporanServices from '../../../services/laporan'
 import CapresChoice from '../../../components/bottomSheet/CapresChoice'
 import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomButton from '../../../components/customButton'
+import CustomMultipleSelect from '../../../components/customMultipleSelect'
+import SelectView from '../../../components/bottomSheet/select'
 
 const BuatLaporanScreen = ({navigation, route}) => {
   const { jenisLaporan } = route.params;
   const [photoKegiatan, setPhotoKegiatan] = useState([]);
+  const [tagTeman, setTagTeman] = useState([]);
+  const [tagNamaTeman, setTagNamaTeman] = useState([]);
   const [judul, setJudul] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [capres, setCapres] = useState("");
@@ -36,8 +40,14 @@ const BuatLaporanScreen = ({navigation, route}) => {
   const [message, setMessage] = useState('');
   const [isDeskripsi, setIsDeskripsi] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalTemanVisible, setIsModalTemanVisible] = useState(false);
+  const [firstname, setFirstname] = useState("");
   const desc_required = useSelector((state)=>{
     return state.laporan.jenisLaporan.desc_required;
+  });
+
+  const is_tag = useSelector((state)=>{
+    return state.laporan.jenisLaporan.is_tag;
   });
 
   const dispatch = useDispatch();
@@ -92,6 +102,12 @@ const BuatLaporanScreen = ({navigation, route}) => {
     );
   }
 
+  const saveTemanLaporan = () =>{
+    dispatch(
+      setTeman({teman: tagTeman, namaTeman: tagNamaTeman, setNamaTeman: setTagNamaTeman, setTeman: setTagTeman})
+    );
+  }
+
   const saveLocationLaporan = () =>{
     dispatch(
       setLocation({lokasi: lokasi, setLokasi: setLokasi, lat: latitude, long: longitude, 
@@ -118,6 +134,10 @@ const BuatLaporanScreen = ({navigation, route}) => {
   useEffect(()=> {
     savePhotosLaporan();
   }, [photoKegiatan])
+
+  useEffect(()=> {
+    saveTemanLaporan();
+  }, [tagTeman])
 
   useEffect(()=>{
     saveLocationLaporan();
@@ -150,9 +170,15 @@ const BuatLaporanScreen = ({navigation, route}) => {
       title="Pilih Capres"
       children={<CapresChoice data={capresData} item={capres} setItem={setCapres} idCapres={idCapres} setIdCapres={setIdCapres} setModalVisible={setIsModalVisible} />}
       />
+      <CustomBottomSheet 
+      isModalVisible={isModalTemanVisible}
+      setModalVisible={setIsModalTemanVisible}
+      title={`Pilih Kawan (${tagTeman.length} Terpilih)`}
+      children={<SelectView />}
+      />
       <HeaderWhite navigation={navigation} title="Buat Laporan" />
       <YellowWarning text="Dalam radius 1 km, kamu hanya dapat membuat laporan dengan capres dan tag yang berbeda." />
-      <ScrollView style={{padding: 20}}>
+      <ScrollView nestedScrollEnabled={true} style={{padding: 20}}>
       {
         photoKegiatan.length == 0 ? 
         <View style={styles.uploadSection}>
@@ -202,6 +228,8 @@ const BuatLaporanScreen = ({navigation, route}) => {
         <DropDownButton onPress={()=>setIsModalVisible(true)} placeholder='Pilih Capres' text={capres} />
         <View style={{height: 10}}></View>
         <DropDownButton onPress={handleTagButton} placeholder='Pilih Tag' text={tag} />
+        <View style={{height: 10}}></View>
+        <DropDownButton onPress={()=>setIsModalTemanVisible(true)} placeholder='Pilih Kawan' text={tagTeman.length != 0 ? tagTeman.length > 1 ? `${tagNamaTeman[0]}, dan ${tagTeman.length-1} Lainnya` : tagNamaTeman[0] : ""} />
         <View style={{height: 10}}></View>
         <DropDownButton onPress={handleLokasiButton} placeholder='Lokasi' text={lokasi} 
         childLeft={<Ionicons name="locate-outline" color={Color.secondaryText} size={16} style={{paddingRight: 5}} />} />

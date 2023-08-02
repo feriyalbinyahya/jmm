@@ -3,4 +3,4 @@ const BASE_URL_PROD= 'https://api.gensatset.org/api-v1';
 
 //ubah disini
 export const VERSION = 'v 1.0.5';
-export const BASE_URL_API = BASE_URL_DEV;
+export const BASE_URL_API = BASE_URL_PROD;

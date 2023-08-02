@@ -55,13 +55,19 @@ addLaporan = async (data) => {
     return Request.post(`laporan/tambah`, data, {headers: headersToken,  timeout: 8000,});
 }
 
+getKawan = async (search)=> {
+    let headersToken = await getHeaders();
+    return Request.get(`laporan/list/simpatisan?search=${search}`, {headers: headersToken});
+}
+
 const LaporanServices = {
     getLaporanJenis,
     getListLaporan,
     getTagLaporan,
     getStatusLaporan,
     getCapres,
-    addLaporan
+    addLaporan,
+    getKawan
   };
   
   export default LaporanServices;

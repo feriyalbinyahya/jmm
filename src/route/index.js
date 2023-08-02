@@ -33,7 +33,7 @@ import { navigationRef } from './utils'
 import UbahKataSandiScreen from '../app/profileScreen/ubahProfile/UbahKataSandi';
 import BeritaDetailScreen from '../app/beritaScreen/detail';
 import ListKomentarBeritaScreen from '../app/beritaScreen/listKomentar';
-import NotifikasiScreen from '../app/notifikasi';
+import NotifikasiScreen from '../app/notifikasiScreen';
 import { useSelector } from 'react-redux';
 import BeritaOrganisasiScreen from '../app/beritaScreen/beritaOrganisasi';
 import LaporanScreen from '../app/laporanScreen/laporan';
