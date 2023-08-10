@@ -165,7 +165,7 @@ export const FontConfig = StyleSheet.create({
     letterSpacing: 0.5
   },
   buttonZeroTwo: {
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 14,
   },
   buttonThree: {
@@ -197,8 +197,12 @@ export const FontConfig = StyleSheet.create({
     lineHeight: 22
   },
   captionUpperOne: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Medium',
     fontSize: 10
+  },
+  captionUpperTwo: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12
   },
   headingOne: {
     fontFamily: 'Poppins-SemiBold',
@@ -245,7 +249,7 @@ export const FontConfig = StyleSheet.create({
     lineHeight: 28
   },
   titleTwo: {
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-Bold',
     fontSize: 16,
     letterSpacing: 0.1,
     lineHeight: 22
@@ -281,6 +285,7 @@ export const Color = {
   divider: '#F0F0F0',
   neutralZeroOne: "#ffff",
   neutralZeroTwo: '#f5f5f5',
+  neutralZeroFour: '#E0E0E0',
   neutralZeroSeven: '#757575',
   neutralZeroFive: '#C2C2C2',
   neutralZeroSix: '#9E9E9E',
@@ -292,7 +297,7 @@ export const Color = {
   neutralColorGrayEight: "#595959",
   neutralColorGrayNine: "#434343",
   secondaryText: "#8c8c8c",
-  secondaryMain: '#E8519E',
+  secondaryMain: '#624FA1',
   lightBorder: '#d9d9d9',
   grayOne: '#FFFFFF',
   grayFour: '#F0F0F0',
@@ -316,7 +321,8 @@ export const Color = {
   successMain: '#22C55E',
   goldSix: '#FAAD14',
   neutralZeroThree: '#EDEDED',
-  purple: '#624FA1'
+  purple: '#624FA1',
+  magenta: '#E0195E'
 };
 /* Paddings */
 export const Padding = {

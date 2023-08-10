@@ -28,6 +28,8 @@ import ImageWarning from '../../assets/images/warning/empty.png';
 import { VERSION } from '../../utils/environment';
 import LinearGradient from 'react-native-linear-gradient';
 import { Box } from "native-base";
+import NotifikasiServices from "../../services/notifikasi";
+import { getTokenNotification } from "../../utils/Utils";
 
 const SignInPage = ({navigation}) => {
     const dispatch = useDispatch();
@@ -44,12 +46,23 @@ const SignInPage = ({navigation}) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isStatusActiveVisible, setStatusActiveVisible] = useState(false);
 
+    const getToken = async() =>{
+      return await getTokenNotification();
+    }
+
     handleLogin = () => {
       setIsLoading(true);
       LoginServices.login({"no_hp": emailphone, "password": password})
       .then(res=> {
         console.log(res.data.data.foto_organisasi);
         if(res.data.message == "Login sukses."){
+          NotifikasiServices.postToken(res.data.data.token, {"fcmtoken": getToken})
+          .then(res=>{
+            console.log(res.data);
+          })
+          .catch(err=>{
+            console.log(err.response);
+          })
           saveCredentials(res.data.data);
         }else if(res.data.message == 'Kata sandi yang anda masukan salah.'){
           setShowAlertWrongPassword(true);
@@ -93,14 +106,15 @@ const SignInPage = ({navigation}) => {
 
     const ContactUs = () => {
       return(
-        <View>
-          <ChildrenButton borderColor={Color.successMain} 
+        <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
+          {/**<ChildrenButton borderColor={Color.successMain} 
           height={40} backgroundColor={Color.neutralZeroOne}
           children={<View style={{flexDirection: 'row'}}>
             <Image source={IconWhatsapp} style={{width: 18, height: 18}} />
             <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi melalui Whatsapp</Text>
           </View>}
-          />
+      />**/}
+          <Text style={{...FontConfig.buttonZeroTwo, color: Color.primaryMain}}>Customer Service 081210412537</Text>
         </View>
       )
     }
@@ -171,6 +185,15 @@ const SignInPage = ({navigation}) => {
               <View style={styles.tidakPunyaAkun}>
                 <Text style={styles.textBelumPunyaAkun}>Belum punya akun?</Text>
                 <Pressable onPress={()=> navigation.navigate('Register')}><Text style={styles.textDaftar}>Daftar disini</Text></Pressable>
+              </View>
+
+              <View style={styles.butuhBantuan}>
+                <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
+                <View style={{width: 10}}></View>
+                <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
+                <View style={{width: 5}}></View>
+                <Pressable onPress={()=>setModalVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
+                </Pressable>
               </View>
           </Box>
           <View style={styles.version}>
@@ -359,6 +382,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     height: 40,
     justifyContent: 'center',
+  },
+  butuhBantuan: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Color.neutralZeroTwo,
+    alignSelf: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    borderRadius: 8,
   }
 });
 

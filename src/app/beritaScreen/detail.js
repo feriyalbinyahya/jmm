@@ -23,6 +23,7 @@ const BeritaDetailScreen = ({navigation, route}) => {
     const [dataBerita, setDataBerita] = useState([]);
     const [isLiked, setIsLiked] = useState(false);
     const [jumlahLike, setJumlahLike] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLike = () => {
         if (isLiked) {
@@ -56,12 +57,14 @@ const BeritaDetailScreen = ({navigation, route}) => {
     }
 
     const getDataBerita = () => {
+        setIsLoading(true);
         BeritaServices.getDetailBerita(id)
         .then(res=> {
             console.log(res.data.data);
             setDataBerita(res.data.data[0]);
             setIsLiked(res.data.data[0].is_liked);
             setJumlahLike(res.data.data[0].jumlah_like);
+            setIsLoading(false);
         })
     }
 
@@ -104,12 +107,12 @@ const BeritaDetailScreen = ({navigation, route}) => {
         if(isFocused){
             getDataBerita();
         }
-    },[height, isFocused]);
+    },[isFocused]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <HeaderWhite navigation={navigation} />
-      {
+      {!isLoading ?
         dataBerita.length != 0 ?
       <ScrollView style={{backgroundColor: Color.neutralZeroOne}}>
         <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} />
@@ -157,7 +160,8 @@ const BeritaDetailScreen = ({navigation, route}) => {
 
             </View>
         </View>
-      </ScrollView>
+      </ScrollView> 
+      : <></>
       : <View style={{height: '100%', backgroundColor: Color.neutralZeroOne}}>
         <ActivityIndicator style={{marginTop: '50%'}} size="large" color={Color.primaryMain} />
         </View>

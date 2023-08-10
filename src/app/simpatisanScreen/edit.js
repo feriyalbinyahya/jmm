@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import { setPhotos } from '../../redux/simpatisan';
 import SimpatisanServices from '../../services/simpatisan';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import UserAvatar from 'react-native-avatar-generator';
 
 const EditSimpatisan = ({navigation, route}) => {
     const {Foto, Firstname, Lastname, Phone, Instagram, Tiktok, Facebook, Twitter, 
@@ -293,8 +294,15 @@ const EditSimpatisan = ({navigation, route}) => {
           <View style={{height: 15}}></View>
           <View style={{flexDirection: 'row'}}>
               {foto == "" ? 
-              <Pressable onPress={handleAddPhoto} style={styles.boxAddPhoto}><Ionicons name="add-circle-outline" color={Color.title}
-              size={24} /></Pressable>  : 
+              <Pressable onPress={handleAddPhoto}><UserAvatar
+              size={100}
+              fontWeight="bold"
+              color="#FFFFFF"
+              backgroundColor={Color.neutralZeroFour}
+              firstName={firstname}
+              lastName={lastname}
+              /></Pressable>
+              : 
               <Pressable onPress={handleAddPhoto}><Image style={{width: 100, height: 100, borderRadius: 8}} source={{uri: `data:image/png;base64,${foto}`}} /></Pressable>
               }
               <View style={{width: 20}}></View>

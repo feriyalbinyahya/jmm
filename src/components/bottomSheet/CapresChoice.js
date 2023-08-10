@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.neutralZeroThree
     },
     title: {
-        ...FontConfig.titleThree,
+        ...FontConfig.bodyOne,
         color: Color.title
     },
     textPilih : {

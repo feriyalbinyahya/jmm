@@ -36,7 +36,7 @@ getPertanyaanSurvei = async(id)=> {
 
 jawabSurvei = async (id, data) => {
     let headersToken = await getHeaders();
-    return Request.post(`survey/jawab/${id}`, data, {headers: headersToken, timeout: 8000,});
+    return Request.post(`survey/jawab/${id}`, data, {headers: headersToken,});
 }
 
 const SurveiServices = {

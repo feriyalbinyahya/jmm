@@ -25,6 +25,8 @@ import { useDispatch } from 'react-redux';
 import { setPhotos } from '../../../redux/simpatisan';
 import SimpatisanServices from '../../../services/simpatisan';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import GenderChoice from '../../../components/bottomSheet/genderChoice'
 
 const TambahkanSimpatisan = ({navigation}) => {
     const [foto, setFoto] = useState("");
@@ -60,6 +62,10 @@ const TambahkanSimpatisan = ({navigation}) => {
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [messageError, setMessageError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [gender, setGender] = useState("");
+    const [dateOfBirth, setDateOfBirth] = useState('');
+    const [isModalGenderVisible, setModalGenderVisible] = useState(false);
+    const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -229,9 +235,33 @@ const TambahkanSimpatisan = ({navigation}) => {
     }
   }
 
-    handleAddPhoto = () => {
-      setIsModalVisiblePhoto(true);
+  handleGenderButton = () => {
+    setModalGenderVisible(true);
+  }
+
+  handleDateButton = () => {
+    setIsCalendarVisible(!isCalendarVisible);
+  }
+
+  handleAddPhoto = () => {
+    setIsModalVisiblePhoto(true);
+  }
+  const handleDateChange = (event, data) => {
+    setIsCalendarVisible(!isCalendarVisible);
+    const currentDate = new Date(data);
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth()+1;
+    let date = currentDate.getDate();
+    if(month < 10){
+      month = `0${currentDate.getMonth()+1}`;
     }
+
+    if (date < 10){
+      date = `0${currentDate.getDate()}`
+    }
+    console.log(`${year}/${month}/${date}`);
+    setDateOfBirth(`${year}/${month}/${date}`);
+  }
 
     useEffect(()=>{
       getDataProvinsi();
@@ -278,6 +308,8 @@ const TambahkanSimpatisan = ({navigation}) => {
         isModalVisible={isModalVisiblePhoto} setModalVisible={setIsModalVisiblePhoto} 
         title="Pilih Foto" />
       <HeaderWhite title="Tambah Kawan" navigation={navigation} />
+      <CustomBottomSheet children={<GenderChoice gender={gender} setModalVisible={setModalGenderVisible} setGender={setGender} />} 
+      isModalVisible={isModalGenderVisible} setModalVisible={setModalGenderVisible} title="Pilih Jenis Kelamin" />
       <ScrollView>
         {/** Unggah Foto */}
         <View style={styles.unggahFoto}>
@@ -330,6 +362,13 @@ const TambahkanSimpatisan = ({navigation}) => {
           keyboardType='number-pad' placeholder='08' placeholderTextColor={Color.disable} />
           {phoneNotEmpty?(isPhone? <></> : <FormErrorMessage text="Nomor ponsel yang dimasukkan tidak valid." />): 
           <FormErrorMessage text="Kolom wajib diisi." />}
+          <Text style={styles.titleFormInput}>Jenis Kelamin</Text>
+          <DropDownButton placeholder='Pilih' text={gender} onPress={handleGenderButton} />
+          <Text style={styles.titleFormInput}>Tanggal Lahir</Text>
+          <DropDownButton placeholder='yyyy/mm/dd' text={dateOfBirth.toString()} onPress={handleDateButton} />
+          {isCalendarVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
+            display="calendar" onChange={handleDateChange} value={new Date(2000, 10, 20)}
+             /> : <></>}
         </View>
 
         {/** Media sosial */}
@@ -505,8 +544,8 @@ const styles = StyleSheet.create({
         paddingTop: 20
     },
     titleFormInput:{
-        color: Color.secondaryText,
-        ...FontConfig.bodyTwo,
+        color: Color.primaryMain,
+        ...FontConfig.bodyOne,
         marginTop: 10,
         marginBottom: 1
     },

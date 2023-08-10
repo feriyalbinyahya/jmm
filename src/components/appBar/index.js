@@ -56,8 +56,8 @@ const AppBarRelawan = ({navigation, isReferal}) => {
                 </View>
             </View>
             <View style={styles.rightSection}>
-                {/**<Pressable onPress={handleNotifikasi}><Ionicons name="notifications" color={Color.neutralZeroOne} size={22} /></Pressable>
-                <View style={{width:10}}></View>**/}
+                <Pressable onPress={handleNotifikasi}><Ionicons name="notifications" color={Color.neutralZeroOne} size={22} /></Pressable>
+                <View style={{width:10}}></View>
                 <Pressable style={styles.rightSection} onPress={handleProfile}>
                     <Text style={styles.textTitle}>Hai, {nama}</Text>
                     <View style={{width:10}}></View>

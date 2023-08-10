@@ -24,7 +24,9 @@ const initialState = {
       nama: '',
       deskripsi: '',
       desc_required: true,
-      is_tag: true
+      is_estimasi_partisipan_required: false,
+      is_tag_kawan: false
+
     }
 
 }
@@ -51,7 +53,8 @@ export const laporanSlice = createSlice({
         nama : action.payload.nama,
         deskripsi: action.payload.deskripsi,
         desc_required: action.payload.desc_required,
-        is_tag: true
+        is_estimasi_partisipan_required: action.payload.is_estimasi_partisipan_required,
+        is_tag_kawan: action.payload.is_tag_kawan
       }
     },
   },

@@ -14,6 +14,7 @@ import {
     MenuTrigger,
    } from "react-native-popup-menu";
 import AwesomeAlert from 'react-native-awesome-alerts';
+import HeaderWhite from '../../components/header/headerWhite'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -21,6 +22,8 @@ const NotifikasiScreen = ({navigation}) => {
     const [terpilih, setTerpilih] = useState(0);
     const [visible, setVisible] = React.useState(false);
     const [allChecked, setAllChecked] = useState(false);
+    const [jumlahPesan, setJumlahPesan] = useState(0);
+    const [jumlahInfoAkun, setJumlahInfoAkun] = useState(0);
 
     const openMenu = () => setVisible(true);
 
@@ -28,6 +31,14 @@ const NotifikasiScreen = ({navigation}) => {
     const [showDeleteNotif, setShowDeleteNotif] = useState(false);
 
     const [dataPesan, setDataPesan] = useState([]);
+
+    const onPressNotif = (id, kategori) => {
+        if(kategori == "Berita"){
+            navigation.navigate("BeritaDetail", {id: id});
+        }else if(kategori == "Survei"){
+            navigation.navigate("StartSurvei", {id:id});
+        }
+    }
 
     const getDataPesan = () => {
         setDataPesan([
@@ -60,7 +71,9 @@ const NotifikasiScreen = ({navigation}) => {
         getDataPesan();
     }, [])
   return (
-      <View style={styles.container}>
+    <View style={{flex:1}}>
+        <HeaderWhite title="Notifikasi" navigation={navigation} />
+        <View style={styles.container}>
             <Tab.Navigator 
             screenOptions={{
                 tabBarLabelStyle: styles.textTabLabel,
@@ -69,13 +82,14 @@ const NotifikasiScreen = ({navigation}) => {
                 tabBarIndicatorStyle: {backgroundColor: Color.primaryMain},
             }}
             >
-                <Tab.Screen  name="Pesan">
-                    {()=> <NotifikasiPesan dataPesan={dataPesan} allChecked={allChecked} setAllChecked={setAllChecked} terpilih={terpilih} setTerpilih={setTerpilih} />}
+                <Tab.Screen  name={`Pesan (${jumlahPesan})`}>
+                    {()=> <NotifikasiPesan onPressNotif={onPressNotif} setJumlah={setJumlahPesan} dataPesan={dataPesan} allChecked={allChecked} setAllChecked={setAllChecked} terpilih={terpilih} setTerpilih={setTerpilih} />}
                 </Tab.Screen>
-                <Tab.Screen  name="Info Akun">
+                {/**<Tab.Screen  name="Info Akun">
                     {()=> <NotifikasiInfoAkun />}
-                </Tab.Screen>
+        </Tab.Screen>**/}
             </Tab.Navigator>
+        </View>
     </View>
   )
 }
@@ -103,7 +117,8 @@ const styles = StyleSheet.create({
         
     },
     container: {
-        flex: 9
+        flex: 1,
+        backgroundColor: Color.neutralZeroOne
     },
     containerMenu: {
         flex: 1

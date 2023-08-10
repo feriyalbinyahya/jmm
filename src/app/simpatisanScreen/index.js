@@ -15,6 +15,7 @@ import IconScanWhite from '../../assets/images/icon/icon_scan_monokrom.png';
 import { useFocusEffect } from '@react-navigation/native'
 import Skeleton from '../../components/skeleton'
 import HeaderSurface from '../../components/header/headerSurface'
+import UserAvatar from 'react-native-avatar-generator';
 
 const ListSimpatisan = ({navigation}) => {
     const title = "Daftar Kawanmu";
@@ -53,7 +54,17 @@ const ListSimpatisan = ({navigation}) => {
       
       return(
         <Pressable onPress={()=>navigation.navigate("DetailSimpatisan", {id: id})} style={styles.laporanItem}>
-          {!isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
+          {!isLoading ? 
+          dataImage != "" ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> :
+          <UserAvatar
+              size={40}
+              fontWeight="bold"
+              color="#FFFFFF"
+              backgroundColor={Color.neutralZeroFour}
+              firstName={nama.split(" ")[0]}
+              lastName={nama.split(" ")[1]}
+          /> 
+          : 
           <Skeleton width={40} height={40} style={{borderRadius: 100}} />
           }
           <View style={{width: 10}}></View>

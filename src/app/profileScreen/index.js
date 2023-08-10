@@ -8,7 +8,7 @@ import IconLaporan from '../../assets/images/icon/icon_laporan.png'
 import IconReferral from '../../assets/images/icon/icon_referral.png'
 import IconSurvey from '../../assets/images/icon/icon_survey.png'
 import IconCopy from '../../assets/images/icon/icon_copy.png'
-import IconSetting from '../../assets/images/icon/setting.png'
+
 import IconWaiting from '../../assets/images/icon/waiting.png'
 import CustomButton from '../../components/customButton'
 import IconEdit from '../../assets/images/icon/icon_edit.png'
@@ -25,6 +25,9 @@ import Skeleton from '../../components/skeleton'
 import { useFocusEffect } from '@react-navigation/native';
 import { VERSION } from '../../utils/environment';
 import Logo from '../../assets/images/LogoAplikasi.png';
+import IconArrowLeft from '../../assets/images/icon/button_left.png'
+import IconSetting from '../../assets/images/icon/button_setting.png'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ProfileScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -155,101 +158,100 @@ const ProfileScreen = ({navigation}) => {
         <CustomBottomSheet children={<LogoutView />} 
         isModalVisible={isLogoutVisible} setModalVisible={setLogoutVisible} 
         title="" />
-        <HeaderRedLinear navigation={navigation} title="" />
         {!isLoading ? <View style={styles.boxProfile}>
-            <View style={styles.boxSection}>
-                <View style={styles.profileSection}>
-                    <Image style={styles.imageProfile} source={{uri: `data:image/png;base64,${profileData.foto_profil}`}} />
-                    <View style={{paddingHorizontal: 15}}>
-                        <Text style={styles.textNama}>{profileData.nama_lengkap}</Text>
-                        <Text style={styles.textUsername}>@{profileData.username}</Text>
-                        <Text style={styles.textPhone}>{profileData.no_hp}</Text>
-                    </View>
-                </View>
-                <Pressable onPress={status == "Diterima" ? handleEditButton : ()=>{}}><Image style={styles.iconEdit} 
-                source={status == "Diterima" ? IconEdit : IconSetting} /></Pressable>
-            </View>
-            <View style={{paddingHorizontal: 10, paddingVertical: 15}}>
-                <Text style={{...FontConfig.bodyThree, color: Color.secondaryText}}>Bio:</Text>
-                <Text style={{...FontConfig.bodyTwo, color: Color.primaryText}}>{profileData.bio}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Pressable onPress={()=>navigation.goBack()}>
+                    <Image source={IconArrowLeft} style={{width: 36, height: 36}} />
+                </Pressable>
+                {status == "Diterima" ? <Pressable onPress={handleEditButton}>
+                    <Image source={IconSetting} style={{width: 36, height: 36}} />
+                </Pressable> : <></>}
             </View>
             <View style={{height: 20}}></View>
-            {
-                status != "Diterima" ? 
-                <View style={styles.waitingStatus}>
-                    <Image source={IconWaiting} style={{width: 34, height: 34}} />
-                    <View style={{paddingHorizontal: 15, width: '90%'}}>
-                        <Text style={{...FontConfig.buttonThree, color: Color.neutralTen}}>Menunggu Persetujuan</Text>
-                        <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Silahkan tunggu persetujuan akunmu untuk dapat menggunakan fitur.</Text>
-                    </View>
-                </View> 
-                : <></>
-            }
+            <View style={styles.boxSection}>
+                <Image style={styles.imageProfile} source={{uri: `data:image/png;base64,${profileData.foto_profil}`}} />
+                <View style={{height: 10}}></View>
+                <View style={{alignItems: 'center', paddingHorizontal: 20}}>
+                    <Text style={styles.textNama}>{profileData.nama_lengkap}</Text>
+                    <Text style={styles.textUsername}>@{profileData.username}</Text>
+                    <Text style={styles.textPhone}>{profileData.no_hp}</Text>
+                    <View style={{height: 10}}></View>
+                    <Text style={{...FontConfig.bodyTwo, color: Color.neutralZeroOne}}>{profileData.bio}</Text>
+                </View>
+            </View>
+            <View style={{height: 20}}></View>
             
             <View style={styles.aksiSection}>
-                <BoxAksi image={IconLaporan} text="Laporan" jumlah={profileData.total_laporan} imageHeight={18} imageWidth={14} />
-                <BoxAksi image={IconReferral} text="Referral" jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
-                <BoxAksi image={IconSurvey} text="Survei" jumlah={profileData.total_survey} imageHeight={22} imageWidth={22} />
+                <BoxAksi image={IconLaporan} text="LAPORAN" jumlah={profileData.total_laporan} imageHeight={18} imageWidth={14} />
+                <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
+                <BoxAksi image={IconReferral} text="REFERAL" jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
+                <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
+                <BoxAksi image={IconSurvey} text="SURVEI" jumlah={profileData.total_survey} imageHeight={22} imageWidth={22} />
             </View>
+            <View style={{height: 25}}></View>
         </View> : 
         <View style={styles.boxProfile}>
-            <View style={styles.boxSection}>
-                <View style={styles.profileSection}>
-                    <Skeleton height={72} width={72} style={{borderRadius: 40}} />
-                    <View style={{paddingHorizontal: 15}}>
-                        <Skeleton height={18} width={width*0.4} style={{borderRadius: 3}} />
-                        <Skeleton height={14} width={width*0.3} style={{borderRadius: 3, marginTop: 8}} />
-                        <Skeleton height={14} width={width*0.3} style={{borderRadius: 3, marginTop: 8}} />
-                    </View>
-                </View>
-                
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Pressable onPress={()=>navigation.goBack()}>
+                    <Image source={IconArrowLeft} style={{width: 36, height: 36}} />
+                </Pressable>
+                <Pressable onPress={status == "Diterima" ? handleEditButton : ()=>{}}>
+                    <Image source={IconSetting} style={{width: 36, height: 36}} />
+                </Pressable>
             </View>
-            <View style={{height: 30}}></View>
-            <View style={styles.aksiSection}>
-                <Skeleton height={60} width={width*0.8} style={{borderRadius: 5}} />
-            </View>
+            <View style={{height: 20}}></View>
+            <View style={{height: '40%', justifyContent: 'center'}}><ActivityIndicator size="large" color={Color.neutralZeroOne} /></View>
         </View>
         }
-        <View style={{height: 20}}></View>
-        { status == "Diterima" && isReferalOrganization == 1 ? <View style={styles.boxReferral}>
+        {isReferalOrganization == 1 ? <View style={styles.boxReferral}>
             { !isLoading ?
                 <><View style={{width: '48%'}}>
-                    <Text style={styles.textKodeAnda}>Kode referral anda</Text>
-                    <Text style={styles.textReferral}>{profileData.kode_referal}</Text>
+                    <Text style={styles.textKodeAnda}>Referral untuk ajak GENSatSet</Text>
+                    {status == "Diterima" ? <Text style={styles.textReferral}>{profileData.kode_referal}</Text> : 
+                    <Ionicons name="eye-off-outline" color={Color.neutralZeroSeven} size={20} />
+                    }
                 </View>
-                <Pressable onPress={handleCopyReferral} style={styles.buttonCopy}><Image style={styles.iconCopy} source={IconCopy} /></Pressable>
-                <CustomButton onPress={handleLihatQRButton} text="Lihat QR" 
-                fontStyles={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne}} 
+                {status == "Diterima" ? <Pressable onPress={handleCopyReferral} style={styles.buttonCopy}><Image style={styles.iconCopy} source={IconCopy} /></Pressable> : <></>}
+                <CustomButton disabled={status != "Diterima"} onPress={handleLihatQRButton} text="Lihat QR" 
+                fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} 
                 width={90} height={40} backgroundColor={Color.primaryMain} /></> : 
                 <Skeleton height={40} width={width*0.8} style={{borderRadius: 5}}/>
             }
         </View> : <></>}
-        <View style={{padding: 20, height: '38%', justifyContent: 'space-between'}}>
-            <CustomButton
-            onPress={()=>navigation.navigate('Leaderboard')} 
-            fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
-            width='100%' height='17%' text="Leaderboard"
-            disabled={status == "Diterima" ? false : true}
-            backgroundColor={Color.primaryMain}
-            />
-            <View style={{height: 10}}></View>
-            {/**<CustomButton
-            onPress={()=>navigation.navigate('Bantuan')} 
-            fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
-            width='100%' height='14%'  text="Bantuan"
-            backgroundColor={Color.primaryMain}
-            />
-            <View style={{height: 10}}></View> */}
-            <CustomButton 
-            onPress={handleKeluarButton}
-            fontStyles={{...FontConfig.buttonOne, color: Color.primaryMain}}
-            width='100%' height='17%' text="Keluar" borderWidth={1}
-            borderColor={Color.primaryMain}
-            backgroundColor={Color.neutralZeroOne}
-            />
+        <View style={{height: 20}}></View>
+        <View>
+            <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="trophy-outline" color={status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive}}>Leaderboard</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive} size={18} />
+            </Pressable>
+            {/**<Pressable onPress={()=>navigation.navigate('Bantuan')}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="help-outline" color={Color.primaryMain} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Bantuan</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+        </Pressable>**/}
+            <Pressable onPress={handleKeluarButton} style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="log-out-outline" color={Color.primaryMain} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Keluar</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+            </Pressable>
             <View style={{height: 10}}></View>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                <Image source={Logo} style={{width: 240, height: 96}} />
+                {status == "Diterima" ? <Image source={Logo} style={{width: 240, height: 96}} /> : 
+                <View style={{height: 96}}></View>
+                }
             </View>
             <View style={styles.version}>
                 <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
@@ -263,17 +265,17 @@ export default ProfileScreen
 
 const styles = StyleSheet.create({
     boxProfile: {
-        marginHorizontal: 20,
-        backgroundColor: Color.neutralZeroOne,
+        backgroundColor: Color.primaryMain,
         elevation: 10,
         shadowOffset: {height: 2, width: 1},
-        marginTop: -100,
-        borderRadius: 12,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
         padding: 20
 
     },
     boxReferral: {
         marginHorizontal: 20,
+        marginTop: -30,
         height: '9%',
         backgroundColor: Color.neutralZeroOne,
         elevation: 10,
@@ -287,8 +289,7 @@ const styles = StyleSheet.create({
 
     },
     boxSection: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+        alignItems: 'center',
     },
     buttonCopy: {
         borderWidth: 1,
@@ -303,8 +304,7 @@ const styles = StyleSheet.create({
         height: 18
     },
     profileSection: {
-        flexDirection: 'row',
-        width: '70%'
+        alignItems: 'center'
     },
     imageProfile: {
         height: 72,
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     },
     textNama: {
         ...FontConfig.titleOne,
-        color: '#000000',
+        color:  Color.neutralZeroOne,
     },
     iconEdit: {
         width: 24,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     },
     textPhone: {
         ...FontConfig.bodyTwo,
-        color: Color.secondaryText
+        color:  Color.neutralZeroOne,
     },
     textReferral: {
         ...FontConfig.headingFour,
@@ -330,12 +330,13 @@ const styles = StyleSheet.create({
     },
     textUsername: {
         ...FontConfig.bodyTwo,
-        color: Color.neutralZeroSix,
+        color: Color.neutralZeroOne,
         paddingVertical: 2
     },
     aksiSection: {
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        alignItems: 'center'
     },
     textKodeAnda: {
         ...FontConfig.captionZero,
@@ -352,5 +353,17 @@ const styles = StyleSheet.create({
         backgroundColor: Color.neutralZeroOne,
         justifyContent: 'center',
         height: 20,
+      },
+      garisVertical: {
+        borderWidth: 0.5,
+        backgroundColor: '#E51A88', 
+        borderColor: '#E51A88',
+        height: '70%',
+      },
+      garisVerticalMati: {
+        borderWidth: 0.5,
+        backgroundColor: Color.grayEight, 
+        borderColor: Color.grayEight,
+        height: '70%',
       }
 })

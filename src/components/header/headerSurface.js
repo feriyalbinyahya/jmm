@@ -3,9 +3,9 @@ import React from 'react'
 import iconArrowLeft from '../../assets/images/icon/icon_arrow_left.png'
 import { Color, FontConfig } from '../../theme'
 
-const HeaderSurface = ({navigation, title, rightChild=<></>}) => {
+const HeaderSurface = ({navigation, color=Color.neutralZeroOne, title, rightChild=<></>}) => {
   return (
-    <View style={styles.header}>
+    <View style={{...styles.header, backgroundColor: color,}}>
         <Pressable onPress={() => navigation.goBack()}><Image style={styles.iconArrowLeft} source={iconArrowLeft} /></Pressable>
         <View style={{alignItems: 'center', flex:1}}><Text style={styles.textTitle}>{title}</Text></View>
         {rightChild}
@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 20,
         alignItems: 'center',
-        backgroundColor: Color.neutralZeroOne,
     },
     iconArrowLeft: {
         width: 24,

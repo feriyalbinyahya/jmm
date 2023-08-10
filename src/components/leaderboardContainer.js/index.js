@@ -160,21 +160,21 @@ const styles = StyleSheet.create({
       height: '100%'
     },
     boxSilver: {
-        backgroundColor: Color.surface,
+        backgroundColor: Color.neutralZeroThree,
         height: '35%',
         width: '80%',
         alignItems: 'center',
         padding: 20
     },
     boxGold: {
-      backgroundColor: Color.primaryMain,
+      backgroundColor: Color.purple,
       height: '43%',
       alignItems: 'center',
       width: '80%',
       padding: 20
     },
     boxBronze: {
-      backgroundColor: Color.surface,
+      backgroundColor: Color.neutralZeroThree,
       height: '27%',
       alignItems: 'center',
       width: '80%',

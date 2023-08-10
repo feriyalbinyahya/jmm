@@ -6,7 +6,7 @@ import { Color, FontConfig } from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
-const SelectView = ({setFirstname}) => {
+const SelectView = ({setFirstname, jumlah}) => {
     const dataTeman = useSelector(state => {
         return state.laporan.tagTeman;
     });
@@ -16,7 +16,7 @@ const SelectView = ({setFirstname}) => {
 
 
 
-    const ItemKawan = ({nama, id}) => {
+    const ItemKawan = ({nama, id, domisili}) => {
         let isSelected = dataTeman.teman.includes(id);
 
         const handleClick = () => {
@@ -34,9 +34,10 @@ const SelectView = ({setFirstname}) => {
 
         return(
             <Pressable onPress={handleClick} style={{flexDirection: 'row', alignItems: 'center'
-            ,paddingHorizontal: 20, paddingVertical: 10, justifyContent: 'space-between'}}>
+            ,paddingHorizontal: 10, paddingVertical: 10, justifyContent: 'space-between'}}>
                 <View>
                     <Text style={{...FontConfig.bodyOne, color: Color.title}}>{nama}</Text>
+                    <Text style={{...FontConfig.captionTwo, color: Color.neutralZeroSix}}>{domisili}</Text>
                 </View>
                 {isSelected ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
                         : <View style={styles.checkboxOff}></View>}
@@ -58,17 +59,39 @@ const SelectView = ({setFirstname}) => {
         })
     }
 
+    const getDataKawanOnRefresh = () => {
+        setIsLoading(true);
+        LaporanServices.getKawan(search)
+        .then(res=>{
+            console.log(res.data.data);
+            setDataKawan(res.data.data);
+            setIsLoading(false);
+        })
+        .catch(err=>{
+            console.log(err.response.message);
+        })
+    }
+
+    const handleSearch = () => {
+        getDataKawanOnRefresh();
+      }
+
     useEffect(()=>{
         getDataKawan();
     },[])
 
+    useEffect(()=> {
+        handleSearch();
+      }, [search])
+
   return (
     <View>
-      <SearchBar text="" search={search} setSearch={setSearch} width='100%' />
+      <SearchBar text="" search={search} setSearch={setSearch} width='100%' padding={10} />
+      <Text style={{...FontConfig.buttonOne, color: Color.title, paddingHorizontal: 10, paddingTop: 10}}>{`Kawan ditandai (${jumlah})`}</Text>
       {!isLoading ? 
       <FlatList
       data={dataKawan}
-      renderItem={({item})=><ItemKawan nama={item.nama} id={item.uniq_code} />}
+      renderItem={({item})=><ItemKawan nama={item.nama} id={item.uniq_code} domisili={`${item.provinsi}, ${item.kabkot}`} />}
        /> 
        : <View style={{flex: 1, marginTop: '10%'}}><ActivityIndicator size="large" color={Color.graySix} /></View>}
     </View>

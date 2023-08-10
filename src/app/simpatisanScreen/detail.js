@@ -10,6 +10,7 @@ import IconTiktok from '../../assets/images/icon/icon_tiktok.png';
 import IconInstagram from '../../assets/images/icon/icon_instagram.png';
 import SimpatisanServices from '../../services/simpatisan'
 import { useFocusEffect } from '@react-navigation/native'
+import UserAvatar from 'react-native-avatar-generator';
 
 const DetailSimpatisanScreen = ({navigation, route}) => {
     const {id} = route.params;
@@ -49,6 +50,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
     }
 
     const getDetailSimpatisan = () => {
+        console.log(id);
         setIsLoading(true);
         SimpatisanServices.getDetailSimpatisan(id)
         .then(res=>{
@@ -57,7 +59,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             setIsLoading(false);
         })
         .catch(err=>{
-            console.log(err);
+            console.log(err.response);
         })
     }
 
@@ -72,7 +74,16 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
       <HeaderWhite title="Detail Kawan" navigation={navigation} />
       {dataSimpatisan.length != 0 ? <ScrollView>
         <View style={{alignItems: 'center', padding: 10, backgroundColor: Color.neutralZeroOne}}>
-            <Image source={{uri: `data:image/png;base64,${dataSimpatisan[0].foto}`}} style={{width: 100, height: 100, borderRadius: 66}} />
+            {dataSimpatisan[0].foto != "" ? <Image source={{uri: `data:image/png;base64,${dataSimpatisan[0].foto}`}} style={{width: 100, height: 100, borderRadius: 66}} /> : 
+            <UserAvatar
+            size={100}
+            fontWeight="bold"
+            color="#FFFFFF"
+            backgroundColor={Color.neutralZeroFour}
+            firstName={dataSimpatisan[0].nama_lengkap.split(" ")[0]}
+            lastName={dataSimpatisan[0].nama_lengkap.split(" ")[1]}
+          />
+            }
             <View style={{height: 12}}></View>
             <Pressable onPress={handleEdit} style={styles.buttonEdit}>
                 <Text style={{...FontConfig.bodyThree, color: '#000000'}}>Edit</Text>
