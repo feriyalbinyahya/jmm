@@ -46,11 +46,10 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
              Facebook: data.sosmed_fb, Twitter: data.sosmed_twitter, 
             Provinsi : data.provinsi, Id_provinsi: data.id_provinsi, Kota : data.kabkot, Id_kota: data.id_kabkot, Id_kecamatan: data.id_kecamatan, Kecamatan : data.kecamatan, Capres : data.preferensi_capres,
              AlasanSuka:data.alasan_preferensi_capres, CapresTidakSuka: data.capres_tidak_suka,
-              AlasanTidakSuka: data.alasan_capres_tidak_suka, id: id});
+              AlasanTidakSuka: data.alasan_capres_tidak_suka, id: id, tanggal_lahir: data.tanggal_lahir, jenis_kelamin: data.jenis_kelamin});
     }
 
     const getDetailSimpatisan = () => {
-        console.log(id);
         setIsLoading(true);
         SimpatisanServices.getDetailSimpatisan(id)
         .then(res=>{
@@ -79,7 +78,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             size={100}
             fontWeight="bold"
             color="#FFFFFF"
-            backgroundColor={Color.neutralZeroFour}
+            backgroundColor={Color.redOne}
             firstName={dataSimpatisan[0].nama_lengkap.split(" ")[0]}
             lastName={dataSimpatisan[0].nama_lengkap.split(" ")[1]}
           />
@@ -98,6 +97,8 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             <View style={{height: 5}}></View>
             <RowItem subject="Nama Lengkap" text={dataSimpatisan[0].nama_lengkap} />
             <RowItem subject="Nomor Ponsel" text={dataSimpatisan[0].nomor_ponsel} />
+            <RowItem subject="Jenis Kelamin" text={dataSimpatisan[0].jenis_kelamin} />
+            <RowItem subject="Tanggal Lahir" text={dataSimpatisan[0].tanggal_lahir} />
             <View style={{height: 15}}></View>
             {/**Media Sosial */}
             <Text style={styles.titleContain}>Media Sosial</Text>

@@ -80,7 +80,7 @@ const DetailLaporanScreen = ({navigation, route}) => {
         <Text style={styles.textContent}>{dataDetail.tag}</Text>
         <View style={{height: 10}}></View>
         {is_tag_kawan ? <><Text style={styles.textSubject}>Kawan</Text>
-        <View style={{flexDirection: 'row'}}>{kawan.map((item, index)=> {
+        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>{kawan.map((item, index)=> {
             if(index == kawan.length-1){
                 return(
                     <Text key={index} style={styles.textContent}>{item.nama}</Text>

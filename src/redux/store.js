@@ -6,6 +6,7 @@ import laporanReducer from './laporan'
 import daerahReducer from './daerah'
 import credentialReducer from './credentials'
 import simpatisanReducer from './simpatisan'
+import misiReducer from './misi'
 import {
   persistStore,
   persistReducer,
@@ -40,7 +41,8 @@ const rootReducer = combineReducers({
   laporan: laporanReducer,
   daerah: daerahReducer,
   credential: credentialReducer,
-  simpatisan: simpatisanReducer
+  simpatisan: simpatisanReducer,
+  misi: misiReducer
   
   // [rtkquery.reducerPath]: rtkquery.reducer,
 })

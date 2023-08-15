@@ -12,9 +12,9 @@ import './translation'
 import { onMessageReceived } from './utils/Utils';
 
 function App() {
-  useEffect(() => {
-    messaging().onMessage(onMessageReceived);
-  }, []);
+  //useEffect(() => {
+    //messaging().onMessage(onMessageReceived);
+  //}, []);
 
   return (
     <NativeBaseProvider theme={theme} config={config} colorModeManager={colorModeManager}>

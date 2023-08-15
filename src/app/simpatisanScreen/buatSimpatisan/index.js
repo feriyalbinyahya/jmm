@@ -94,7 +94,9 @@ const TambahkanSimpatisan = ({navigation}) => {
         "preferensi_capres": capres,
         "alasan_preferensi_capres": alasanSuka,
         "capres_tidak_suka": capresTidakSuka,
-        "alasan_capres_tidak_suka": alasanTidakSuka
+        "alasan_capres_tidak_suka": alasanTidakSuka,
+        "jenis_kelamin": gender,
+        "tanggal_lahir": dateOfBirth
     })
       .then(res=> {
         console.log(res.data.message);
@@ -228,7 +230,7 @@ const TambahkanSimpatisan = ({navigation}) => {
 
   handleValidation = () => {
     if(firstname && lastname && phone && isPhone && (instagram || tiktok || facebook || twitter) && provinsi && 
-    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka){
+    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka && dateOfBirth && gender){
       setIsContinue(true);
     }else{
       setIsContinue(false);
@@ -260,7 +262,7 @@ const TambahkanSimpatisan = ({navigation}) => {
       date = `0${currentDate.getDate()}`
     }
     console.log(`${year}/${month}/${date}`);
-    setDateOfBirth(`${year}/${month}/${date}`);
+    setDateOfBirth(`${year}-${month}-${date}`);
   }
 
     useEffect(()=>{
@@ -289,7 +291,7 @@ const TambahkanSimpatisan = ({navigation}) => {
     useEffect(()=> {
       handleValidation();
     }, [firstname, lastname, phone, instagram, tiktok, facebook, twitter, provinsi, kota, kecamatan,
-    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto]);
+    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto, dateOfBirth, gender]);
   return (
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
       <CustomBottomSheet 
@@ -365,7 +367,7 @@ const TambahkanSimpatisan = ({navigation}) => {
           <Text style={styles.titleFormInput}>Jenis Kelamin</Text>
           <DropDownButton placeholder='Pilih' text={gender} onPress={handleGenderButton} />
           <Text style={styles.titleFormInput}>Tanggal Lahir</Text>
-          <DropDownButton placeholder='yyyy/mm/dd' text={dateOfBirth.toString()} onPress={handleDateButton} />
+          <DropDownButton placeholder='yyyy-mm-dd' text={dateOfBirth.toString()} onPress={handleDateButton} />
           {isCalendarVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
             display="calendar" onChange={handleDateChange} value={new Date(2000, 10, 20)}
              /> : <></>}
@@ -380,28 +382,28 @@ const TambahkanSimpatisan = ({navigation}) => {
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Instagram</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={instagram} setValue={setInstagram}
             leftChild={<Image source={IconInstagram} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tiktok</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={tiktok} setValue={setTiktok}
             leftChild={<Image source={IconTiktok} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Twitter</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={twitter} setValue={setTwitter}
             leftChild={<Image source={IconTwitter} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Facebook</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={facebook} setValue={setFacebook}
             leftChild={<Image source={IconFacebook} style={styles.iconStyle}
             />} />

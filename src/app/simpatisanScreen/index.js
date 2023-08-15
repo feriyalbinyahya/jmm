@@ -60,7 +60,7 @@ const ListSimpatisan = ({navigation}) => {
               size={40}
               fontWeight="bold"
               color="#FFFFFF"
-              backgroundColor={Color.neutralZeroFour}
+              backgroundColor={Color.redOne}
               firstName={nama.split(" ")[0]}
               lastName={nama.split(" ")[1]}
           /> 

@@ -448,16 +448,16 @@ const HomepageScreen = ({navigation}) => {
             }
 
             {/** misi section */}
-            {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
-            <View style={styles.surveiSection}>
+            { status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
+            <View >
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 <View style={{height: 20}}></View>
-                {/** <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /> **/}
+                <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />
             </View> : <></>) : 
-            <View style={styles.surveiSection}>
+            <View >
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>

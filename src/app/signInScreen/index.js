@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator, Linking } from "react-native";
 import {
   Margin,
   FontFamily,
@@ -42,6 +42,7 @@ const SignInPage = ({navigation}) => {
     const [showAlertStatusAccount, setShowStatusAccount] = useState(false);
     const [showAlertPhoneNotVerified, setShowAlertPhoneNotVerified] = useState(false);
     const [showAlertSomethingWrong, setShowAlertSomethingWrong] = useState(false);
+    const [showAlertNoWhatsapp, setShowAlertNoWhatsapp] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isStatusActiveVisible, setStatusActiveVisible] = useState(false);
@@ -104,17 +105,36 @@ const SignInPage = ({navigation}) => {
       }
     }
 
+    const handleWhatsapp = () => {
+      const url = `whatsapp://send?phone=081210412537`;
+      Linking.canOpenURL(url).then(supported => {
+          if (supported) {
+              Linking.openURL(url);
+          } else {
+              setShowAlertNoWhatsapp(true);
+          }
+      });
+    }
+
     const ContactUs = () => {
       return(
         <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
-          {/**<ChildrenButton borderColor={Color.successMain} 
-          height={40} backgroundColor={Color.neutralZeroOne}
+          <View style={{alignItems: 'center'}}>
+            <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
+            <View style={{height: 5}}></View>
+            <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>081210412537</Text>
+          </View>
+          <View style={{height: 10}}></View>
+          <ChildrenButton borderColor={Color.successMain} 
+          borderRadius={26}
+          onPress={handleWhatsapp}
+          height={44} backgroundColor={Color.neutralZeroOne}
           children={<View style={{flexDirection: 'row'}}>
-            <Image source={IconWhatsapp} style={{width: 18, height: 18}} />
-            <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi melalui Whatsapp</Text>
+            <Ionicons name="call-outline" size={20} color={Color.successMain} />
+            <View style={{width: 5}}></View>
+            <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi Whatsapp</Text>
           </View>}
-      />**/}
-          <Text style={{...FontConfig.buttonZeroTwo, color: Color.primaryMain}}>Customer Service 081210412537</Text>
+          />
         </View>
       )
     }
@@ -246,6 +266,25 @@ const SignInPage = ({navigation}) => {
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
             setShowAlertWrongPhone(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertNoWhatsapp}
+          showProgress={false}
+          title="Tidak dapat menghubungi"
+          message="Aplikasi whatsapp belum terinstall di perangkat Anda"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Oke, mengerti"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '80%', height: '80%', alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertNoWhatsapp(false);
           }}
         />
         <AwesomeAlert

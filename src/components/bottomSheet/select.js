@@ -85,11 +85,12 @@ const SelectView = ({setFirstname, jumlah}) => {
       }, [search])
 
   return (
-    <View>
+    <View style={{maxHeight: 500,}}>
       <SearchBar text="" search={search} setSearch={setSearch} width='100%' padding={10} />
       <Text style={{...FontConfig.buttonOne, color: Color.title, paddingHorizontal: 10, paddingTop: 10}}>{`Kawan ditandai (${jumlah})`}</Text>
       {!isLoading ? 
       <FlatList
+      scrollEnabled
       data={dataKawan}
       renderItem={({item})=><ItemKawan nama={item.nama} id={item.uniq_code} domisili={`${item.provinsi}, ${item.kabkot}`} />}
        /> 
