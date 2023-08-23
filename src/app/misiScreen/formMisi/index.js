@@ -16,25 +16,44 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
 import { setTeman } from '../../../redux/misi';
 import DropDownButton from '../../../components/buttonDropdown';
+import CustomBottomSheet from '../../../components/bottomSheet';
+import SelectView from '../../../components/bottomSheet/select';
+import MisiServices from '../../../services/misi';
+import {AspectRatio,} from 'native-base'
 
-const FormMisiScreen = ({navigation}) => {
-  const [judul, setJudul] = useState("");
-  const [konsep, setKonsep] = useState("");
-  const [filePdf, setFilePdf] = useState("");
+const FormMisiScreen = ({navigation, route}) => {
+  const {id, judul_kegiatan, konsep_kegiatan, laporan_kegiatan, media, nama_foto, nama_file, link, 
+    perkiraan_partisipan, tandai_kawan, nama_teman} = route.params;
+  const [judul, setJudul] = useState(judul_kegiatan);
+  const [konsep, setKonsep] = useState(konsep_kegiatan);
+  const [filePdf, setFilePdf] = useState([]);
   const [fotoBukti, setFotoBukti] = useState([]);
-  const [namaFoto, setNamaFoto] = useState([]);
-  const [namaFile, setNamaFile] = useState("");
+  const [fotoBuffer, setFotoBuffer] = useState([]);
+  const [namaFotoBuffer, setNamaFotoBuffer] = useState([]);
+  const [hapusFoto, setHapusFoto] = useState([]);
+  const [hapusDoc, setHapusDoc] = useState(false);
+  const [foto, setFoto] = useState(media);
+  const [namaFoto, setNamaFoto] = useState(nama_foto);
+  const [namaFile, setNamaFile] = useState(nama_file);
   const [showAlertFileBig, setShowAlertFileBig] = useState(false);
   const [showAlertPhotoBig, setShowAlertPhotoBig] = useState(false);
-  const [listTautan, setListTautan] = useState([]);
+  const [showAlertLimitFoto, setShowAlertLimitFoto] = useState(false);
+  const [listTautan, setListTautan] = useState(link);
   const [tautan, setTautan] = useState("");
   const [isInputActive, setInputActive] = useState(true);
-  const [perkiraanPartisipan, setPerkiraanPartisipan] = useState("");
+  const [perkiraanPartisipan, setPerkiraanPartisipan] = useState(perkiraan_partisipan);
   const [isModalTemanVisible, setIsModalTemanVisible] = useState(false);
-  const [tagTeman, setTagTeman] = useState([]);
-  const [tagNamaTeman, setTagNamaTeman] = useState([]);
+  const [isModalFotoVisible, setIsModalFotoVisible] = useState(false);
+  const [tagTeman, setTagTeman] = useState(tandai_kawan);
+  const [tagNamaTeman, setTagNamaTeman] = useState(nama_teman);
   const [phoneIsFocused, setPhoneIsFocused] = useState(false);
   const [isContinue, setIsContinue] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showAlertSuccess, setShowAlertSuccess] = useState(false);
+  const [showAlertSuccessSave, setShowAlertSuccessSave] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [previewPhoto, setPreviewPhoto] = useState("");
 
   const dispatch = useDispatch();
 
@@ -44,10 +63,16 @@ const FormMisiScreen = ({navigation}) => {
         type: [DocumentPicker.types.pdf],
         readContent: true
       });
+      console.log(results);
       if(results.size <= 10000000){
         setNamaFile(results.name);
-        let filePdfBase64 = await Utils.readFileBase64(results.uri);
-        setFilePdf(filePdfBase64);
+        //let filePdfBase64 = await Utils.readFileBase64(results.uri);
+        let fileAtribut = {
+          uri: results.uri,
+          type: results.type,
+          name: results.name,
+        };
+        setFilePdf(fileAtribut);
       }else{
         setShowAlertFileBig(true);
       }
@@ -62,18 +87,39 @@ const FormMisiScreen = ({navigation}) => {
   }
 
   const handlePilihDariFotoDocument = async () => {
+    let namafoto = [];
+    let fotobukti = [];
+    let fotoUri = [];
     try {
-      const results = await DocumentPicker.pickSingle({
+      const results = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
-        readContent: true
+        readContent: true,
+        allowMultiSelection: true,
       });
-      if(results.size <= 2000000){
-        setNamaFoto([...namaFoto, results.name]);
-        let fotoBase64 = await Utils.readFileBase64(results.uri);
-        setFotoBukti([...fotoBukti, fotoBase64]);
+      console.log(results);
+      if(results.length + fotoBukti.length > 5){
+        setShowAlertLimitFoto(true);
       }else{
-        setShowAlertPhotoBig(true);
+        for(var i=0; i<results.length; i++){
+          if(results[i].size <= 2000000){
+            namafoto.push(results[i].name);
+            //let fotoBase64 = await Utils.readFileBase64(results[i].uri);
+            let fotoAtribut = {
+              uri: results[i].uri,
+              type: results[i].type,
+              name: results[i].name,
+            };
+            fotobukti.push(fotoAtribut);
+            fotoUri.push(results[i].uri)
+            
+          }else{
+            setShowAlertPhotoBig(true);
+          }
+        }
       }
+      setNamaFoto([...namaFoto, ...namafoto]);
+      setFotoBukti([...fotoBukti, ...fotobukti]);
+      setFoto([...foto, ...fotoUri]);
       
           
     }catch (err) {
@@ -87,11 +133,13 @@ const FormMisiScreen = ({navigation}) => {
   const handleHapusDocument = () =>{
     setFilePdf("");
     setNamaFile("");
+    setHapusDoc(true);
   }
 
   const handleRemovePhotoButton = (index) => {
     setNamaFoto(photos => photos.filter((s,i)=>(i != index)));
     setFotoBukti(photos => photos.filter((s,i)=>(i != index)));
+    setHapusFoto([...hapusFoto, namaFoto[index]]);
   }
 
   const handleRemoveLinkButton = (index) => {
@@ -110,21 +158,114 @@ const FormMisiScreen = ({navigation}) => {
     );
   }
 
+  const handleBukaFoto = async(index) => {
+    console.log(foto);
+    const fotoTerpilih = foto[index];
+    if(fotoTerpilih.includes("base64")){
+      setPreviewPhoto(fotoTerpilih.split(",")[1]);
+      setIsModalFotoVisible(true);
+    }else{
+      let photoSource = await Utils.readFileBase64(fotoTerpilih);
+      setPreviewPhoto(photoSource);
+      setIsModalFotoVisible(true);
+    }
+
+  }
+
   const handleSimpan = () => {
 
   }
 
-  const handleKirim = () => {
+  const FotoView = ({image}) => {
+    return(
+      <View style={{height: 250, justifyContent: 'center'}}>
+        <AspectRatio w="100%" ratio={16 / 9}>
+          <Image source={{uri: `data:image/png;base64,${image}`} } />
+        </AspectRatio>
+      </View>
+    );
+  }
 
+  const handleKirim = (type) => {
+    setIsLoading(true);
+    const formdata = new FormData();
+    fotoBukti.forEach((file, index) => {
+      formdata.append('foto', {
+          uri: file.uri,
+          type: file.type,
+          name: file.name // For instance: foto_0.jpg
+      });
+    });
+    //const base64Data = fotoBase64[i].base64_information.split(',')[1];  // Remove the prefix (e.g. "data:image/jpeg;base64,")
+    //const buffer = Buffer.from(base64Data, 'base64');
+    //fotoBuffer.push(buffer);
+    console.log("gaada isi" + filePdf);
+    
+    hapusFoto.forEach((item, index)=>{
+      formdata.append('hapus_foto[]', item);
+    })
+    formdata.append('judul_kegiatan', judul);
+    formdata.append('konsep_kegiatan', konsep);
+    formdata.append('laporan_kegiatan', filePdf);
+    formdata.append('hapus_doc', hapusDoc);
+    listTautan.forEach((item, index)=>{
+      formdata.append('tautan[]', item);
+    });
+    formdata.append('perkiraan_partisipan', perkiraanPartisipan);
+    tagTeman.forEach((item, index)=>{
+      formdata.append('tandai_kawan[]', item);
+    });
+
+
+    MisiServices.addMisi(id, formdata, type)
+    .then(res=>{
+      console.log(res);
+      if(res.data.message == "Misi Terkirim!"){
+        setShowAlertSuccess(true);
+      }else if(res.data.message == "Berhasil menyimpan misi laporan anda."){
+        setShowAlertSuccessSave(true);
+      }else{
+        setMessageError(res.data.message);
+        setShowAlert(true);
+      }
+      setIsLoading(false);
+    })
+    .catch(err=>{
+      console.log(err.response);
+      setMessageError(err.response.data.message);
+      setShowAlert(true);
+      setIsLoading(false);
+    })
   }
 
   useEffect(()=> {
+    console.log("simpan");
     saveTemanLaporan();
   }, [tagTeman])
+
+  useEffect(()=>{
+    if( judul && konsep && fotoBukti.length !=0 && listTautan.length !=0){
+      setIsContinue(true);
+    }else{
+      setIsContinue(false);
+    }
+  }, [konsep, judul, fotoBukti, listTautan])
 
 
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
+      <CustomBottomSheet 
+      isModalVisible={isModalTemanVisible}
+      setModalVisible={setIsModalTemanVisible}
+      title={`Tandai Kawan`}
+      children={<SelectView type="misi" jumlah={tagTeman.length} />}
+      />
+      <CustomBottomSheet 
+      isModalVisible={isModalFotoVisible}
+      setModalVisible={setIsModalFotoVisible}
+      title={'Preview photo'}
+      children={<FotoView image={previewPhoto} />}
+      />
       <HeaderWhite title="" navigation={navigation} />
       <ScrollView>
         {/** tentang kegiatan */}
@@ -178,10 +319,10 @@ const FormMisiScreen = ({navigation}) => {
                 return(
                   <View key={index} style={{flexDirection: 'row', paddingVertical: 2, paddingHorizontal: 4, marginVertical: 2,  backgroundColor: Color.grayTwo, justifyContent: 'space-between', 
                   alignItems: 'center'}}>
-                    <View style={{flexDirection: 'row'}}>
+                    <Pressable onPress={()=>handleBukaFoto(index)} style={{flexDirection: 'row'}}>
                       <Ionicons name="attach-outline" color={Color.secondaryText} size={20} />
                       <Text style={{...FontConfig.bodyTwo, width: '90%', color: Color.primaryMain, marginHorizontal: 3}}>{item}</Text>
-                    </View>
+                    </Pressable>
                     <Pressable onPress={()=> handleRemovePhotoButton(index)}><Ionicons name="close-outline" color={Color.secondaryText} size={22} /></Pressable>
                   </View>
                 );
@@ -226,7 +367,7 @@ const FormMisiScreen = ({navigation}) => {
               keyboardType='number-pad' placeholder='Masukkan jumlah partisipan' placeholderTextColor={Color.disable} />
               <View style={{height: 10}}></View>
               <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Tandai Kawan</Text>
-              <DropDownButton placeholder='Pilih Kawan' text={tagTeman.length != 0 ? tagTeman.length > 1 ? `${tagNamaTeman[0]}, dan ${tagTeman.length-1} Lainnya` : tagNamaTeman[0] : ""} />
+              <DropDownButton onPress={()=>setIsModalTemanVisible(true)} placeholder='Pilih Kawan' text={tagTeman.length != 0 ? tagTeman.length > 1 ? `${tagNamaTeman[0]}, dan ${tagTeman.length-1} Lainnya` : tagNamaTeman[0] : ""} />
               <View style={{height: 10}}></View>
             </View>
           </View>
@@ -235,22 +376,21 @@ const FormMisiScreen = ({navigation}) => {
       <View style={styles.bottomSection}>
         <View style={styles.buttonSimpan}>
           <CustomButton
-              onPress={handleSimpan} 
+              onPress={()=>handleKirim("simpan")} 
               borderColor={Color.neutralZeroFive}
               borderWidth={1}
               fontStyles={{...FontConfig.buttonOne, color: Color.primaryMain}}
               width='100%' height={44} text="Simpan"
-              disabled={isContinue}
               backgroundColor={Color.neutralZeroOne}
               />
           </View>
           <View style={{width: 20}}></View>
         <View style={styles.buttonContinue}>
         <CustomButton
-            onPress={handleKirim} 
+            onPress={()=>handleKirim("kirim")} 
             fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
             width='100%' height={44} text="Kirim"
-            disabled={isContinue}
+            disabled={!isContinue}
             backgroundColor={Color.primaryMain}
             />
         </View>
@@ -275,7 +415,7 @@ const FormMisiScreen = ({navigation}) => {
           }}
         />
         <AwesomeAlert
-          show={showAlertFileBig}
+          show={showAlertPhotoBig}
           showProgress={false}
           title="Tidak dapat mengunggah foto"
           message="Ukuran foto yang Anda unggah lebih dari 2mb"
@@ -292,6 +432,96 @@ const FormMisiScreen = ({navigation}) => {
           onConfirmPressed={() => {
             setShowAlertPhotoBig(false);
           }}
+        />
+        <AwesomeAlert
+          show={showAlertLimitFoto}
+          showProgress={false}
+          title="Tidak dapat mengunggah foto"
+          message="Hanya dapat mengunggah foto maksimal 5"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Coba Lagi"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyTwo, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertLimitFoto(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertSuccess}
+          showProgress={false}
+          title="Sukses mengirim misi"
+          message="Misi berhasil terkirim!"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Oke"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '40%', alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertSuccess(false);
+            navigation.pop();
+            navigation.pop();
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertSuccessSave}
+          showProgress={false}
+          title="Sukses menyimpan misi"
+          message="Misi berhasil tersimpan. Segera kirim misi mu ya!"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Oke"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '40%', alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertSuccessSave(false);
+            navigation.pop();
+            navigation.pop();
+          }}
+        />
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title="Gagal mengirim misi"
+          message={messageError}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Coba Lagi"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '40%', alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlert(false);
+          }}
+        />
+        <AwesomeAlert
+          show={isLoading}
+          showProgress={true}
+          progressColor={Color.graySeven}
+          message="Loading"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={true}
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
         />
     </View>
   )

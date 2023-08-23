@@ -6,9 +6,13 @@ import { Color, FontConfig } from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
-const SelectView = ({setFirstname, jumlah}) => {
+const SelectView = ({setFirstname, jumlah, type="laporan"}) => {
     const dataTeman = useSelector(state => {
-        return state.laporan.tagTeman;
+        if (type == "laporan"){
+            return state.laporan.tagTeman;
+        }else{
+            return state.misi.tagTeman;
+        }
     });
     const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -20,12 +24,14 @@ const SelectView = ({setFirstname, jumlah}) => {
         let isSelected = dataTeman.teman.includes(id);
 
         const handleClick = () => {
+            console.log(dataTeman);
             if(isSelected){
                 let temp = dataTeman.teman.filter((elem)=> elem != id);
                 let tempNama = dataTeman.namaTeman.filter((elem)=> elem != nama);
                 dataTeman.setTeman(temp);
                 dataTeman.setNamaTeman(tempNama);
             }else{
+                console.log(dataTeman.teman);
                 dataTeman.setTeman([...dataTeman.teman, id]);
                 dataTeman.setNamaTeman([...dataTeman.namaTeman, nama]);
             }

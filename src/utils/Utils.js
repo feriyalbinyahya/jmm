@@ -1,4 +1,4 @@
-import ReactNativeBlobUtil from 'react-native-blob-util'
+import ReactNativeBlobUtil, { ReactNativeBlobUtilFetchPolyfill } from 'react-native-blob-util'
 import notifee from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 

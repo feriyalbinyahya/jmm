@@ -261,8 +261,8 @@ export const FontConfig = StyleSheet.create({
     lineHeight: 20
   },
   titleFive: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    fontSize: 10,
   },
   titleSix: {
     fontFamily: 'Poppins-Medium',
@@ -322,7 +322,10 @@ export const Color = {
   goldSix: '#FAAD14',
   neutralZeroThree: '#EDEDED',
   purple: '#624FA1',
-  magenta: '#E0195E'
+  magenta: '#E0195E',
+  hitam: '#000000',
+  blue: '#3785C7',
+  purpleSurface: '#F7F2FF'
 };
 /* Paddings */
 export const Padding = {
