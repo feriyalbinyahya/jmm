@@ -3,14 +3,14 @@ import React from 'react'
 import BottomSheet from "react-native-easy-bottomsheet";
 import { FontConfig } from '../../theme';
 
-const CustomBottomSheet = ({isModalVisible, setModalVisible, title, children}) => {
+const CustomBottomSheet = ({isModalVisible, setModalVisible, onClose=() => setModalVisible(!isModalVisible), title, children}) => {
   return (
     <BottomSheet
         bottomSheetTitle={title}
         bottomSheetIconColor="#0A2463"
         bottomSheetStyle={styles.container}
         bottomSheetTitleStyle={styles.textTitle}
-        onRequestClose={() => setModalVisible(!isModalVisible)}
+        onRequestClose={onClose}
         bottomSheetVisible={isModalVisible}
     >
         {children}

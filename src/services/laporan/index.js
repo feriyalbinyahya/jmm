@@ -50,9 +50,19 @@ getCapres = async ()=> {
     return Request.get(`laporan/daftar-capres`, {headers: headersToken});
 }
 
+getDetail = async (id)=> {
+    let headersToken = await getHeaders();
+    return Request.get(`laporan/detail/${id}`, {headers: headersToken});
+}
+
 addLaporan = async (data) => {
     let headersToken = await getHeaders();
     return Request.post(`laporan/tambah`, data, {headers: headersToken,  timeout: 8000,});
+}
+
+getKawan = async (search)=> {
+    let headersToken = await getHeaders();
+    return Request.get(`laporan/list/simpatisan?search=${search}`, {headers: headersToken});
 }
 
 const LaporanServices = {
@@ -61,7 +71,9 @@ const LaporanServices = {
     getTagLaporan,
     getStatusLaporan,
     getCapres,
-    addLaporan
+    addLaporan,
+    getKawan,
+    getDetail
   };
   
   export default LaporanServices;

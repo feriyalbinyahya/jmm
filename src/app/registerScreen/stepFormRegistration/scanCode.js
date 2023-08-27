@@ -5,6 +5,7 @@ import { Color, FontConfig } from '../../../theme'
 import {Svg, Rect, Defs, Mask} from 'react-native-svg'
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
+import RegistrationService from '../../../services/registration'
 
 const ScanKodeReferralScreen = ({navigation, setValue}) => {
 
@@ -33,12 +34,36 @@ const ScanKodeReferralScreen = ({navigation, setValue}) => {
         )
     }
 
-    onSuccess = e => {
-        setValue(e.data);
-        //Linking.openURL(e.data).catch(err =>
-          //console.error('An error occured', err)
-        //);
-        navigation.goBack();
+    handleLanjutkan = () => {
+      setIsLoading(true);
+      RegistrationService.getIdOrganisasi({kode_referal: kodeReferral})
+      .then(res=> {
+          if(res.data.data.length != 0){
+              let idOrganisasi = res.data.data[0].id_organisasi;
+              navigation.navigate("OrganisasiTerpilihRegister", {idOrganisasi: idOrganisasi, kodeReferalDigunakan: kodeReferral, photo: photo});
+          }else{
+              setShowAlertWrongReferral(true);
+          }
+          setIsLoading(false);
+      })
+      .catch(err=> {
+          console.log(err);
+          setIsLoading(false);
+          setShowAlertWrongReferral(true);
+      })
+  }
+
+    const onSuccess = (e) => {
+      RegistrationService.getIdOrganisasi({kode_referal: e.data})
+      .then(res=> {
+          if(res.data.data.length != 0){
+              setValue(e.data);
+              navigation.goBack();
+          }
+      })
+      .catch(err=> {
+          console.log(err);
+      })
       };
 
   return (
@@ -51,8 +76,7 @@ const ScanKodeReferralScreen = ({navigation, setValue}) => {
       <View style={styles.scanSection}>
         <QRCodeScanner
             cameraStyle={{marginTop: 70}}
-            onRead={({data})=>alert(data)}
-            flashMode={RNCamera.Constants.FlashMode.auto}
+            onRead={onSuccess}
             bottomViewStyle={{height:0}}
         />
         <CameraFrame />

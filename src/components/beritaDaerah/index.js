@@ -11,10 +11,10 @@ const BeritaDaerah = ({data, navigation}) => {
                 borderBottomColor: '#F0F0F0'}}>
                     <Image style={{width: 74, height: 74, borderRadius: 6}} source={{uri: `data:image/png;base64,${item.cover_berita}`}} />
                     <View style={{width: 10}}></View>
-                    <View style={{justifyContent: 'space-around', paddingVertical: 5}}>
+                    <View style={{justifyContent: 'space-around', paddingVertical: 5, width: '80%'}}>
                         <Text style={{...FontConfig.captionOne, color: Color.neutralColorGrayEight}}>
                             {item.kategori.toUpperCase()}</Text>
-                        <Text style={{...FontConfig.titleThree, color: '#000000', width: '40%', marginVertical: 5}}>
+                        <Text style={{...FontConfig.titleThree, color: '#000000', width: '100%', marginVertical: 5}}>
                         {item.judul}</Text>
                         <Text style={{...FontConfig.captionOne, color: Color.secondaryText}}>
                         {item.tanggal}</Text>

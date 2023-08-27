@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React from 'react'
-import { Color } from '../../theme'
+import { Color, FontConfig } from '../../theme'
 
-const ChildrenButton = ({onPress, width='100%', height=40, backgroundColor, children, borderColor=Color.gray8}) => {
+const ChildrenButton = ({onPress, width='100%', disabled=false, height=40, backgroundColor, children, borderRadius=5, borderColor=Color.gray8}) => {
   return (
-    <Pressable onPress={onPress} style={{...styles.container, 
-        backgroundColor: backgroundColor, width: width, height: height, borderColor: borderColor, borderWidth: 1}}>
+    <Pressable onPress={disabled? null : onPress} style={disabled ? {...styles.container, ...styles.disabled,width: width, height: height, borderWidth: 1, borderRadius: borderRadius, backgroundColor: backgroundColor,}: {...styles.container, 
+        backgroundColor: backgroundColor, borderRadius: borderRadius, width: width, height: height, borderColor: borderColor, borderWidth: 1}}>
         {children}
     </Pressable>
   )
@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     alignItems: 'center',
-    borderRadius: 5
-  }
+  },
+  disabled: {
+    backgroundColor: Color.grayFour,
+    borderColor: Color.grayFour,
+  },
 })

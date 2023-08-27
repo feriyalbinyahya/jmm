@@ -15,6 +15,7 @@ import IconScanWhite from '../../assets/images/icon/icon_scan_monokrom.png';
 import { useFocusEffect } from '@react-navigation/native'
 import Skeleton from '../../components/skeleton'
 import HeaderSurface from '../../components/header/headerSurface'
+import UserAvatar from 'react-native-avatar-generator';
 
 const ListSimpatisan = ({navigation}) => {
     const title = "Daftar Kawanmu";
@@ -53,7 +54,17 @@ const ListSimpatisan = ({navigation}) => {
       
       return(
         <Pressable onPress={()=>navigation.navigate("DetailSimpatisan", {id: id})} style={styles.laporanItem}>
-          {!isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
+          {!isLoading ? 
+          dataImage != "" ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> :
+          <UserAvatar
+              size={40}
+              fontWeight="bold"
+              color="#FFFFFF"
+              backgroundColor={Color.redOne}
+              firstName={nama.split(" ")[0]}
+              lastName={nama.split(" ")[1]}
+          /> 
+          : 
           <Skeleton width={40} height={40} style={{borderRadius: 100}} />
           }
           <View style={{width: 10}}></View>
@@ -109,6 +120,8 @@ const ListSimpatisan = ({navigation}) => {
 
     const onRefresh =  () => {
       setRefreshing(true);
+      setCurrentPage(1);
+      setDataSimpatisan([]);
       getDataSimpatisanOnRefresh( 1, provinsi != "" ? provinsi : "", kota != "" ? kota : "", search);
       setRefreshing(false);
     }
@@ -207,7 +220,7 @@ const ListSimpatisan = ({navigation}) => {
           <View style={{height: '50%', alignItems: 'center', justifyContent: 'center'}}>
             <Image source={IconNoData} style={styles.imageNoData} />
             <Text style={{...FontConfig.titleTwo, color: "#000000", marginTop: 10}}>Tidak ada riwayat</Text>
-            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 10}}>Yuk segera buat data simpatisan.</Text>
+            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 10}}>Yuk segera buat data kawan.</Text>
           </View>
           }</> :
           <View style={{flex: 1, marginTop: '40%'}}><ActivityIndicator size="large" color={Color.graySix} /></View>} 

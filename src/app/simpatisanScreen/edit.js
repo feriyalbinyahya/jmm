@@ -25,10 +25,14 @@ import { useDispatch } from 'react-redux';
 import { setPhotos } from '../../redux/simpatisan';
 import SimpatisanServices from '../../services/simpatisan';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import UserAvatar from 'react-native-avatar-generator';
+import GenderChoice from '../../components/bottomSheet/genderChoice';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const EditSimpatisan = ({navigation, route}) => {
     const {Foto, Firstname, Lastname, Phone, Instagram, Tiktok, Facebook, Twitter, 
-    Provinsi, Id_provinsi, Kota, Id_kota, Kecamatan, Id_kecamatan, Capres, AlasanSuka, CapresTidakSuka, AlasanTidakSuka, id} = route.params;
+    Provinsi, Id_provinsi, Kota, Id_kota, Kecamatan, Id_kecamatan, Capres, AlasanSuka, CapresTidakSuka, AlasanTidakSuka, id, 
+    tanggal_lahir, jenis_kelamin} = route.params;
     const [foto, setFoto] = useState(Foto);
     const [firstname, setFirstname] = useState(Firstname);
     const [lastname, setLastname] = useState(Lastname);
@@ -62,6 +66,10 @@ const EditSimpatisan = ({navigation, route}) => {
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [messageError, setMessageError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [gender, setGender] = useState(jenis_kelamin);
+    const [dateOfBirth, setDateOfBirth] = useState(tanggal_lahir);
+    const [isModalGenderVisible, setModalGenderVisible] = useState(false);
+    const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -91,6 +99,8 @@ const EditSimpatisan = ({navigation, route}) => {
         "alasan_preferensi_capres": alasanSuka,
         "capres_tidak_suka": capresTidakSuka,
         "alasan_capres_tidak_suka": alasanTidakSuka,
+        "jenis_kelamin": gender,
+        "tanggal_lahir": dateOfBirth,
         "useragent": ""
     })
       .then(res=> {
@@ -226,16 +236,40 @@ const EditSimpatisan = ({navigation, route}) => {
 
   handleValidation = () => {
     if(firstname && lastname && phone && isPhone && (instagram || tiktok || facebook || twitter) && provinsi && 
-    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka){
+    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka && gender && dateOfBirth){
       setIsContinue(true);
     }else{
       setIsContinue(false);
     }
   }
 
-    handleAddPhoto = () => {
-      setIsModalVisiblePhoto(true);
+  handleGenderButton = () => {
+    setModalGenderVisible(true);
+  }
+
+  handleDateButton = () => {
+    setIsCalendarVisible(!isCalendarVisible);
+  }
+
+  handleAddPhoto = () => {
+    setIsModalVisiblePhoto(true);
+  }
+  const handleDateChange = (event, data) => {
+    setIsCalendarVisible(!isCalendarVisible);
+    const currentDate = new Date(data);
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth()+1;
+    let date = currentDate.getDate();
+    if(month < 10){
+      month = `0${currentDate.getMonth()+1}`;
     }
+
+    if (date < 10){
+      date = `0${currentDate.getDate()}`
+    }
+    console.log(`${year}/${month}/${date}`);
+    setDateOfBirth(`${year}-${month}-${date}`);
+  }
 
     useEffect(()=>{
       getDataProvinsi();
@@ -263,7 +297,7 @@ const EditSimpatisan = ({navigation, route}) => {
     useEffect(()=> {
       handleValidation();
     }, [firstname, lastname, phone, instagram, tiktok, facebook, twitter, provinsi, kota, kecamatan,
-    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto]);
+    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto, dateOfBirth, gender]);
   return (
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
       <CustomBottomSheet 
@@ -281,6 +315,8 @@ const EditSimpatisan = ({navigation, route}) => {
       <CustomBottomSheet children={<UbahPhotoModal />} 
         isModalVisible={isModalVisiblePhoto} setModalVisible={setIsModalVisiblePhoto} 
         title="Pilih Foto" />
+      <CustomBottomSheet children={<GenderChoice gender={gender} setModalVisible={setModalGenderVisible} setGender={setGender} />} 
+      isModalVisible={isModalGenderVisible} setModalVisible={setModalGenderVisible} title="Pilih Jenis Kelamin" />
       <HeaderWhite title="Detail Kawan" navigation={navigation} />
       <ScrollView>
         {/** Unggah Foto */}
@@ -293,8 +329,15 @@ const EditSimpatisan = ({navigation, route}) => {
           <View style={{height: 15}}></View>
           <View style={{flexDirection: 'row'}}>
               {foto == "" ? 
-              <Pressable onPress={handleAddPhoto} style={styles.boxAddPhoto}><Ionicons name="add-circle-outline" color={Color.title}
-              size={24} /></Pressable>  : 
+              <Pressable onPress={handleAddPhoto}><UserAvatar
+              size={100}
+              fontWeight="bold"
+              color="#FFFFFF"
+              backgroundColor={Color.redOne}
+              firstName={firstname}
+              lastName={lastname}
+              /></Pressable>
+              : 
               <Pressable onPress={handleAddPhoto}><Image style={{width: 100, height: 100, borderRadius: 8}} source={{uri: `data:image/png;base64,${foto}`}} /></Pressable>
               }
               <View style={{width: 20}}></View>
@@ -334,6 +377,13 @@ const EditSimpatisan = ({navigation, route}) => {
           keyboardType='number-pad' placeholder='08' placeholderTextColor={Color.disable} />
           {phoneNotEmpty?(isPhone? <></> : <FormErrorMessage text="Nomor ponsel yang dimasukkan tidak valid." />): 
           <FormErrorMessage text="Kolom wajib diisi." />}
+          <Text style={styles.titleFormInput}>Jenis Kelamin</Text>
+          <DropDownButton placeholder='Pilih' text={gender} onPress={handleGenderButton} />
+          <Text style={styles.titleFormInput}>Tanggal Lahir</Text>
+          <DropDownButton placeholder='yyyy-mm-dd' text={dateOfBirth.toString()} onPress={handleDateButton} />
+          {isCalendarVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
+            display="calendar" onChange={handleDateChange} value={new Date(2000, 10, 20)}
+             /> : <></>}
         </View>
 
         {/** Media sosial */}
@@ -345,28 +395,28 @@ const EditSimpatisan = ({navigation, route}) => {
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Instagram</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={instagram} setValue={setInstagram}
             leftChild={<Image source={IconInstagram} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tiktok</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={tiktok} setValue={setTiktok}
             leftChild={<Image source={IconTiktok} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Twitter</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={twitter} setValue={setTwitter}
             leftChild={<Image source={IconTwitter} style={styles.iconStyle}
             />} />
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Facebook</Text>
             <View style={{height: 5}}></View>
-            <CustomInputAddon placeholder="Nama akun/username@" 
+            <CustomInputAddon placeholder="Nama akun/username" 
             value={facebook} setValue={setFacebook}
             leftChild={<Image source={IconFacebook} style={styles.iconStyle}
             />} />

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator, Linking } from "react-native";
 import {
   Margin,
   FontFamily,
@@ -28,6 +28,8 @@ import ImageWarning from '../../assets/images/warning/empty.png';
 import { VERSION } from '../../utils/environment';
 import LinearGradient from 'react-native-linear-gradient';
 import { Box } from "native-base";
+import NotifikasiServices from "../../services/notifikasi";
+import { getTokenNotification } from "../../utils/Utils";
 
 const SignInPage = ({navigation}) => {
     const dispatch = useDispatch();
@@ -40,9 +42,14 @@ const SignInPage = ({navigation}) => {
     const [showAlertStatusAccount, setShowStatusAccount] = useState(false);
     const [showAlertPhoneNotVerified, setShowAlertPhoneNotVerified] = useState(false);
     const [showAlertSomethingWrong, setShowAlertSomethingWrong] = useState(false);
+    const [showAlertNoWhatsapp, setShowAlertNoWhatsapp] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isStatusActiveVisible, setStatusActiveVisible] = useState(false);
+
+    const getToken = async() =>{
+      return await getTokenNotification();
+    }
 
     handleLogin = () => {
       setIsLoading(true);
@@ -50,6 +57,13 @@ const SignInPage = ({navigation}) => {
       .then(res=> {
         console.log(res.data.data.foto_organisasi);
         if(res.data.message == "Login sukses."){
+          NotifikasiServices.postToken(res.data.data.token, {"fcmtoken": getToken})
+          .then(res=>{
+            console.log(res.data);
+          })
+          .catch(err=>{
+            console.log(err.response);
+          })
           saveCredentials(res.data.data);
         }else if(res.data.message == 'Kata sandi yang anda masukan salah.'){
           setShowAlertWrongPassword(true);
@@ -91,14 +105,34 @@ const SignInPage = ({navigation}) => {
       }
     }
 
+    const handleWhatsapp = () => {
+      const url = `whatsapp://send?phone=081210412537`;
+      Linking.canOpenURL(url).then(supported => {
+          if (supported) {
+              Linking.openURL(url);
+          } else {
+              setShowAlertNoWhatsapp(true);
+          }
+      });
+    }
+
     const ContactUs = () => {
       return(
-        <View>
+        <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
+          <View style={{alignItems: 'center'}}>
+            <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
+            <View style={{height: 5}}></View>
+            <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>081210412537</Text>
+          </View>
+          <View style={{height: 10}}></View>
           <ChildrenButton borderColor={Color.successMain} 
-          height={40} backgroundColor={Color.neutralZeroOne}
-          children={<View style={{flexDirection: 'row'}}>
-            <Image source={IconWhatsapp} style={{width: 18, height: 18}} />
-            <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi melalui Whatsapp</Text>
+          borderRadius={26}
+          onPress={handleWhatsapp}
+          height={44} backgroundColor={Color.neutralZeroOne}
+          children={<View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Ionicons name="logo-whatsapp" size={21} color={Color.successMain} />
+            <View style={{width: 5}}></View>
+            <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi Whatsapp</Text>
           </View>}
           />
         </View>
@@ -172,6 +206,15 @@ const SignInPage = ({navigation}) => {
                 <Text style={styles.textBelumPunyaAkun}>Belum punya akun?</Text>
                 <Pressable onPress={()=> navigation.navigate('Register')}><Text style={styles.textDaftar}>Daftar disini</Text></Pressable>
               </View>
+
+              <View style={styles.butuhBantuan}>
+                <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
+                <View style={{width: 10}}></View>
+                <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
+                <View style={{width: 5}}></View>
+                <Pressable onPress={()=>setModalVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
+                </Pressable>
+              </View>
           </Box>
           <View style={styles.version}>
             <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
@@ -223,6 +266,25 @@ const SignInPage = ({navigation}) => {
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
             setShowAlertWrongPhone(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertNoWhatsapp}
+          showProgress={false}
+          title="Tidak dapat menghubungi"
+          message="Aplikasi whatsapp belum terinstall di perangkat Anda"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Oke, mengerti"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '80%', height: '80%', alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertNoWhatsapp(false);
           }}
         />
         <AwesomeAlert
@@ -359,6 +421,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     height: 40,
     justifyContent: 'center',
+  },
+  butuhBantuan: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Color.neutralZeroTwo,
+    alignSelf: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    borderRadius: 8,
   }
 });
 

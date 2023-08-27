@@ -4,7 +4,7 @@ import { height } from '../../assets/constants'
 import { Color, FontConfig } from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked}) => {
+const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked, onPressNotif}) => {
     const [checked, setChecked] = useState(false);
     const [pressIn, setPressIn] = useState(false);
     checkedNotif = () => {
@@ -26,6 +26,7 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
     }
 
     handlePressNotif = () => {
+        onPressNotif(item.id_content, item.kategori);
     }
 
     useEffect(()=> {
@@ -45,17 +46,19 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
     return(
         <Pressable
            onPress={terpilih > 0 ? handleLongPress : handlePressNotif}
-            onLongPress={handleLongPress} style={{...styles.notifContainer, 
-            backgroundColor: checked && terpilih > 0 ? Color.redOne : Color.grayTwo}}>
+            style={{...styles.notifContainer, 
+            backgroundColor: checked && terpilih > 0 ? Color.redOne : Color.neutralZeroOne}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <View style={{width: terpilih > 0 ? '90%' : '100%'}}>
-                    <Text style={styles.textTitle}>{item.title}</Text>
+                    <Text style={styles.textTitle}>{item.judul}</Text>
                     <View style={{height: 8}}></View>
                     <View style={styles.boxType}>
-                        <Text style={styles.textType}>{item.type}</Text>
+                        <Text style={styles.textType}>{item.kategori}</Text>
                     </View>
                     <View style={{height: 8}}></View>
                     <Text style={styles.textDeskripsi}>{item.deskripsi}</Text>
+                    <View style={{height: 8}}></View>
+                    <Text style={styles.textTanggal}>{item.tanggal_broadcast}</Text>
                 </View>
                 {terpilih > 0 ? <View>
                     {!checked ? <Ionicons name={"radio-button-off"}
@@ -76,15 +79,16 @@ const styles = StyleSheet.create({
     notifContainer: {
         padding: 20,
         borderColor: Color.lightBorder,
+        borderBottomWidth: 1,
     },
     boxType: {
-        paddingVertical: 5,
+        paddingVertical: 4,
         paddingHorizontal: 15,
-        backgroundColor: Color.redOne,
         borderColor: Color.primaryMain,
         borderWidth: 1,
         alignSelf: 'baseline',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderRadius: 24
     },
     textTitle: {
         ...FontConfig.titleThree,
@@ -92,10 +96,14 @@ const styles = StyleSheet.create({
     },
     textType: {
         ...FontConfig.captionOne,
-        color: Color.primaryMain
+        color: Color.primaryMain,
     },
     textDeskripsi: {
         ...FontConfig.bodyThree,
-        color: Color.primaryText,
+        color: '#000000',
+    },
+    textTanggal: {
+        ...FontConfig.bodyThree,
+        color: Color.neutralColorGrayEight,
     },
 })

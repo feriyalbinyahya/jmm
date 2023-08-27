@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native'
 import React from 'react'
 import ImageSuccess from '../../../assets/images/laporan_terkirim.png'
 import { Color, FontConfig } from '../../../theme'
+import CustomButton from '../../../components/customButton'
 
 const LaporanTerkirimScreen = ({navigation}) => {
     const handleLanjutkan = () => {
@@ -16,7 +17,8 @@ const LaporanTerkirimScreen = ({navigation}) => {
             <Text style={styles.textYuk}>Yuk, lebih sering buat laporan untuk tingkatkan poinmu.</Text>
         </View>
         <View style={styles.bottomSection}>
-            <View style={styles.buttonContinue}><Button onPress={handleLanjutkan} color={Color.primaryMain} title="Selesai" /></View>
+            <View style={styles.buttonContinue}><CustomButton onPress={handleLanjutkan} text="Selesai" fontStyles={{...FontConfig.buttonOne,
+            color: Color.neutralZeroOne}} backgroundColor={Color.primaryMain} height={44}  /></View>
         </View>
     </View>
   )
@@ -40,14 +42,15 @@ const styles = StyleSheet.create({
         height: 171
     },
     textLaporanBerhasil: {
-        ...FontConfig.titleOne,
+        ...FontConfig.titleTwo,
         color: '#000000',
         marginVertical: 10
     },
     textYuk: {
         ...FontConfig.bodyTwo,
-        color: '#7B7B7B',
-        textAlign: 'center'
+        color: Color.neutralZeroSeven,
+        textAlign: 'center',
+        width: '80%'
     },
     bottomSection: {
         backgroundColor: Color.neutralZeroOne,

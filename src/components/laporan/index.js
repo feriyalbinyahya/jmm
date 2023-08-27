@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, FlatList, Image, ActivityIndicator, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, Pressable, FlatList, Image, ActivityIndicator, RefreshControl,} from 'react-native'
 import React, {useState, useEffect} from 'react'
 import HeaderRed from '../header/headerRed'
 import { Color, FontConfig } from '../../theme'
@@ -32,7 +32,7 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
     const [isModalVisible, setModalVisible] = useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
     
-    const LaporanItem = ({image, judul, kategori, tanggal, status}) => {
+    const LaporanItem = ({image, judul, kategori, tanggal, status, id}) => {
       const [dataImage, setDataImage] = useState("");
       const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +54,7 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
 
       
       return(
-        <View style={styles.laporanItem}>
+        <Pressable onPress={()=>navigation.navigate("DetailLaporan", {id: id})} style={styles.laporanItem}>
           {!isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
           <Skeleton width={100} height={56} style={{borderRadius: 5}} />
           }
@@ -71,11 +71,11 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
               </View>
             </View>
             <View style={{height: 5}}></View>
-            <Text style={styles.textJudulLaporan} numberOfLines={1}>{judul}</Text>
+            <View style={{width: '55%'}}><Text style={styles.textJudulLaporan} numberOfLines={2}>{judul}</Text></View>
             <View style={{height: 3}}></View>
             <Text style={styles.textTanggalLaporan}>{tanggal}</Text>
           </View>
-        </View>
+        </Pressable>
       );
     }
 
@@ -178,6 +178,8 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
 
     const onRefresh =  () => {
       setRefreshing(true);
+      setCurrentPage(1);
+      setDataLaporan([]);
       getLaporanDataOnRefresh(idJenisLaporan, 1, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
       setRefreshing(false);
     }
@@ -187,12 +189,12 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
     }, [choosenTag, choosenSortBy])
 
   return (
-    <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
+    <View style={{flex: 1, backgroundColor: '#F5F5F5'}}>
       <CustomBottomSheet children={<FilterLaporan idChoosenTag={idChoosenTag} setIdChoosenTag={setIdChoosenTag} sortby={sortBy} 
       choosenTag={choosenTag} choosenSortBy={choosenSortBy} onPressFilter={onPressFilter} onPressResetFilter={onPressResetFilter} />} 
       isModalVisible={isModalVisible} setModalVisible={setModalVisible} 
       title="Filter" />
-      <HeaderSurface navigation={navigation} />
+      <HeaderSurface color="#F5F5F5" navigation={navigation} />
       <View style={styles.boxHeader}>
         <Text style={styles.textTitleHeader}>Laporan {title}</Text>
         <View style={{height:5}}></View>
@@ -201,7 +203,7 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
       </View>
       <View style={{position: 'absolute', bottom: 40, right: 20, zIndex: 1}}>
         <Pressable onPress={()=>navigation.navigate("BuatLaporan", {jenisLaporan: jenisLaporan})} style={{flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 10, borderWidth: 1,
-        borderColor: Color.neutralZeroSix, backgroundColor: Color.primaryMain, borderRadius: 32, 
+        borderColor: Color.neutralZeroSix, backgroundColor: Color.secondaryMain, borderRadius: 32, 
         alignItems: 'center', height: 46}}>
             <Ionicons name="add-outline" size={20} color={Color.neutralZeroOne} />
             <View style={{width: 4}}></View>
@@ -230,7 +232,7 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
         refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
         style={{height: '78%'}}
         renderItem={({item}) => <LaporanItem image={item.cover_laporan[0]} judul={item.judul} 
-        kategori={item.tag} status={item.status} tanggal={item.waktu_dibuat} />
+        kategori={item.tag} status={item.status} tanggal={item.waktu_dibuat} id={item.id_laporan} />
         }
         /> : 
         <View style={{height: '83%', alignItems: 'center', justifyContent: 'center'}}>
@@ -249,7 +251,7 @@ export default ListLaporanContainer
 const styles = StyleSheet.create({
     boxHeader: {
         padding: 20,
-        backgroundColor: Color.neutralZeroOne,
+        backgroundColor: '#F5F5F5',
         width: '100%'
     },
     textTitleHeader: {
@@ -262,7 +264,10 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 20,
-        flex: 1
+        flex: 1,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        backgroundColor: Color.neutralZeroOne
     },
     rowFilter: {
       flexDirection: 'row',

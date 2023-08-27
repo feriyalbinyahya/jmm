@@ -10,6 +10,7 @@ import IconTiktok from '../../assets/images/icon/icon_tiktok.png';
 import IconInstagram from '../../assets/images/icon/icon_instagram.png';
 import SimpatisanServices from '../../services/simpatisan'
 import { useFocusEffect } from '@react-navigation/native'
+import UserAvatar from 'react-native-avatar-generator';
 
 const DetailSimpatisanScreen = ({navigation, route}) => {
     const {id} = route.params;
@@ -45,7 +46,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
              Facebook: data.sosmed_fb, Twitter: data.sosmed_twitter, 
             Provinsi : data.provinsi, Id_provinsi: data.id_provinsi, Kota : data.kabkot, Id_kota: data.id_kabkot, Id_kecamatan: data.id_kecamatan, Kecamatan : data.kecamatan, Capres : data.preferensi_capres,
              AlasanSuka:data.alasan_preferensi_capres, CapresTidakSuka: data.capres_tidak_suka,
-              AlasanTidakSuka: data.alasan_capres_tidak_suka, id: id});
+              AlasanTidakSuka: data.alasan_capres_tidak_suka, id: id, tanggal_lahir: data.tanggal_lahir, jenis_kelamin: data.jenis_kelamin});
     }
 
     const getDetailSimpatisan = () => {
@@ -57,7 +58,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             setIsLoading(false);
         })
         .catch(err=>{
-            console.log(err);
+            console.log(err.response);
         })
     }
 
@@ -72,7 +73,16 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
       <HeaderWhite title="Detail Kawan" navigation={navigation} />
       {dataSimpatisan.length != 0 ? <ScrollView>
         <View style={{alignItems: 'center', padding: 10, backgroundColor: Color.neutralZeroOne}}>
-            <Image source={{uri: `data:image/png;base64,${dataSimpatisan[0].foto}`}} style={{width: 100, height: 100, borderRadius: 66}} />
+            {dataSimpatisan[0].foto != "" ? <Image source={{uri: `data:image/png;base64,${dataSimpatisan[0].foto}`}} style={{width: 100, height: 100, borderRadius: 66}} /> : 
+            <UserAvatar
+            size={100}
+            fontWeight="bold"
+            color="#FFFFFF"
+            backgroundColor={Color.redOne}
+            firstName={dataSimpatisan[0].nama_lengkap.split(" ")[0]}
+            lastName={dataSimpatisan[0].nama_lengkap.split(" ")[1]}
+          />
+            }
             <View style={{height: 12}}></View>
             <Pressable onPress={handleEdit} style={styles.buttonEdit}>
                 <Text style={{...FontConfig.bodyThree, color: '#000000'}}>Edit</Text>
@@ -87,6 +97,8 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             <View style={{height: 5}}></View>
             <RowItem subject="Nama Lengkap" text={dataSimpatisan[0].nama_lengkap} />
             <RowItem subject="Nomor Ponsel" text={dataSimpatisan[0].nomor_ponsel} />
+            <RowItem subject="Jenis Kelamin" text={dataSimpatisan[0].jenis_kelamin} />
+            <RowItem subject="Tanggal Lahir" text={dataSimpatisan[0].tanggal_lahir} />
             <View style={{height: 15}}></View>
             {/**Media Sosial */}
             <Text style={styles.titleContain}>Media Sosial</Text>

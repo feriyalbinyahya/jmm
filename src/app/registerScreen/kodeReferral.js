@@ -56,7 +56,7 @@ const KodeReferralScreen = ({navigation, route}) => {
             <View style={{flexDirection: 'row'}}>
                 <View style={{width: '85%'}}><CustomInput value={kodeReferral} setValue={setKodeReferral} placeholder='Masukkan kode referral' /></View>
                 <View style={{width: '5%'}}></View>
-                {/**<Pressable onPress={()=> navigation.navigate('ScanKodeReferralRegister', {setValue: setKodeReferral})}><Image style={styles.iconScan} source={IconScan} /></Pressable>*/}
+                {/**<Pressable onPress={()=> navigation.navigate('ScanKodeReferralRegister', {setValue: setKodeReferral})}><Image style={styles.iconScan} source={IconScan} /></Pressable>**/}
             </View>
             <View style={{height: '10%'}}></View>
             <View style={styles.buttonSection}>

@@ -42,11 +42,16 @@ import QRCode from 'react-native-qrcode-svg'
 import CustomBottomSheet from '../../components/bottomSheet'
 import BeritaDaerah from '../../components/beritaDaerah'
 import BeritaDaerahSkeleton from '../../components/beritaDaerah/skeleton'
+import CardGradient from '../../components/misi/cardGradient'
+import MisiServices from '../../services/misi'
+import CardWhite from '../../components/misi/cardWhite'
+import IconNoMisi from '../../assets/images/warning/nomisi.png'
 
 
 const HomepageScreen = ({navigation}) => {
     const [laporanJenis, setLaporanJenis] = useState([]);
     const [dataBeritaTerkini, setDataBeritaTerkini] = useState([]);
+    const [dataMisi, setDataMisi] = useState([]);
     const [dataBeritaOrganisasi, setDataBeritaOrganisasi] = useState([]);
     const [beritaTerkiniLoading, setBeritaTerkiniLoading] = useState(false);
     const [beritaOrganisasiLoading, setBeritaOrganisasiLoading] = useState(false);
@@ -116,6 +121,23 @@ const HomepageScreen = ({navigation}) => {
         )
     }
 
+    const MisiView = ({data, size}) => {
+        return (
+            <>
+            {data?.map((item, index)=> {
+                return(
+                    <View key={index} style={{width: size}}>
+                        {item.tingkat_kepentingan == "Sangat Penting" ? 
+                        <CardGradient status={item.status_konfirmasi} navigation={navigation} is_important={true} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} /> :
+                        <CardWhite status={item.status_konfirmasi} navigation={navigation} is_important={false} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} />
+                        }
+                    </View>
+                )
+              })}
+            </>
+        )
+    }
+
     const SurveiView = ({data, size}) => {
         return (
             <>
@@ -141,11 +163,18 @@ const HomepageScreen = ({navigation}) => {
             </View>
         )
     }
+    const BeritaSkeleton = () => {
+        return (
+            <Skeleton style={{borderRadius: 8, marginHorizontal: 8,
+                marginVertical: 5,}} width={width*0.67} height={4*width/3} />
+        )
+    }
 
     const getLaporanJenisData = () => {
         setLaporanLoading(true);
         LaporanServices.getLaporanJenis()
         .then(res=>{
+            console.log(res.data.data);
             if(res.data.message != "Token expired."){
                 setLaporanJenis(res.data.data);
                 setLaporanLoading(false);
@@ -202,40 +231,15 @@ const HomepageScreen = ({navigation}) => {
         })
     }
 
-    const fetchAllDataHomepage = async() => {
-        setLaporanLoading(true);
-        setSurveiLoading(true);
-        setBeritaOrganisasiLoading(true);
-        setBeritaTerkiniLoading(true);
-        let requestLaporan = LaporanServices.getLaporanJenis();
-        let requestSurvei = SurveiServices.getAllSurvei();
-        let requestTerkini = BeritaServices.getBeritaHomepage("terkini");
-        let requestOrganisasi = BeritaServices.getBeritaHomepage("organisasi");
-        const [responseLaporan, responseSurvei, responseTerkini, responseOrganisasi] = await axios.all([requestLaporan, requestSurvei, requestTerkini, requestOrganisasi]);
-        if(responseLaporan.data.message != "Token expired."){
-            setLaporanJenis(responseLaporan.data.data);
-            setLaporanLoading(false);
-        }else{
-            handleLogout();
-        }
-        if(responseSurvei.data.message != "Token expired."){
-            setAllSurvei(responseSurvei.data.data);
-            setSurveiLoading(false);
-        }else{
-            handleLogout();
-        }
-        if(responseTerkini.data.message != "Token expired."){
-            setDataBeritaTerkini(responseTerkini.data.data);
-            setBeritaTerkiniLoading(false);
-        }else{
-            handleLogout();
-        }
-        if(responseOrganisasi.data.message != "Token expired."){
-            setDataBeritaOrganisasi(responseOrganisasi.data.data);
-            setBeritaOrganisasiLoading(false);
-        }else{
-            handleLogout();
-        }
+    const getAllMisiData = () => {
+        MisiServices.getMisiHomepage()
+        .then(res=>{
+            console.log(res.data.data);
+            setDataMisi(res.data.data);
+        })
+        .catch(err=>{
+            console.log(err.response);
+        })
     }
 
     const [selectedMenuBeritaTerkini, setSelectedMenuBeritaTerkini] = useState("Terbaru");
@@ -244,9 +248,10 @@ const HomepageScreen = ({navigation}) => {
     const menus = ["Terbaru", "Kesehatan", "Pendidikan", "Politik", "Olahraga"];
     const width = Dimensions.get('window').width;
 
-    const saveJenisLaporan = (id, nama, deskripsi, desc_required) => {
+    const saveJenisLaporan = (id, nama, deskripsi, desc_required, is_estimasi_partisipan_required, is_tag_kawan) => {
         dispatch(
-            setJenisLaporan({id: id, nama: nama, deskripsi: deskripsi, desc_required: desc_required})
+            setJenisLaporan({id: id, nama: nama, deskripsi: deskripsi, desc_required: desc_required,
+                is_estimasi_partisipan_required: is_estimasi_partisipan_required, is_tag_kawan: is_tag_kawan})
         );
     }
 
@@ -260,6 +265,7 @@ const HomepageScreen = ({navigation}) => {
             //fetchAllDataHomepage();
         }
         getBeritaTerkini();
+        getAllMisiData();
         getReferalData();
         setRefreshing(false);
       }, [refreshing]);
@@ -273,6 +279,7 @@ const HomepageScreen = ({navigation}) => {
                 //fetchAllDataHomepage();
             }
             getBeritaTerkini();
+            getAllMisiData();
             getReferalData();
         }, [])
     );
@@ -325,56 +332,60 @@ const HomepageScreen = ({navigation}) => {
         title="Kode QR Referral" />
         <AppBarRelawan navigation={navigation} isReferal={isReferalOrganization} />
         
-        {
-            status != "Diterima" ? 
-            <View style={styles.waitingStatus}>
-                <Image source={IconWaiting} style={{width: 34, height: 34}} />
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={{...FontConfig.buttonThree, color: Color.neutralTen}}>Akun berhasil dibuat!</Text>
-                    <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Silahkan tunggu persetujuan akunmu untuk dapat menggunakan fitur.</Text>
-                </View>
-            </View> 
-            : <></>
-        }
-        {status == "Diterima" ? isReferalOrganization == 1 ? <View style={{flexDirection: 'row', justifyContent: 'center', position: 'absolute', zIndex: 1, top: 110, left: '4%' }}>
-            <Box style={{backgroundColor: Color.neutralZeroOne,}} borderRadius={6} paddingTop={3} padding={0} 
-            paddingLeft={4} w='94%' p="2" bg="primary.500" _text={{
-                fontSize: 'md',
-                fontWeight: 'medium',
-                color: 'warmGray.50',
-                letterSpacing: 'lg'
-                }} shadow={2}>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <View>
-                            <Text style={{...FontConfig.titleThree, color: Color.primaryMain}}>Ajak yang lain jadi GENSatSet!</Text>
-                            <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>Berikan tautan atau QR Codemu</Text>
-                            <View style={{flexDirection: 'row', width: 120, alignItems: 'center', paddingHorizontal: 6}}>
-                                {!isLoadingReferal ?<Pressable onPress={handleSalinTautan} style={{flexDirection: 'row', paddingHorizontal: 10, borderWidth: 1,
-                            borderColor: Color.neutralZeroSix, borderRadius: 32, alignItems: 'center', height: 32}}>
-                                    <Image source={IconCopy} style={{width: 16, height:16}} />
-                                    <View style={{width: 5}}></View>
-                                    <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Salin Referal</Text>
-                                </Pressable> : <Skeleton width={126} height={28} style={{borderRadius: 32}} />}
-                                <View style={{width: 10}}></View>
-                                <CustomButton onPress={()=>setModalVisibleReferal(true)} backgroundColor={Color.primaryMain} height={32}
-                                 text="Lihat QR" fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} />
-                            </View>
-                        </View>
-                        <Image style={{width: 80, height: 80}} source={IconPhoneQR} />
-                    </View>
-            </Box>
-        </View> : <></> : <></>}
+
         <ScrollView style={styles.scrollView} refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}>
+            {
+                status != "Diterima" ? 
+                <><View style={styles.waitingStatus}>
+                    <Image source={IconWaiting} style={{width: 34, height: 34}} />
+                    <View style={{paddingHorizontal: 15}}>
+                        <Text style={{...FontConfig.buttonThree, color: Color.neutralTen}}>Akun berhasil dibuat!</Text>
+                        <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Silahkan tunggu persetujuan akunmu untuk dapat menggunakan fitur.</Text>
+                    </View>
+                </View>
+                <View style={{height: 80}}></View>
+                </>
+                : <></>
+            }
+            {status == "Diterima" ? isReferalOrganization == 1 ? <View style={{flexDirection: 'row', justifyContent: 'center', position: 'absolute', zIndex: 1, top: 10, left: '4%' }}>
+                <Box style={{backgroundColor: Color.neutralZeroOne,}} borderRadius={6} paddingTop={3} padding={0} 
+                paddingLeft={4} w='94%' p="2" bg="primary.500" _text={{
+                    fontSize: 'md',
+                    fontWeight: 'medium',
+                    color: 'warmGray.50',
+                    letterSpacing: 'lg'
+                    }} shadow={2}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View>
+                                <Text style={{...FontConfig.titleThree, color: Color.primaryMain}}>Ajak yang lain jadi GENSatSet!</Text>
+                                <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>Berikan tautan atau QR Codemu</Text>
+                                <View style={{flexDirection: 'row', width: 120, alignItems: 'center', paddingHorizontal: 6}}>
+                                    {!isLoadingReferal ?<Pressable onPress={handleSalinTautan} style={{flexDirection: 'row', paddingHorizontal: 10, borderWidth: 1,
+                                borderColor: Color.neutralZeroSix, borderRadius: 32, alignItems: 'center', height: '80%'}}>
+                                        <Image source={IconCopy} style={{width: 16, height:16}} />
+                                        <View style={{width: 5}}></View>
+                                        <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Salin Referal</Text>
+                                    </Pressable> : <Skeleton width={126} height={28} style={{borderRadius: 32}} />}
+                                    <View style={{width: 10}}></View>
+                                    <CustomButton onPress={()=>setModalVisibleReferal(true)} backgroundColor={Color.primaryMain} height={32}
+                                    text="Lihat QR" fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} />
+                                </View>
+                            </View>
+                            <Image style={{width: 80, height: 80}} source={IconPhoneQR} />
+                        </View>
+                </Box>
+            </View> : <></> : <></>}
             {/** laporan section */}
             <View style={styles.laporanSection}>
                 { status == 'Diterima' ? <View style={{height: 10}}></View> : <></>}
-                {isReferalOrganization ==1 ? <View style={{height: 50}}></View> : <></>}
+                {isReferalOrganization ==1 && status=="Diterima" ? <View style={{height: 80}}></View> : <></>}
                 {!laporanLoading ? <View style={styles.menuLaporan}>
                     {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
                         if(status == "Diterima"){
                         return (
                             <Pressable key={index} onPress={()=>{ 
-                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
+                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, item.is_estimasi_partisipan_required,
+                                    item.is_tag_kawan);
                                 navigation.navigate("Laporan");
                                 }} style={styles.itemMenu}>
                                 <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApk : 
@@ -405,7 +416,7 @@ const HomepageScreen = ({navigation}) => {
                         <Text style={{...FontConfig.titleThree, color: Color.neutralZeroOne}}>Ayo datakan Kawanmu</Text>
                         <Text style={{...FontConfig.captionOne, color: Color.neutralZeroOne}}>Kumpulkan poinnya!</Text>
                     </View>
-                    <CustomButton onPress={()=>navigation.navigate("ListSimpatisan")} borderRadius={16} text="Data Kawan" height={32} width={99} 
+                    <CustomButton onPress={()=>navigation.navigate("ListSimpatisan")} borderRadius={16} text="Data Kawan" height="85%" width={99} 
                     backgroundColor={Color.neutralZeroOne}
                      borderColor={Color.primaryMain} fontStyles={{...FontConfig.buttonThree, color: Color.primaryMain}} />
                 </View>
@@ -438,6 +449,42 @@ const HomepageScreen = ({navigation}) => {
             </View> : <></>
             }
 
+            {/** misi section */}
+            { status == "Diterima" ? !surveiLoading ? (dataMisi.length != 0 ?
+            <View style={styles.surveiSection}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
+                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                </View>
+                <View style={{height: 20}}></View>
+                <CustomCarousel width={width} height={190} children={<MisiView size={width*0.75} data={dataMisi} />} size={width*0.5} />
+                {/** <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />*/}
+            </View> : 
+            <View style={styles.surveiSection}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
+                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                </View>
+                <View style={{height: 30}}></View>
+                <View style={{alignItems: 'center', justifyContent:'center'}}>
+                    <Image source={IconNoMisi} style={{width: 74, height: 54}} />
+                    <View style={{height: 15}}></View>
+                    <Text style={{...FontConfig.titleTwo, color: Color.hitam}}>{`Belum ada misi yang Aktif`}</Text>
+                    <View style={{height: 3}}></View>
+                    <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, misi akan segera ditampilkan</Text>
+                </View>
+            </View>
+            ) : 
+            <View style={styles.surveiSection}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
+                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                </View>
+                <View style={{height: 20}}></View>
+                <CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} />
+            </View> : <></>
+            }
+
             {/** berita terkini section */}
             {!beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -446,7 +493,7 @@ const HomepageScreen = ({navigation}) => {
                 </View>
                 
                 <View style={{height: 15}}></View>
-                <CustomCarousel height={265} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.5} />} size={width*0.5} />
+                <CustomCarousel height={225} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} />
             </View> : <>
             <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Berita Terkini</Text>
             <View style={{alignItems: 'center', padding: 20}}>
@@ -459,7 +506,7 @@ const HomepageScreen = ({navigation}) => {
             <View style={styles.beritaSection}>
                 <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Terkini</Text>
                 <View style={{height: 20}}></View>
-                <CustomCarousel height={265} width={width} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} />
+                <CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} />
             </View>
             }
             
@@ -574,8 +621,14 @@ const styles = StyleSheet.create({
     },
     waitingStatus: {
         padding: 15,
-        backgroundColor: Color.warningSurface,
+        backgroundColor: Color.neutralZeroOne,
         flexDirection: 'row',
-        marginBottom: 15
+        marginBottom: 15,
+        width: '90%',
+        position: 'absolute',
+        zIndex: 1, top: 10, left: '5%' ,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: Color.lightBorder
     }
 })

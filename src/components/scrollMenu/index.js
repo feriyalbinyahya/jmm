@@ -15,7 +15,7 @@ const ScrollMenuButton = ({data, value, setValue, keyMenu, onPressMenu=()=>{}}) 
             return(
                 <Pressable onPress={
                     ()=> {
-                        setValue(topik);
+                        
                     }} key={index} style={styles.menuSelected}>
                     <Text style={styles.textMenuSelected}>{topik}</Text>
                 </Pressable>
