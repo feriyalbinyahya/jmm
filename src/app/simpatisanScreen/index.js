@@ -120,6 +120,8 @@ const ListSimpatisan = ({navigation}) => {
 
     const onRefresh =  () => {
       setRefreshing(true);
+      setCurrentPage(1);
+      setDataSimpatisan([]);
       getDataSimpatisanOnRefresh( 1, provinsi != "" ? provinsi : "", kota != "" ? kota : "", search);
       setRefreshing(false);
     }
@@ -218,7 +220,7 @@ const ListSimpatisan = ({navigation}) => {
           <View style={{height: '50%', alignItems: 'center', justifyContent: 'center'}}>
             <Image source={IconNoData} style={styles.imageNoData} />
             <Text style={{...FontConfig.titleTwo, color: "#000000", marginTop: 10}}>Tidak ada riwayat</Text>
-            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 10}}>Yuk segera buat data simpatisan.</Text>
+            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 10}}>Yuk segera buat data kawan.</Text>
           </View>
           }</> :
           <View style={{flex: 1, marginTop: '40%'}}><ActivityIndicator size="large" color={Color.graySix} /></View>} 

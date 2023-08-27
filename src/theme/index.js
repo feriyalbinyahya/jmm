@@ -179,7 +179,7 @@ export const FontConfig = StyleSheet.create({
   },
   captionOne: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 10,
+    fontSize: 11,
     lineHeight: 16
   },
   captionTwo: {
@@ -324,6 +324,7 @@ export const Color = {
   purple: '#624FA1',
   magenta: '#E0195E',
   hitam: '#000000',
+  putih: '#FFFFFF',
   blue: '#3785C7',
   purpleSurface: '#F7F2FF'
 };

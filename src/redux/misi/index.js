@@ -18,6 +18,14 @@ export const misiSlice = createSlice({
       state.tagTeman = {teman: action.payload.teman, namaTeman: action.payload.namaTeman, 
         setNamaTeman: action.payload.setNamaTeman, setTeman: action.payload.setTeman}
     },
+    deleteTemen: (state, action) => {
+      state.tagTeman = {
+        teman: [],
+        namaTeman: [],
+        setNamaTeman: ()=>{},
+        setTeman: ()=>{}
+      }
+    }
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -30,5 +38,5 @@ export const misiSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {  setTeman} = misiSlice.actions
+export const {  setTeman, deleteTemen} = misiSlice.actions
 export default misiSlice.reducer

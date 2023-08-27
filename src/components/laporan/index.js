@@ -178,6 +178,8 @@ const ListLaporanContainer = ({navigation, idJenisLaporan, jenisLaporan, title, 
 
     const onRefresh =  () => {
       setRefreshing(true);
+      setCurrentPage(1);
+      setDataLaporan([]);
       getLaporanDataOnRefresh(idJenisLaporan, 1, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
       setRefreshing(false);
     }

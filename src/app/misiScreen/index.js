@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, Image, Pressable, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, FlatList, Image, Pressable, ActivityIndicator, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import HeaderWhite from '../../components/header/headerWhite'
 import { Color, FontConfig } from '../../theme'
@@ -18,24 +18,9 @@ const ListMisiScreen = ({navigation}) => {
     `Diterima (0)`, `Ditolak (0)`]);
     const [selectedMenu, setSelectedMenu] = useState("Misi Aktif");
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const data = [
-        {
-            is_important: true,
-            judul: "Buat Konten Dengan Tema dilarang Golput",
-            expired_date: "Sen, 12 Juli 2023  23:00:00"
-        },
-        {
-            is_important: false,
-            judul: "Buat Kegiatan Edukasi",
-            expired_date: "Sen, 12 Juli 2023  23:00:00"
-        },
-        {
-            is_important: false,
-            judul: "Buat Podcast",
-            expired_date: "Sen, 12 Juli 2023  23:00:00"
-        }
-    ];
+    const [refreshing, setRefreshing] = useState(false);
 
     const getStatusDataMisi = () => {
         let misiaktif;
@@ -67,16 +52,16 @@ const ListMisiScreen = ({navigation}) => {
         .catch(err=>{
           console.log(err);
         })
-      }
+    }
 
-    const MisiItem = ({is_important, judul, expired_date, id, deskripsi, publish_date, kategori}) => {
+    const MisiItem = ({is_important, judul, expired_date, id, deskripsi, publish_date, kategori, is_expired}) => {
         return (
             <Box shadow={3} style={!is_important ? styles.cardContainer : styles.cardContainerPenting}>
                 <View style={{flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row'}}>
                         <Image style={{width: 40, height: 40}} source={is_important ? IconMisiPenting : IconMisi} />
                         <View style={{width: 15}}></View>
-                        <View style={{width: '70%'}}>
+                        <View style={{width: '73%'}}>
                             <Text style={{...FontConfig.captionUpperOne, color: Color.primaryMain}}>MISI</Text>
                             <View style={{height: 5}}></View>
                             <Text style={{...FontConfig.titleThree, color: Color.neutralTen}}>{judul}</Text>
@@ -86,7 +71,10 @@ const ListMisiScreen = ({navigation}) => {
                                 <Text style={{...FontConfig.captionOne, color: Color.primaryMain}}>{kategori}</Text>
                             </View>
                             <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>Batas waktu:</Text>
+                            {(selectedMenu == "Terkirim" || selectedMenu == "Diterima" || selectedMenu == "Ditolak") && is_expired ? 
+                            <Text style={{...FontConfig.titleThree, color: Color.graySeven}}>{`${expired_date} (Telah Selesai)`}</Text> : 
                             <Text style={{...FontConfig.titleThree, color: Color.danger}}>{expired_date}</Text>
+                            }
                         </View>
                     </View>
                     {is_important ? <Image style={{width: 14, height: 14}} source={IconPin} /> : 
@@ -94,10 +82,12 @@ const ListMisiScreen = ({navigation}) => {
                 </View>
                 <View style={{alignItems: 'flex-end'}}>
                     <Pressable onPress={()=>navigation.navigate("StartMisi", {id: id, judul: judul, deskripsi: deskripsi ,
-                    startDate: publish_date, deadlineDate: expired_date, is_important: is_important})}>
-                        <Text style={{...FontConfig.buttonZeroTwo, color:Color.primaryMain}}>Mulai Misi</Text>
+                    startDate: publish_date, deadlineDate: expired_date, is_important: is_important, kategori: kategori})}>
+                        <Text style={{...FontConfig.buttonZeroTwo, color:Color.primaryMain}}>{selectedMenu == "Misi Aktif" ? `Mulai Misi`
+                        : selectedMenu == "Belum Selesai" ? `Lanjutkan Misi` : `Lihat Misi`}</Text>
                     </Pressable>
                 </View>
+                <View style={{height: 10}}></View>
             </Box>
         )
     }
@@ -108,12 +98,13 @@ const ListMisiScreen = ({navigation}) => {
         setSelectedMenu(status);
       }
 
-    const getDataMisi = (status) => {
-        setIsLoading(true);
-        MisiServices.getMisi(status)
+    const getDataMisi = (status, page) => {
+        if(dataMisi.length ==0 ) setIsLoading(true);
+        MisiServices.getMisi(status, page)
         .then(res=>{
-            console.log(res.data.data);
-            setDataMisi(res.data.data.data);
+            console.log(res.data.data.data);
+            setDataMisi([...dataMisi, ...res.data.data.data]);
+            setTotalPages(res.data.data.totalPages);
             setIsLoading(false);
         })
         .catch(err=>{
@@ -122,16 +113,63 @@ const ListMisiScreen = ({navigation}) => {
         })
     }
 
+    const loadMoreItem = () => {
+        if(currentPage < parseInt(totalPages)){
+          setCurrentPage(currentPage + 1);
+        }
+      }
+    
+      const renderLoader = () => {
+        return(
+          <View style={styles.loaderStyle}>
+              <ActivityIndicator size="large" color={Color.graySix} />
+          </View>
+        );
+      }
+
+    const getMisiDataOnRefresh = (status, page) => {
+        if(dataMisi.length ==0 ) setIsLoading(true);
+        MisiServices.getMisi(status, page)
+        .then(res=> {
+          setDataMisi(res.data.data.data);
+          setTotalPages(res.data.data.totalPages);
+          setIsLoading(false);
+        })
+        .catch(err=> {
+          console.log(err);
+          setIsLoading(false);
+        })
+    }
+
+    const onRefresh =  () => {
+        setCurrentPage(1);
+        setDataMisi([]);
+        setRefreshing(true);
+        getStatusDataMisi();
+        getMisiDataOnRefresh(selectedMenu == "Misi Aktif"? "" : selectedMenu == "Belum Selesai" ? "1" : 
+        selectedMenu == "Terkirim" ? "2" : selectedMenu == "Diterima" ? "3" : "4", 1);
+        setRefreshing(false);
+    }
+
     useFocusEffect(
         React.useCallback(() => {
           getStatusDataMisi();
         }, [])
+    );
+
+    useFocusEffect(
+        React.useCallback(() => {
+          if(dataMisi.length != 0){
+            getDataMisi(selectedMenu == "Misi Aktif"? "" : selectedMenu == "Belum Selesai" ? "1" : 
+            selectedMenu == "Terkirim" ? "2" : selectedMenu == "Diterima" ? "3" : "4", currentPage);
+          }
+          }, [])
       );
 
     useEffect(()=>{
         getDataMisi(selectedMenu == "Misi Aktif"? "" : selectedMenu == "Belum Selesai" ? "1" : 
-        selectedMenu == "Terkirim" ? "2" : selectedMenu == "Diterima" ? "3" : "4");
-    },[selectedMenu])
+        selectedMenu == "Terkirim" ? "2" : selectedMenu == "Diterima" ? "3" : "4", currentPage);
+    },[selectedMenu, currentPage])
 
   return (
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
@@ -141,10 +179,14 @@ const ListMisiScreen = ({navigation}) => {
         </View>
         {!isLoading ? dataMisi.length != 0 ? <FlatList 
         data={dataMisi}
+        ListFooterComponent={currentPage.toString() != totalPages ? renderLoader : <></>}
+        onEndReached={loadMoreItem}
+        onEndReachedThreshold={0}
+        refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
         contentContainerStyle={{alignItems: 'center'}}
         renderItem={({item})=><MisiItem kategori={item.kategori[0].nama_kategori} is_important={item.tingkat_kepentingan == "Sangat Penting" ? true : false}
          expired_date={item.batas_waktu} publish_date={item.tanggal_publish} deskripsi={item.deskripsi}
-        judul={item.judul} id={item.id_misi} />}
+        judul={item.judul} id={item.id_misi} is_expired={item.is_expired} />}
         /> : 
         <View style={{alignItems: 'center', height: '70%', justifyContent:'center'}}>
             <Image source={IconNoMisi} style={{width: 74, height: 54}} />
@@ -155,7 +197,7 @@ const ListMisiScreen = ({navigation}) => {
             selectedMenu == "Belum Selesai" ? <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Yuk segera selesaikan misi pertamamu</Text> :
             selectedMenu == "Terkirim" ? <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Yuk segera buat dan kirim misimu</Text> :
             selectedMenu == "Diterima" ? <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Yuk, segera kirimkan atau perbaiki misimu</Text> : 
-            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}><Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Yeey, kamu tidak memiliki misi yang ditolak</Text></Text>
+            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Yeey, kamu tidak memiliki misi yang ditolak</Text>
             }
         </View> : 
         <View style={{height: '60%', justifyContent: 'center'}}><ActivityIndicator size="large" color={Color.neutralTen} /></View>

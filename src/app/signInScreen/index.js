@@ -129,8 +129,8 @@ const SignInPage = ({navigation}) => {
           borderRadius={26}
           onPress={handleWhatsapp}
           height={44} backgroundColor={Color.neutralZeroOne}
-          children={<View style={{flexDirection: 'row'}}>
-            <Ionicons name="call-outline" size={20} color={Color.successMain} />
+          children={<View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Ionicons name="logo-whatsapp" size={21} color={Color.successMain} />
             <View style={{width: 5}}></View>
             <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi Whatsapp</Text>
           </View>}

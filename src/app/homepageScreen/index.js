@@ -45,6 +45,7 @@ import BeritaDaerahSkeleton from '../../components/beritaDaerah/skeleton'
 import CardGradient from '../../components/misi/cardGradient'
 import MisiServices from '../../services/misi'
 import CardWhite from '../../components/misi/cardWhite'
+import IconNoMisi from '../../assets/images/warning/nomisi.png'
 
 
 const HomepageScreen = ({navigation}) => {
@@ -127,8 +128,8 @@ const HomepageScreen = ({navigation}) => {
                 return(
                     <View key={index} style={{width: size}}>
                         {item.tingkat_kepentingan == "Sangat Penting" ? 
-                        <CardGradient navigation={navigation} is_important={true} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} /> :
-                        <CardWhite navigation={navigation} is_important={false} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} />
+                        <CardGradient status={item.status_konfirmasi} navigation={navigation} is_important={true} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} /> :
+                        <CardWhite status={item.status_konfirmasi} navigation={navigation} is_important={false} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} />
                         }
                     </View>
                 )
@@ -331,20 +332,22 @@ const HomepageScreen = ({navigation}) => {
         title="Kode QR Referral" />
         <AppBarRelawan navigation={navigation} isReferal={isReferalOrganization} />
         
-        {
-            status != "Diterima" ? 
-            <View style={styles.waitingStatus}>
-                <Image source={IconWaiting} style={{width: 34, height: 34}} />
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={{...FontConfig.buttonThree, color: Color.neutralTen}}>Akun berhasil dibuat!</Text>
-                    <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Silahkan tunggu persetujuan akunmu untuk dapat menggunakan fitur.</Text>
-                </View>
-            </View> 
-            : <></>
-        }
 
         <ScrollView style={styles.scrollView} refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}>
-            {status == "Diterima" ? isReferalOrganization == 1 ? <View style={{flexDirection: 'row', justifyContent: 'center', position: 'absolute', zIndex: 1, top: 0, left: '4%' }}>
+            {
+                status != "Diterima" ? 
+                <><View style={styles.waitingStatus}>
+                    <Image source={IconWaiting} style={{width: 34, height: 34}} />
+                    <View style={{paddingHorizontal: 15}}>
+                        <Text style={{...FontConfig.buttonThree, color: Color.neutralTen}}>Akun berhasil dibuat!</Text>
+                        <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Silahkan tunggu persetujuan akunmu untuk dapat menggunakan fitur.</Text>
+                    </View>
+                </View>
+                <View style={{height: 80}}></View>
+                </>
+                : <></>
+            }
+            {status == "Diterima" ? isReferalOrganization == 1 ? <View style={{flexDirection: 'row', justifyContent: 'center', position: 'absolute', zIndex: 1, top: 10, left: '4%' }}>
                 <Box style={{backgroundColor: Color.neutralZeroOne,}} borderRadius={6} paddingTop={3} padding={0} 
                 paddingLeft={4} w='94%' p="2" bg="primary.500" _text={{
                     fontSize: 'md',
@@ -375,7 +378,7 @@ const HomepageScreen = ({navigation}) => {
             {/** laporan section */}
             <View style={styles.laporanSection}>
                 { status == 'Diterima' ? <View style={{height: 10}}></View> : <></>}
-                {isReferalOrganization ==1 ? <View style={{height: 70}}></View> : <></>}
+                {isReferalOrganization ==1 && status=="Diterima" ? <View style={{height: 80}}></View> : <></>}
                 {!laporanLoading ? <View style={styles.menuLaporan}>
                     {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
                         if(status == "Diterima"){
@@ -447,16 +450,31 @@ const HomepageScreen = ({navigation}) => {
             }
 
             {/** misi section */}
-            { status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
+            { status == "Diterima" ? !surveiLoading ? (dataMisi.length != 0 ?
             <View style={styles.surveiSection}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 <View style={{height: 20}}></View>
-                <CustomCarousel width={width} height={190} children={<MisiView size={width*0.9} data={dataMisi} />} size={width*0.5} />
+                <CustomCarousel width={width} height={190} children={<MisiView size={width*0.75} data={dataMisi} />} size={width*0.5} />
                 {/** <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />*/}
-            </View> : <></>) : 
+            </View> : 
+            <View style={styles.surveiSection}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
+                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                </View>
+                <View style={{height: 30}}></View>
+                <View style={{alignItems: 'center', justifyContent:'center'}}>
+                    <Image source={IconNoMisi} style={{width: 74, height: 54}} />
+                    <View style={{height: 15}}></View>
+                    <Text style={{...FontConfig.titleTwo, color: Color.hitam}}>{`Belum ada misi yang Aktif`}</Text>
+                    <View style={{height: 3}}></View>
+                    <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, misi akan segera ditampilkan</Text>
+                </View>
+            </View>
+            ) : 
             <View style={styles.surveiSection}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
@@ -475,7 +493,7 @@ const HomepageScreen = ({navigation}) => {
                 </View>
                 
                 <View style={{height: 15}}></View>
-                <CustomCarousel height={220} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} />
+                <CustomCarousel height={225} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} />
             </View> : <>
             <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Berita Terkini</Text>
             <View style={{alignItems: 'center', padding: 20}}>
@@ -488,7 +506,7 @@ const HomepageScreen = ({navigation}) => {
             <View style={styles.beritaSection}>
                 <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Terkini</Text>
                 <View style={{height: 20}}></View>
-                <CustomCarousel height={220} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} />
+                <CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} />
             </View>
             }
             
@@ -608,7 +626,9 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: '90%',
         position: 'absolute',
-        zIndex: 1, top: 110, left: '5%' ,
-        borderRadius: 6
+        zIndex: 1, top: 10, left: '5%' ,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: Color.lightBorder
     }
 })

@@ -182,7 +182,7 @@ const BuatLaporanScreen = ({navigation, route}) => {
       isModalVisible={isModalTemanVisible}
       setModalVisible={setIsModalTemanVisible}
       title={`Tandai Kawan`}
-      children={<SelectView jumlah={tagTeman.length} />}
+      children={<SelectView isModalVisible={isModalTemanVisible} setIsModalVisible={setIsModalTemanVisible} jumlah={tagTeman.length} />}
       />
       <HeaderWhite navigation={navigation} title="Buat Laporan" />
       <YellowWarning text="Dalam radius 1 km, kamu hanya dapat membuat laporan dengan capres dan tag yang berbeda." />

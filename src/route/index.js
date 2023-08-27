@@ -55,6 +55,7 @@ import DetailLaporanScreen from '../app/laporanScreen/detailLaporan';
 import ListMisiScreen from '../app/misiScreen';
 import StartMisiScreen from '../app/misiScreen/startMisi';
 import FormMisiScreen from '../app/misiScreen/formMisi';
+import LaporanView from '../app/misiScreen/laporanKegiatan';
 
 const Stack = createNativeStackNavigator();
 
@@ -129,6 +130,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListMisi" component={ListMisiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="StartMisi" component={StartMisiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="FormMisi" component={FormMisiScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanView" component={LaporanView} />
       </Stack.Navigator>
       }
     </NavigationContainer>}

@@ -38,9 +38,9 @@ addMisi = async (id, data, type) => {
     return Request.post(`misi/${id}?type=${type}`, data, {headers: headersToken,});
 }
 
-getMisi = async (status)=> {
+getMisi = async (status, page)=> {
     let headersToken = await getHeaders();
-    return Request.get(`misi?status_misi=${status}&size=5&page=1`, {headers: headersToken});
+    return Request.get(`misi?status_misi=${status}&size=5&page=${page}`, {headers: headersToken});
 }
 
 getMisiHomepage = async ()=> {

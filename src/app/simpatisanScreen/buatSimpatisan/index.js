@@ -546,8 +546,8 @@ const styles = StyleSheet.create({
         paddingTop: 20
     },
     titleFormInput:{
-        color: Color.primaryMain,
-        ...FontConfig.bodyOne,
+        color: Color.secondaryText,
+        ...FontConfig.bodyTwo,
         marginTop: 10,
         marginBottom: 1
     },

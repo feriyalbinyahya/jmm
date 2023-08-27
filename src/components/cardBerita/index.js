@@ -7,9 +7,10 @@ import { Box } from 'native-base';
 const CardBerita = ({image, topik, tanggal, berita, id, navigation}) => {
   return (
     <Box style={styles.cardContainer} shadow={3}>
-        <Pressable onPress={()=>navigation.navigate("BeritaDetail", {id:id})}>
+        <Pressable style={{height: '100%'}} onPress={()=>navigation.navigate("BeritaDetail", {id:id})}>
             <Image style={styles.image} source={{uri: `data:image/png;base64,${image}`}}/>
             <View style={styles.topik}><Text style={styles.textTopik}>{topik}</Text></View>
+            <View style={{height: 3}}></View>
             <Text numberOfLines={2} style={styles.textBerita}>{berita}</Text>
             <Text style={styles.textTanggal}>{tanggal}</Text>
         </Pressable>
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
         
     },
     image:{
-        aspectRatio: 4/3,
+        aspectRatio: 16/9,
         borderRadius: 4,
         overflow: 'hidden'
     },
@@ -38,18 +39,14 @@ const styles = StyleSheet.create({
     },
     textBerita: {
         ...FontConfig.titleThree,
-        color: Color.neutralZeroOne,
+        color: Color.primaryMain,
         marginVertical: 3,
-        position: 'absolute',
-        bottom: '20%',
-        paddingHorizontal: 10,
+        paddingHorizontal: 12,
     },
     textTanggal: {
         ...FontConfig.captionOne,
-        color: Color.neutralZeroOne,
+        color: Color.primaryMain,
         marginVertical: 3,
-        position: 'absolute',
-        bottom: '5%',
         paddingHorizontal: 10,
     },
     topik: {
@@ -57,7 +54,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         backgroundColor: Color.purple,
         position: 'absolute',
-        bottom: '47%',
+        top: '50%',
         marginHorizontal: 10,
         borderRadius: 24,
         justifyContent: 'center'

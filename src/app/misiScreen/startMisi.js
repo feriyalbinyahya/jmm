@@ -12,10 +12,14 @@ import CustomButton from '../../components/customButton';
 import MisiServices from '../../services/misi';
 import CustomCarousel from '../../components/customCarousel';
 import {AspectRatio,} from 'native-base'
+import Pdf from 'react-native-pdf'
+import CustomBottomSheet from '../../components/bottomSheet';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const StartMisiScreen = ({navigation, route}) => {
 
-    const {id, judul, deskripsi, startDate, deadlineDate, is_important} = route.params;
+    const {id, judul, deskripsi, startDate, deadlineDate, is_important, kategori} = route.params;
     const [stepOne, setStepOne] = useState(false);
     const [stepTwo, setStepTwo] = useState(false);
     const [stepThree, setStepThree] = useState(false);
@@ -27,7 +31,6 @@ const StartMisiScreen = ({navigation, route}) => {
     const [konsepKegiatan, setKonsepKegiatan] = useState("");
     const [laporanKegiatan, setLaporanKegiatan] = useState([]);
     const [namaFile, setNamaFile] = useState("");
-    const [kategori, setKategori] = useState([]);
     const [media, setMedia] = useState([]);
     const [namaFoto, setNamaFoto] = useState([]);
     const [perkiraanPartisipan, setPerkiraanPartisipan] = useState("");
@@ -35,12 +38,15 @@ const StartMisiScreen = ({navigation, route}) => {
     const [namaTeman, setNamaTeman] = useState([]);
     const [tautan, setTautan] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isModalPdfVisible, setIsModalPdfVisible] = useState(false);
+
+    const [isLoadingFile, setIsLoadingFile] = useState(false);
 
     const CommandItem = ({image, title, content, subtitle, is_done}) => {
         return (
             <View style={{flexDirection: 'row', padding: 10, borderWidth: 1, 
             borderColor: Color.neutralZeroFour, borderRadius: 8, marginVertical: 10,}} >
-                <Image style={{width: 30, height: 30}} source={image} />
+                <Image style={{width: 32, height: 32}} source={image} />
                 <View style={{width: 15}}></View>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 8}}>
                   <View style={{width: '80%'}}>
@@ -67,7 +73,6 @@ const StartMisiScreen = ({navigation, route}) => {
       setIsLoading(true);
       MisiServices.getMisiDetail(id)
       .then(res=>{
-        console.log(res.data.data[0]);
         setDataMisiDetail(res.data.data);
         setStatus(res.data.data[0].status_konfirmasi);
         if(res.data.data[0].status_konfirmasi == "Belum Selesai"){
@@ -82,13 +87,24 @@ const StartMisiScreen = ({navigation, route}) => {
             setStepThree(true);
           }
         }else if(res.data.data[0].status_konfirmasi == "Ditolak"){
+          if(res.data.data[0].judul_kegiatan != "" && res.data.data[0].konsep_kegiatan != "" && res.data.data[0].laporan_kegiatan.length != 0){
+            setStepOne(true);
+          }
+          if(res.data.data[0].media.length != 0 && res.data.data[0].tautan.length != 0){
+            setStepTwo(true);
+          }
+          if(res.data.data[0].perkiraan_partisipan != "" && res.data.data[0].tandai_kawan.length != 0){
+            setStepThree(true);
+          }
           setBisaEdit(res.data.data[0].bisa_edit);
           setAlasanTolak(res.data.data[0].alasan_tolak);
         }
         setJudulKegiatan(res.data.data[0].judul_kegiatan);
         setKonsepKegiatan(res.data.data[0].konsep_kegiatan);
+        let tempFile = [];
         if(res.data.data[0].laporan_kegiatan.length != 0){
-          setLaporanKegiatan(res.data.data[0].laporan_kegiatan[0]);
+          tempFile.push(res.data.data[0].laporan_kegiatan[0].base64_information);
+          setLaporanKegiatan(tempFile);
           setNamaFile(res.data.data[0].laporan_kegiatan[0].media);
         }
         
@@ -99,7 +115,7 @@ const StartMisiScreen = ({navigation, route}) => {
           tempBase64.push(res.data.data[0].media[i].base64_information);
         }
         setNamaFoto(tempNamaFoto);
-        console.log(tempBase64);
+        console.log(res.data.data[0].bisa_edit);
         setMedia(tempBase64);
         let tempTautan = [];
         for(var i=0; i<res.data.data[0].tautan.length; i++){
@@ -151,6 +167,7 @@ const StartMisiScreen = ({navigation, route}) => {
           </>
       )
   }
+
   const width = Dimensions.get('window').width;
 
     useEffect(()=>{
@@ -169,6 +186,10 @@ const StartMisiScreen = ({navigation, route}) => {
           <View style={{height: 10}}></View>
           <Text style={{...FontConfig.bodyTwo, width: '90%', color: Color.neutralZeroSeven}}>{deskripsi}</Text>
           <View style={{height: 10}}></View>
+          <View style={{paddingHorizontal: 10, paddingVertical: 2, borderWidth: 1,
+          borderRadius: 12, alignSelf: 'baseline', marginBottom: 5}}>
+              <Text style={{...FontConfig.captionOne, color: Color.primaryMain}}>{kategori}</Text>
+          </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image style={{width: 16, height: 16}} source={IconTime} />
               <View style={{width: 4}}></View>
@@ -205,13 +226,29 @@ const StartMisiScreen = ({navigation, route}) => {
               backgroundColor: status == "Terkirim" ? Color.blue : status == "Diterima" ? Color.successMain : Color.danger}}>
               <Text style={{...FontConfig.captionOne, color: Color.neutralZeroOne}}>{status}</Text>
             </View>
-            <View style={{height: 20}}></View>
+            <View style={{height: 10}}></View>
+            {status == "Ditolak" && (bisaEdit == "0" || bisaEdit ==0) ? 
+            <View style={{paddingHorizontal: 15, paddingVertical: 10, marginBottom: 10, backgroundColor: '#FFEBEE', borderRadius: 8}}>
+            <Text style={{...FontConfig.titleFour, color: Color.neutralTen}}>Alasan Ditolak</Text>
+            <View style={{height: 2}}></View>
+            <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{alasanTolak}</Text>
+          </View> : <></>
+            }
             <View style={{paddingVertical: 10}}>
               <Text style={{...FontConfig.titleThree, color: Color.neutralTen}}>Tentang kegiatan</Text>
               <View style={{height: 10}}></View>
               <InfoItem judul="Judul Kegiatan" content={judulKegiatan} />
               <InfoItem judul="Konsep Kegiatan" content={konsepKegiatan} />
-              <InfoItem judul="Laporan Kegiatan" content={namaFile} />
+              {namaFile != "" ? <><InfoItem judul="Laporan Kegiatan" content={namaFile} />
+              <Pressable onPress={()=>
+                navigation.navigate("LaporanView", {namaFile: namaFile, filepath: ""})
+                } style={{flexDirection: 'row', alignItems: 'center',
+            backgroundColor: Color.primaryMain, alignSelf: 'baseline', paddingHorizontal: 15, paddingVertical: 5,
+            borderRadius: 26, }}>
+                <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroOne}}>Lihat file</Text>
+                <View style={{width: 5}}></View>
+                <Ionicons name="eye-outline" color={Color.neutralZeroOne} size={18} />
+              </Pressable></> : <></>}
             </View>
             <View style={styles.garis}></View>
             <View style={{paddingVertical: 10}}>
@@ -224,7 +261,18 @@ const StartMisiScreen = ({navigation, route}) => {
               <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>Tautan</Text>
               {tautan.map((item, index)=>{
                 return(
-                  <Pressable key={index} onPress={()=>Linking.openURL(`https://${item}`)}><Text style={{...FontConfig.linkOne, color: '#1989C8', textDecorationLine: 'underline'}}>{item}</Text></Pressable>
+                  <Pressable key={index} onPress={()=>{
+                    let link;
+                    if(item.includes("https")){
+                      link = item.split("https://")[1];
+                    }else if(item.includes("http")){
+                      link = item.split("http://")[1];
+                    }else{
+                      link = item;
+                    }
+                    console.log(link);
+                    Linking.openURL(`https://${link}`);
+                  }}><Text style={{...FontConfig.linkOne, color: '#1989C8', textDecorationLine: 'underline'}}>{item}</Text></Pressable>
                 )
               })}
             </View>
@@ -233,6 +281,9 @@ const StartMisiScreen = ({navigation, route}) => {
               <Text style={{...FontConfig.titleThree, color: Color.neutralTen}}>Partisipan</Text>
               <View style={{height: 10}}></View>
               <InfoItem judul="Perkiraan Partisipan" content={perkiraanPartisipan} />
+              <View style={{height: 10}}></View>
+              {namaTeman.length != 0 ?  <><Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>Kawan yang ditandai</Text>
+              <View style={{height: 10}}></View>
               <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>{namaTeman.map((item, index)=> {
                   if(index == namaTeman.length-1){
                       return(
@@ -242,7 +293,7 @@ const StartMisiScreen = ({navigation, route}) => {
                   return(
                       <Text key={index} style={{...FontConfig.bodyTwo, color: Color.hitam}}>{`${item}, `}</Text>
                   )}
-              })}</View>
+              })}</View></> : <></>}
             </View>
           </View>
           
@@ -263,7 +314,7 @@ const StartMisiScreen = ({navigation, route}) => {
                 <CustomButton
                 onPress={handleLanjutkan} 
                 fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
-                width='100%' height={44} text="Mulai Misi"
+                width='100%' height={44} text={status == "Misi Aktif" ? `Mulai Misi` : `Lanjutkan Misi`}
                 backgroundColor={Color.primaryMain}
                 />
                 }
@@ -280,6 +331,10 @@ const styles = StyleSheet.create({
         color: Color.magenta,
         ...FontConfig.captionUpperTwo
     },
+    textMisi: {
+      color: Color.grayEight,
+      ...FontConfig.captionUpperTwo
+  },
     textCommandTitle: {
         ...FontConfig.titleThree,
         color: Color.neutralTen

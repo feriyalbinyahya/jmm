@@ -14,7 +14,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import ChildrenButton from '../../../components/customButtonChildren';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
-import { setTeman } from '../../../redux/misi';
+import { deleteTemen, setTeman } from '../../../redux/misi';
 import DropDownButton from '../../../components/buttonDropdown';
 import CustomBottomSheet from '../../../components/bottomSheet';
 import SelectView from '../../../components/bottomSheet/select';
@@ -54,6 +54,7 @@ const FormMisiScreen = ({navigation, route}) => {
   const [messageError, setMessageError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState("");
+  const [showAlertYakinKirim, setShowAlertYakinKirim] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -158,6 +159,12 @@ const FormMisiScreen = ({navigation, route}) => {
     );
   }
 
+  const deleteDataTeman = () =>{
+    dispatch(
+      deleteTemen()
+    );
+  }
+
   const handleBukaFoto = async(index) => {
     console.log(foto);
     const fotoTerpilih = foto[index];
@@ -172,7 +179,12 @@ const FormMisiScreen = ({navigation, route}) => {
 
   }
 
-  const handleSimpan = () => {
+  const handleBukaFile = async(index) => {
+    if(nama_file !=""){
+      navigation.navigate("LaporanView", {namaFile: nama_file, filepath: ""});
+    }else{
+      navigation.navigate("LaporanView", {namaFile: "", filepath: filePdf.uri});
+    }
 
   }
 
@@ -244,7 +256,7 @@ const FormMisiScreen = ({navigation, route}) => {
   }, [tagTeman])
 
   useEffect(()=>{
-    if( judul && konsep && fotoBukti.length !=0 && listTautan.length !=0){
+    if( judul && konsep && namaFoto.length !=0 && listTautan.length !=0){
       setIsContinue(true);
     }else{
       setIsContinue(false);
@@ -257,8 +269,11 @@ const FormMisiScreen = ({navigation, route}) => {
       <CustomBottomSheet 
       isModalVisible={isModalTemanVisible}
       setModalVisible={setIsModalTemanVisible}
+      onClose={()=>{
+        setIsModalTemanVisible(!isModalTemanVisible);
+      }}
       title={`Tandai Kawan`}
-      children={<SelectView type="misi" jumlah={tagTeman.length} />}
+      children={<SelectView isModalVisible={isModalTemanVisible} setIsModalVisible={setIsModalTemanVisible} type="misi" jumlah={tagTeman.length} />}
       />
       <CustomBottomSheet 
       isModalVisible={isModalFotoVisible}
@@ -271,7 +286,7 @@ const FormMisiScreen = ({navigation, route}) => {
         {/** tentang kegiatan */}
         <View style={{padding: 20}}>
           <View style={{flexDirection: 'row'}}>
-            <Image style={{width: 26, height: 26}} source={IconSatu} />
+            <Image style={{width: 28, height: 28}} source={IconSatu} />
             <View style={{width: '90%', paddingHorizontal: 20}}>
               <Text style={styles.textTitle}>Tentang Kegiatan</Text>
               <Text style={styles.textSubjectForm}>Judul Kegiatan</Text>
@@ -295,6 +310,13 @@ const FormMisiScreen = ({navigation, route}) => {
               </View>
               <View style={{height: 5}}></View>
               <Text style={{...FontConfig.bodyThree, color: Color.secondaryText}}>Hanya menerima format pdf dan ukuran file maksimal 10mb</Text>
+              {namaFile ? <Pressable onPress={handleBukaFile} style={{marginTop: 10, flexDirection: 'row', alignItems: 'center',
+            backgroundColor: Color.purple, alignSelf: 'baseline', paddingHorizontal: 15, paddingVertical: 5,
+            borderRadius: 26, }}>
+                <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroOne}}>Lihat file</Text>
+                <View style={{width: 5}}></View>
+                <Ionicons name="eye-outline" color={Color.neutralZeroOne} size={18} />
+              </Pressable> : <></>}
             </View>
           </View>
         </View>
@@ -303,7 +325,7 @@ const FormMisiScreen = ({navigation, route}) => {
         borderColor: Color.neutralZeroTwo}}></View>
         <View style={{padding: 20}}>
           <View style={{flexDirection: 'row'}}>
-            <Image style={{width: 26, height: 26}} source={IconDua} />
+            <Image style={{width: 28, height: 28}} source={IconDua} />
             <View style={{width: '90%', paddingHorizontal: 20}}>
               <Text style={styles.textTitle}>Bukti Kegiatan</Text>
               <Text style={styles.textSubjectForm}>Foto</Text>
@@ -355,7 +377,7 @@ const FormMisiScreen = ({navigation, route}) => {
         borderColor: Color.neutralZeroTwo}}></View>
         <View style={{padding: 20}}>
           <View style={{flexDirection: 'row'}}>
-            <Image style={{width: 26, height: 26}} source={IconTiga} />
+            <Image style={{width: 28, height: 28}} source={IconTiga} />
             <View style={{width: '90%', paddingHorizontal: 20}}>
               <View style={{flexDirection: 'row', alignItems: 'center',}}><Text style={styles.textTitle}>Partisipan</Text>
               <Text style={{...FontConfig.buttonThree, color: Color.neutralZeroSeven, marginHorizontal: 4}}>{`(Opsional)`}</Text>
@@ -387,7 +409,7 @@ const FormMisiScreen = ({navigation, route}) => {
           <View style={{width: 20}}></View>
         <View style={styles.buttonContinue}>
         <CustomButton
-            onPress={()=>handleKirim("kirim")} 
+            onPress={()=>setShowAlertYakinKirim(true)} 
             fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
             width='100%' height={44} text="Kirim"
             disabled={!isContinue}
@@ -511,6 +533,32 @@ const FormMisiScreen = ({navigation, route}) => {
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
             setShowAlert(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertYakinKirim}
+          showProgress={false}
+          title="Yakin ingin kirim?"
+          message="Data yang sudah terkirim tidak dapat diubah kembali ya, jadi pastikan data sudah sesuai."
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          confirmText="Ya, Kirim"
+          cancelText="Batal"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, borderRadius: 26, width: '50%', height: '80%',  alignItems: 'center'}}
+          cancelButtonStyle={{width: '40%', borderWidth:1, borderColor: Color.lightBorder, height: '80%', borderRadius: 26, alignItems: 'center', backgroundColor: Color.neutralZeroOne}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          cancelButtonTextStyle={{...FontConfig.buttonThree, color: Color.primaryMain}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setShowAlertYakinKirim(false);
+            handleKirim("kirim");
+          }}
+          onCancelPressed={()=>{
+            setShowAlertYakinKirim(false);
           }}
         />
         <AwesomeAlert
