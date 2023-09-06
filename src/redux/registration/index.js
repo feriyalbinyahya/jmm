@@ -6,6 +6,11 @@ const initialState = {
   fullname: '',
   username: '',
   bio: '',
+  interest: [],
+  facebook: '',
+  instagram: '',
+  tiktok: '',
+  twitter: '',
   job: 0,
   gender: '',
   dateOfBirth: '',
@@ -40,6 +45,11 @@ export const authRegistrationSlice = createSlice({
       state.fullname = action.payload.fullname;
       state.username = action.payload.username;
       state.bio = action.payload.bio;
+      state.interest = action.payload.interest;
+      state.facebook = action.payload.facebook;
+      state.instagram = action.payload.instagram;
+      state.tiktok = action.payload.tiktok;
+      state.twitter = action.payload.twitter;
       state.job = action.payload.job;
       state.gender = action.payload.gender;
       state.dateOfBirth = action.payload.dateOfBirth;
@@ -70,6 +80,11 @@ export const authRegistrationSlice = createSlice({
       state.username =  '';
       state.job =  '';
       state.bio = '';
+      state.interest = [];
+      state.facebook = '';
+      state.instagram = '';
+      state.tiktok = '';
+      state.twitter = '';
       state.gender =  '';
       state.dateOfBirth =  '';
     },

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Button } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Button, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import HeaderRegistration from '../../../components/headerRegistration'
 import { Color, FontConfig } from '../../../theme'
@@ -16,6 +16,13 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomButton from '../../../components/customButton'
 import CustomTextArea from '../../../components/customTextArea'
+import IconInstagram from '../../../assets/images/icon/icon_instagram.png';
+import IconTiktok from '../../../assets/images/icon/icon_tiktok.png';
+import IconTwitter from '../../../assets/images/icon/icon_twitter.png';
+import IconFacebook from '../../../assets/images/icon/icon_facebook.png';
+import CustomInputAddon from '../../../components/customInputAddon'
+import InterestChoice from '../../../components/bottomSheet/InterestChoice'
+
 
 
 const DataDiriScreen = ({navigation}) => {
@@ -36,6 +43,18 @@ const DataDiriScreen = ({navigation}) => {
   const [usernameExist, setUsernameExist] = useState(false);
   const [bio, setBio] = useState("");
   const [isBio, setIsBio] = useState(true); 
+  const [instagram, setInstagram] = useState("");
+  const [tiktok, setTiktok] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [isModalKomunitasVisible, setIsModalKomunitasVisible] = useState(false);
+  const [komunitas, setKomunitas] = useState("");
+  const [isModalInterestVisible, setIsModalInterestVisible] = useState(false);
+  const [interest, setInterest] = useState("");
+  const [interestData, setInterestData] = useState([]);
+  const [interestLoading, setInterestLoading] = useState(false);
+  const [idInterest, setIdInterest] = useState("");
+
 
 
   const setOldJob = (data, id) => {
@@ -56,17 +75,31 @@ const DataDiriScreen = ({navigation}) => {
   }
 
   handleValidation = () => {
-    if(firstname && lastname && job && gender && dateOfBirth && bio){
+    if(firstname && lastname && job && gender && dateOfBirth && (instagram || tiktok || facebook || twitter) && bio && interest){
       setIsContinue(true);
     }else{
       setIsContinue(false);
     }
   }
 
+  const getInterestData = () =>{
+    setInterestLoading(true);
+    RegistrationService.getInterest()
+    .then(res=>{
+      console.log(res.data.data);
+      setInterestData(res.data.data);
+      setInterestLoading(false);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
   const saveDataDiriRegistration = () => {
     console.log({fullname: `${firstname} ${lastname}`, username: username, job: idJob, bio: bio, gender: gender, dateOfBirth: dateOfBirth})
     dispatch(
-      setDataDiriRegistration({fullname:`${firstname} ${lastname}`, username: username, job: idJob, bio: bio, gender: gender, dateOfBirth: dateOfBirth})
+      setDataDiriRegistration({fullname:`${firstname} ${lastname}`, username: username, job: idJob, bio: bio, interest: [parseInt(idInterest)], 
+      facebook: facebook, instagram: instagram, tiktok: tiktok, twitter: twitter, gender: gender, dateOfBirth: dateOfBirth})
     );
   }
 
@@ -88,9 +121,13 @@ const DataDiriScreen = ({navigation}) => {
     }
   }
 
+  useEffect(()=>{
+    getInterestData();
+  }, [])
+
   useEffect(()=> {
     handleValidation();
-  }, [dateOfBirth, job, gender, firstname, lastname, bio]);
+  }, [dateOfBirth, job, gender, firstname, lastname, bio, instagram, tiktok, facebook, twitter, interest]);
 
   const handleDateChange = (event, data) => {
     setIsCalendarVisible(!isCalendarVisible);
@@ -121,6 +158,8 @@ const DataDiriScreen = ({navigation}) => {
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
       <CustomBottomSheet children={<GenderChoice gender={gender} setModalVisible={setModalVisible} setGender={setGender} />} 
       isModalVisible={isModalVisible} setModalVisible={setModalVisible} title="Pilih Jenis Kelamin" />
+      <CustomBottomSheet children={<InterestChoice id={idInterest} setId={setIdInterest} data={interestData} item={interest} setModalVisible={setIsModalInterestVisible} setItem={setInterest} />} 
+      isModalVisible={isModalInterestVisible} setModalVisible={setIsModalInterestVisible} title="Pilih Interest" />
       <HeaderRegistration navigation={navigation} numberStep={1} />
       <ScrollView>
         <View style={styles.topSection}>
@@ -140,9 +179,9 @@ const DataDiriScreen = ({navigation}) => {
             </View>
             <Text style={styles.titleFormInput}>{`Username (Optional)`}</Text>
             <CustomInput value={username} setValue={setUsername} placeholder="ex: bimakusuma" />
-            <Text style={styles.titleFormInput}>Bio/Ketertarikan</Text>
+            <Text style={styles.titleFormInput}>Tentangmu</Text>
             <CustomTextArea value={bio} setValue={setBio} inputNotWrong={isBio} type='text' width='100%'
-             placeholder="Tulis tentangmu dan ketertarikanmu disini" />
+             placeholder="Tulis tentangmu dan komunitas yang kamu ikuti" />
              <Text style={{...styles.textMasukanDeskripsi, color: isBio ? Color.secondaryText : Color.danger}}>
               Maksimal 280 karakter.
             </Text>
@@ -172,6 +211,48 @@ const DataDiriScreen = ({navigation}) => {
             {isCalendarVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
             display="calendar" onChange={handleDateChange} value={new Date(2000, 10, 20)}
              /> : <></>}
+            <View style={{height: 10}}></View>
+            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Interest</Text>
+            <View style={{height: 5}}></View>
+            <DropDownButton onPress={()=>setIsModalInterestVisible(true)} placeholder='Pilih interest kamu' text={interest} />
+            
+             {/**Media sosial */}
+            <View style={styles.mediaSosial}>
+              <Text style={{...FontConfig.titleThree, color: '#000000'}}>Media Sosial</Text>
+              <View style={{height: 3}}></View>
+              <Text style={{...FontConfig.captionOne, color: '#757575'}}>{`Paling tidak harap isi 1 (satu) media sosialmu.`}</Text>
+              <View>
+                <View style={{height: 10}}></View>
+                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Instagram</Text>
+                <View style={{height: 5}}></View>
+                <CustomInputAddon placeholder="Nama akun/username" 
+                value={instagram} setValue={setInstagram}
+                leftChild={<Image source={IconInstagram} style={styles.iconStyle}
+                />} />
+                <View style={{height: 10}}></View>
+                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tiktok</Text>
+                <View style={{height: 5}}></View>
+                <CustomInputAddon placeholder="Nama akun/username" 
+                value={tiktok} setValue={setTiktok}
+                leftChild={<Image source={IconTiktok} style={styles.iconStyle}
+                />} />
+                <View style={{height: 10}}></View>
+                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Twitter</Text>
+                <View style={{height: 5}}></View>
+                <CustomInputAddon placeholder="Nama akun/username" 
+                value={twitter} setValue={setTwitter}
+                leftChild={<Image source={IconTwitter} style={styles.iconStyle}
+                />} />
+                <View style={{height: 10}}></View>
+                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Facebook</Text>
+                <View style={{height: 5}}></View>
+                <CustomInputAddon placeholder="Nama akun/username" 
+                value={facebook} setValue={setFacebook}
+                leftChild={<Image source={IconFacebook} style={styles.iconStyle}
+                />} />
+              </View>
+              <View style={{height: 5}}></View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -223,6 +304,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 20,
         backgroundColor: '#FFFF'
+    },
+    iconStyle: {
+      width: 20,
+      height: 20,
+    },
+    mediaSosial: {
+      paddingTop: 20
     },
     textIsiData: {
         ...FontConfig.titleOne,

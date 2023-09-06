@@ -30,8 +30,8 @@ import GenderChoice from '../../components/bottomSheet/genderChoice';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const EditSimpatisan = ({navigation, route}) => {
-    const {Foto, Firstname, Lastname, Phone, Instagram, Tiktok, Facebook, Twitter, 
-    Provinsi, Id_provinsi, Kota, Id_kota, Kecamatan, Id_kecamatan, Capres, AlasanSuka, CapresTidakSuka, AlasanTidakSuka, id, 
+    const {Foto, Firstname, Lastname, Phone, Instagram, Tiktok, Facebook, Twitter, Pekerjaan, Id_pekerjaan, 
+    Provinsi, Id_provinsi, Kota, Id_kota, Kecamatan, Id_kecamatan, Id_kelurahan, Kelurahan, Alamat, Capres, AlasanSuka, CapresTidakSuka, AlasanTidakSuka, id, 
     tanggal_lahir, jenis_kelamin} = route.params;
     const [foto, setFoto] = useState(Foto);
     const [firstname, setFirstname] = useState(Firstname);
@@ -39,6 +39,8 @@ const EditSimpatisan = ({navigation, route}) => {
     const [phone, setPhone] = useState(Phone);
     const [phoneIsFocused, setPhoneIsFocused] = useState(false);
     const [isContinue, setIsContinue] = useState(false);
+    const [job, setJob] = useState(Pekerjaan);
+    const [idJob, setIdJob] = useState(Id_pekerjaan);
     const [isPhone, setIsPhone] = useState(true);
     const [phoneNotEmpty, setPhoneNotEmpty] = useState(true);
     const [instagram, setInstagram] = useState(Instagram);
@@ -48,9 +50,12 @@ const EditSimpatisan = ({navigation, route}) => {
     const [dataProvinsi, setDataProvinsi] = useState([]);
     const [dataKabkot, setDataKabkot] = useState([]);
     const [dataKecamatan, setDataKecamatan] = useState([]);
+    const [dataKelurahan, setDataKelurahan] = useState([]);
     const [provinsi, setProvinsi] = useState(Id_provinsi);
     const [kota, setKota] = useState(Id_kota);
     const [kecamatan, setKecamatan] = useState(Id_kecamatan);
+    const [kelurahan, setKelurahan] = useState(Id_kelurahan);
+    const [address, setAddress] = useState(Alamat)
     const [capresData, setCapresData] = useState([]);
     const [capresLoading, setCapresLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -70,6 +75,7 @@ const EditSimpatisan = ({navigation, route}) => {
     const [dateOfBirth, setDateOfBirth] = useState(tanggal_lahir);
     const [isModalGenderVisible, setModalGenderVisible] = useState(false);
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+    const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -91,6 +97,8 @@ const EditSimpatisan = ({navigation, route}) => {
         "domisili_prov": provinsi,
         "domisili_kabkot": kota,
         "domisili_kec": kecamatan,
+        "domisili_kel": kelurahan,
+        "domisili_alamat":address,
         "sosmed_fb": facebook,
         "sosmed_tiktok": tiktok,
         "sosmed_twitter": twitter,
@@ -101,7 +109,8 @@ const EditSimpatisan = ({navigation, route}) => {
         "alasan_capres_tidak_suka": alasanTidakSuka,
         "jenis_kelamin": gender,
         "tanggal_lahir": dateOfBirth,
-        "useragent": ""
+        "useragent": "",
+        "id_pekerjaan": idJob
     })
       .then(res=> {
         console.log(res.data.message);
@@ -144,6 +153,16 @@ const EditSimpatisan = ({navigation, route}) => {
       RegistrationService.getAllKecamatan(properti)
       .then(res=> {
         setDataKecamatan(res.data.data);
+      })
+      .catch(err=> {
+        console.log(err);
+      })
+    }
+
+    const getDataKelurahan = (properti) => {
+      RegistrationService.getAllKelurahan(properti)
+      .then(res=> {
+        setDataKelurahan(res.data.data);
       })
       .catch(err=> {
         console.log(err);
@@ -208,6 +227,15 @@ const EditSimpatisan = ({navigation, route}) => {
       navigation.navigate("AmbilFotoRegister", {path: 'HasilUnggahFotoSimpatisan', type: 'noholes'});
   }
 
+  const setOldJob = (data, id) => {
+    setJob(data);
+    setIdJob(id);
+  }
+
+  handleJobButton = () => {
+    navigation.navigate('DropDown', {title: 'Pekerjaan', item: job, onGoBack: setOldJob, id: idJob, properti: ''});
+  }
+
   handlePilihDariGaleri = async () => {
       setIsModalVisiblePhoto(false);
       let pathImage = '';
@@ -236,7 +264,8 @@ const EditSimpatisan = ({navigation, route}) => {
 
   handleValidation = () => {
     if(firstname && lastname && phone && isPhone && (instagram || tiktok || facebook || twitter) && provinsi && 
-    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka && gender && dateOfBirth){
+    kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka && gender && dateOfBirth && 
+    address && !privacyPolicyDisabled && job){
       setIsContinue(true);
     }else{
       setIsContinue(false);
@@ -289,6 +318,12 @@ const EditSimpatisan = ({navigation, route}) => {
     }, [kota])
 
     useEffect(()=>{
+      if(kecamatan != '' && kecamatan != 0){
+        getDataKelurahan(parseInt(kecamatan));
+      }
+    }, [kecamatan])
+
+    useEffect(()=>{
         if(phone){
           phoneValidation(phone);
         }
@@ -296,8 +331,8 @@ const EditSimpatisan = ({navigation, route}) => {
 
     useEffect(()=> {
       handleValidation();
-    }, [firstname, lastname, phone, instagram, tiktok, facebook, twitter, provinsi, kota, kecamatan,
-    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto, dateOfBirth, gender]);
+    }, [firstname, lastname, phone, instagram, tiktok, facebook, twitter, provinsi, kota, kecamatan, kelurahan, address,
+    capres, alasanSuka, capresTidakSuka, alasanTidakSuka, foto, dateOfBirth, gender, privacyPolicyDisabled, job]);
   return (
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
       <CustomBottomSheet 
@@ -342,6 +377,12 @@ const EditSimpatisan = ({navigation, route}) => {
               }
               <View style={{width: 20}}></View>
               <View style={{justifyContent: 'center'}}>
+                <Pressable onPress={handleAddPhoto} style={styles.buttonEdit}>
+                  <Text style={{...FontConfig.bodyThree, color: '#000000'}}>Ubah Foto</Text>
+                  <View style={{width: 2}}></View>
+                  <Ionicons name="chevron-forward-outline" color="#000000" size={14} />
+                </Pressable>
+                <View style={{height: 10}}></View>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text style={{fontSize: 6, color: Color.neutralZeroSeven}}>{'\u2B24'}</Text>
                       <View style={{width: 4}}></View>
@@ -377,6 +418,8 @@ const EditSimpatisan = ({navigation, route}) => {
           keyboardType='number-pad' placeholder='08' placeholderTextColor={Color.disable} />
           {phoneNotEmpty?(isPhone? <></> : <FormErrorMessage text="Nomor ponsel yang dimasukkan tidak valid." />): 
           <FormErrorMessage text="Kolom wajib diisi." />}
+          <Text style={styles.titleFormInput}>Pekerjaan</Text>
+          <DropDownButton placeholder='Pilih pekerjaan' text={job} onPress={handleJobButton} />
           <Text style={styles.titleFormInput}>Jenis Kelamin</Text>
           <DropDownButton placeholder='Pilih' text={gender} onPress={handleGenderButton} />
           <Text style={styles.titleFormInput}>Tanggal Lahir</Text>
@@ -427,6 +470,10 @@ const EditSimpatisan = ({navigation, route}) => {
         <View style={styles.domisili}>
           <Text style={{...FontConfig.titleThree, color: '#000000'}}>Domisili</Text>
           <View style={{height: 8}}></View>
+          <Text style={styles.titleFormInput}>Alamat Lengkap</Text>
+          <CustomTextArea inputNotWrong={true} value={address} setValue={setAddress}
+            placeholder="Contoh: Jl. Relawan, Gg. 01, No. 10" width='100%' />
+          <View style={{height: 10}}></View>
           <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Provinsi</Text>
           <View style={{height: 5}}></View>
           <CustomSelect value={provinsi} setValue={setProvinsi} data={dataProvinsi}
@@ -446,6 +493,14 @@ const EditSimpatisan = ({navigation, route}) => {
           <View style={{height: 5}}></View>
           <CustomSelect value={kecamatan} setValue={setKecamatan} data={dataKecamatan}
           title="Kecamatan" labelField="nama_kecamatan" valueField="id_kecamatan" /></> : <></>
+          }
+          <View style={{height: 10}}></View>
+          {kecamatan != "" ? 
+          <>
+          <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Kelurahan</Text>
+          <View style={{height: 5}}></View>
+          <CustomSelect value={kelurahan} setValue={setKelurahan} data={dataKelurahan}
+          title="Kelurahan" labelField="nama_kelurahan" valueField="id_kelurahan" /></> : <></>
           }
         </View>
         <View style={{height: 6, backgroundColor: '#EDEDED'}}></View>
@@ -472,6 +527,20 @@ const EditSimpatisan = ({navigation, route}) => {
         <CustomTextArea inputNotWrong={true} value={alasanTidakSuka} setValue={setAlasanTidakSuka}
           placeholder="Tulis alasanmu disini.." width='100%' />
         <View style={{height: 10}}></View>
+        {/**<View style={{flexDirection: 'row',}}>
+          <Pressable style={{marginVertical: 5}} onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
+              {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
+              : <View style={styles.checkboxOff}></View>}
+          </Pressable>
+          <Text style={{...FontConfig.captionOne, color: Color.neutralColorGrayEight, marginHorizontal: 5, width: '90%'}}>
+            Pilih untuk melanjutkan, dengan memilih kamu menyetujui 
+            <Text onPress={()=>{}} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
+            dan 
+            <Text style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
+            GEN Sat Set
+          </Text>
+        </View>
+        <View style={{height: 10}}></View> */}
         </View>
       </ScrollView>
       <View style={styles.bottomSection}>
@@ -488,7 +557,7 @@ const EditSimpatisan = ({navigation, route}) => {
       <AwesomeAlert
           show={showAlert}
           showProgress={false}
-          title="Gagal menambahkan simpatisan"
+          title="Gagal menambahkan kawan"
           message={messageError}
           closeOnTouchOutside={false}
           closeOnHardwareBackPress={false}
@@ -508,7 +577,7 @@ const EditSimpatisan = ({navigation, route}) => {
           show={showAlertSuccess}
           showProgress={false}
           title="Sukses menyimpan perubahan"
-          message="Perubahan simpatisan berhasil tersimpan"
+          message="Perubahan kawan berhasil tersimpan"
           closeOnTouchOutside={false}
           closeOnHardwareBackPress={false}
           showCancelButton={false}
@@ -544,6 +613,26 @@ const styles = StyleSheet.create({
     unggahFoto: {
         paddingHorizontal: 20,
         paddingTop: 20
+    },
+    buttonEdit: {
+      backgroundColor: Color.neutralZeroOne,
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 32,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      alignSelf: 'baseline',
+      borderWidth: 0.5,
+      borderColor: Color.graySix
+    },
+    checkboxOff: {
+      borderWidth: 1.5,
+      borderColor: Color.secondaryText,
+      width: 16,
+      height: 16,
+      backgroundColor: Color.neutralZeroOne,
+      marginHorizontal: 3
     },
     boxAddPhoto: {
         justifyContent: 'center',

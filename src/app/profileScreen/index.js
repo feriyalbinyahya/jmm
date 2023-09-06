@@ -81,7 +81,6 @@ const ProfileScreen = ({navigation}) => {
         setIsLoading(true);
         ProfileServices.getProfile()
         .then(res=> {
-            console.log(res.data.data);
             if(res.data.message != "Token expired."){
                 setProfileData(res.data.data[0]);
                 setIsLoading(false);
@@ -249,7 +248,7 @@ const ProfileScreen = ({navigation}) => {
             </Pressable>
             <View style={{height: 10}}></View>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                {status == "Diterima" ? <Image source={Logo} style={{width: 240, height: 96}} /> : 
+                {status == "Diterima" ? <Image source={Logo} style={{width: 137, height: 55}} /> : 
                 <View style={{height: 96}}></View>
                 }
             </View>

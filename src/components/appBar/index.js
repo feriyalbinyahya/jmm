@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     logo: {
-        width: 109,
-        height: 44
+        width: 126,
+        height: 52
     },
     textTitle: {
         ...FontConfig.titleThree,

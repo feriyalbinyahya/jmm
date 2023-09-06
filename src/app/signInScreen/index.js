@@ -9,7 +9,7 @@ import {
   Border,
   FontConfig,
 } from "../../theme";
-import Logo from '../../assets/images/LogoAplikasi.png';
+import Logo from '../../assets/images/LogoLogin.png';
 import iconGoogle from '../../assets/images/icon/icon_google.png';
 import { TextInput } from "react-native/Libraries/Components/TextInput/TextInput";
 import CustomInput from "../../components/customInput";
@@ -88,7 +88,7 @@ const SignInPage = ({navigation}) => {
       dispatch(
         setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user,
         isNoHpVerified: data.is_no_hp_verified, fullname: data.nama_user, noHp: data.no_hp, 
-        status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization})
+        status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization, statusPolicy: data.status_policy})
       );
       AsyncStorage.setItem('token', data.token);
     }
@@ -169,12 +169,9 @@ const SignInPage = ({navigation}) => {
         isModalVisible={showAlertStatusAccount} setModalVisible={setShowStatusAccount} 
         title="" />
         <View style={styles.header}>
+          <View style={{alignItems: 'center', justifyContent: 'center'}}><Image source={Logo} style={styles.logoDashboard} /></View>
           <View style={styles.topSection}>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={styles.textSelamatDatang}>Selamat Bergabung</Text>
-              
-                <Image source={Logo} style={styles.logoDashboard} />
-              </View>
+              <Text style={styles.textSelamatDatang}>Selamat Bergabung</Text>
               <View style={{height: 20}}></View>
               <Text style={styles.textTopSection}>Masukan nomor ponsel dan kata sandi yang sudah terdaftar.
               </Text>
@@ -356,8 +353,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   logoDashboard:{
-    width: 174,
-    height: 70
+    width: 320,
+    height: 129
   },
   masukGoogle: {
     flexDirection:'row',
@@ -393,7 +390,7 @@ const styles = StyleSheet.create({
   textSelamatDatang:{
     ...FontConfig.titleOne,
     color: Color.primaryMain,
-    width: '50%'
+    width: '100%'
   },
   textTopSection: {
     ...FontConfig.bodyTwo,
@@ -410,7 +407,7 @@ const styles = StyleSheet.create({
     ...FontConfig.bodyTwo
   },
   topSection: {
-    margin:20
+    marginHorizontal:20,
   },
   visibiltyButton:{
     top: 20,
@@ -419,7 +416,7 @@ const styles = StyleSheet.create({
   version: {
     alignItems: 'center',
     paddingHorizontal: 5,
-    height: 40,
+    height: 30,
     justifyContent: 'center',
   },
   butuhBantuan: {

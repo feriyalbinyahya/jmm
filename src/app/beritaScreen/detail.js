@@ -66,6 +66,9 @@ const BeritaDetailScreen = ({navigation, route}) => {
             setJumlahLike(res.data.data[0].jumlah_like);
             setIsLoading(false);
         })
+        .catch(err=>{
+            console.log(err.response.data.message);
+        })
     }
 
 

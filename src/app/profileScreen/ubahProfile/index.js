@@ -11,8 +11,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { launchImageLibrary } from 'react-native-image-picker'
 import ProfileServices from '../../../services/profile'
 import { useFocusEffect } from '@react-navigation/native';
+import IconFacebook from '../../../assets/images/icon/icon_facebook.png';
+import IconTwitter from '../../../assets/images/icon/icon_twitter.png';
+import IconTiktok from '../../../assets/images/icon/icon_tiktok.png';
+import IconInstagram from '../../../assets/images/icon/icon_instagram.png';
+
 const UbahProfileScreen = ({navigation}) => {
-    const subjectDataDiri = ["Nama Lengkap", "Username", "Bio", "Pekerjaan",
+    const subjectDataDiri = ["Nama Lengkap", "Username", "Tentangmu", "Pekerjaan",
      "Jenis Kelamin", "Tanggal Lahir"];
     const [dataDiri, setDataDiri] = useState([]);
     const [fotoProfil, setFotoProfil] = useState("");
@@ -27,6 +32,18 @@ const UbahProfileScreen = ({navigation}) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [imageGallery, setImageGallery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [medsos, setMedsos] = useState([
+        {"instagram": "", "facebook": "", "tiktok": "", "twitter": ""}
+    ]);
+
+    const MediaSosialItem = ({image, username}) => {
+        return(
+        <Pressable style={{flexDirection: 'row'}}>
+            <Image source={image} style={{width: 18, height: 18}} />
+            <View style={{width: 5}}></View>
+            <Text style={styles.textContent}>{username}</Text>
+        </Pressable>)
+    }
 
 
     const loadDataDiri = (dataDiriStore) => {
@@ -73,6 +90,9 @@ const UbahProfileScreen = ({navigation}) => {
         ProfileServices.getProfile()
         .then(res=> {
             if(res.data.message != "Token expired."){
+                if(res.data.data[0].medsos.length != 0){
+                    setMedsos(res.data.data[0].medsos);
+                }
                 loadDataDiri(res.data.data[0]);
                 loadAccount(res.data.data[0]);
                 loadAlamat(res.data.data[0]);
@@ -145,7 +165,7 @@ const UbahProfileScreen = ({navigation}) => {
                     <Text style={styles.textTitleSection}>Data Diri</Text>
                     <Pressable onPress={()=> {
                     navigation.navigate("UbahDataDiriProfile", 
-                    {namaLengkap: dataDiri[0], userName: dataDiri[1], biodata: dataDiri[2]});
+                    {namaLengkap: dataDiri[0], userName: dataDiri[1], biodata: dataDiri[2], medsos: medsos});
                     }}><Image style={styles.iconEdit} source={IconEdit} />
                     </Pressable>
                 </View>
@@ -161,6 +181,13 @@ const UbahProfileScreen = ({navigation}) => {
                     })}
                 </View>
             </View>
+            {medsos.length != 0 ? <View style={{flexDirection: 'row', flexWrap: 'wrap', columnGap: 30, rowGap: 10, paddingHorizontal: 20}}>
+                {medsos[0].facebook != "" ? <MediaSosialItem image={IconFacebook} username={medsos[0].facebook} /> : <></>}
+                {medsos[0].instagram != "" ? <MediaSosialItem image={IconInstagram} username={medsos[0].instagram} /> : <></>}
+                {medsos[0].tiktok != "" ? <MediaSosialItem image={IconTiktok} username={medsos[0].tiktok} /> : <></>}
+                {medsos[0].twitter != "" ? <MediaSosialItem image={IconTwitter} username={medsos[0].twitter} /> : <></>}
+            </View> : <></>}
+            <View style={{height: 15}}></View>
             <View style={{borderWidth: 0.5, borderColor: Color.lightBorder}}></View>
             <View style={styles.containSection}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -169,7 +196,6 @@ const UbahProfileScreen = ({navigation}) => {
                 <View style={{height: 10}}></View>
                 <View>
                     {subjectAccount.map((item, index) => {
-                        console.log(item);
                         return(
                             <View key={index} style={styles.editInfoAkun}>
                                 <View style={styles.rowSection}>
@@ -221,6 +247,10 @@ const styles = StyleSheet.create({
         ...FontConfig.bodyOne,
         color: Color.primaryMain
     },
+    textContent: {
+        ...FontConfig.bodyTwo,
+        color: '#000000'
+    },
     imageProfile: {
         width: 72,
         height: 72,
@@ -254,7 +284,7 @@ const styles = StyleSheet.create({
     textData: {
         ...FontConfig.titleThree,
         color: Color.title,
-        width: '80%'
+        width: '70%'
     },
     iconEdit: {
         width: 16,

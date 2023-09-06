@@ -11,7 +11,8 @@ const initialState = {
     status: '',
     token: '',
     fotoProfil: '',
-    isReferalOrganization: 0
+    isReferalOrganization: 0,
+    statusPolicy: 0,
 
 }
 
@@ -31,6 +32,7 @@ export const credentialSlice = createSlice({
       state.token = action.payload.token;
       state.fotoProfil = action.payload.fotoProfil;
       state.isReferalOrganization = action.payload.isReferalOrganization;
+      state.statusPolicy = action.payload.statusPolicy;
     },
     deleteCredentials: (state) => {
         state.idOrganisasi = '';
@@ -43,6 +45,7 @@ export const credentialSlice = createSlice({
         state.token = '';
         state.fotoProfil = '';
         state.isReferalOrganization = 0;
+        state.statusPolicy = 0;
     }
   },
   extraReducers: (builder) => {

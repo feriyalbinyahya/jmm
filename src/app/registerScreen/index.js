@@ -27,6 +27,8 @@ const RegisterScreen = ({navigation}) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [isPasswordMatch, setIsPasswordMatch] = useState(true);
     const [phoneExist, setPhoneExist] = useState(false);
+    const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(true);
+    const [isContinue, setIsContinue] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -122,6 +124,14 @@ const RegisterScreen = ({navigation}) => {
       }
     }, [password]);
 
+    useEffect(()=>{
+      if(isPhone && isPassword && isPasswordMatch && privacyPolicyDisabled && phone && password && confirmPassword){
+        setIsContinue(true);
+      }else{
+        setIsContinue(false);
+      }
+    }, [isPhone, isPassword, isPasswordMatch, privacyPolicyDisabled])
+
     const saveAuthRegistration = (phone, password, confirmPassword) => {
       dispatch(
         setAuthRegistration({phone: phone, password: password})
@@ -152,8 +162,22 @@ const RegisterScreen = ({navigation}) => {
             </Pressable>} 
         />
         {isPasswordMatch? <></>: <FormErrorMessage text="Kata sandi yang dimasukkan tidak sama dengan yang kamu buat." />}
-        <View style={{height: 25}}></View>
-        <CustomButton onPress={handleDaftarButton} fontStyles={{...FontConfig.buttonOne, color: 'white'}} 
+        {/**<View style={{height: 25}}></View>
+        <View style={{flexDirection: 'row',}}>
+          <Pressable style={{marginVertical: 5}} onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
+              {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
+              : <View style={styles.checkboxOff}></View>}
+          </Pressable>
+          <Text style={{...FontConfig.captionOne, color: Color.neutralColorGrayEight, marginHorizontal: 5, width: '90%'}}>
+            Pilih untuk melanjutkan, dengan memilih kamu menyetujui 
+            <Text onPress={()=>{}} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
+            dan 
+            <Text style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
+            GEN Sat Set
+          </Text>
+  </View>*/}
+        <View style={{height: 20}}></View>
+        <CustomButton disabled={!isContinue} onPress={handleDaftarButton} fontStyles={{...FontConfig.buttonOne, color: 'white'}} 
             text="Daftar" backgroundColor={Color.primaryMain} height={44} />
             
             {/***<View style={styles.atau}><Text style={{...FontConfig.captionTwo, color: Color.grayEight}}>ATAU</Text></View>
@@ -195,6 +219,14 @@ const styles = StyleSheet.create({
     buttonBack: {
         width: 32,
         height: 32
+    },
+    checkboxOff: {
+      borderWidth: 1.5,
+      borderColor: Color.secondaryText,
+      width: 16,
+      height: 16,
+      backgroundColor: Color.neutralZeroOne,
+      marginHorizontal: 3
     },
     daftarGoogle: {
         flexDirection:'row',
