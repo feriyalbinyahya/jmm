@@ -10,6 +10,10 @@ getAllPekerjaan = () => {
     return Request.get("user/daftar-pekerjaan", {headers: headers});
 }
 
+getInterest = async ()=> {
+    return Request.get(`user/interest`, {headers: headers});
+}
+
 getAllProvinsi = () => {
     return Request.get("daerah/provinsi", {headers: headers});
 }
@@ -72,7 +76,8 @@ const RegistrationService = {
     registration,
     verifyOtp,
     checkUsername,
-    checkPhone
+    checkPhone,
+    getInterest
   };
   
   export default RegistrationService;

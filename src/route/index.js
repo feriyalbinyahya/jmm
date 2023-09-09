@@ -105,6 +105,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="DetailSimpatisan" component={DetailSimpatisanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="ReferalSimpatisan" component={ReferalSimpatisan} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="TambahkanSimpatisan" component={TambahkanSimpatisan} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="DropDown" component={DropDownPage} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="EditSimpatisan" component={EditSimpatisanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilUnggahFotoSimpatisan" component={HasilUnggahFotoSimpatisan} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilLibraryFotoSimpatisan" component={HasilLibraryFotoSimpatisan} />

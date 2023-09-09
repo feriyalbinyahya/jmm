@@ -46,6 +46,8 @@ import CardGradient from '../../components/misi/cardGradient'
 import MisiServices from '../../services/misi'
 import CardWhite from '../../components/misi/cardWhite'
 import IconNoMisi from '../../assets/images/warning/nomisi.png'
+import AwesomeAlert from 'react-native-awesome-alerts'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 const HomepageScreen = ({navigation}) => {
@@ -59,6 +61,8 @@ const HomepageScreen = ({navigation}) => {
     const [surveiLoading, setSurveiLoading] = useState(false);
     const [allSurvei, setAllSurvei] = useState([]);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [showAlertPrivacyPolicy, setShowAlertPrivacyPolicy] = useState(false);
+    const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(true);
     const dispatch = useDispatch();
     var status = useSelector((state)=>{
         return state.credential.status;
@@ -66,6 +70,9 @@ const HomepageScreen = ({navigation}) => {
 
     const isReferalOrganization = useSelector((state)=>{
         return state.credential.isReferalOrganization;
+    })
+    const statusPolicy = useSelector((state)=>{
+        return state.credential.statusPolicy;
     })
 
     handleLogout = () => {
@@ -287,6 +294,7 @@ const HomepageScreen = ({navigation}) => {
     const [referal, setReferal] = useState("");
     const [isLoadingReferal, setIsLoadingReferal] = useState(false);
     const [isModalVisibleReferal, setModalVisibleReferal] = useState(false);
+    const [isPrivacySelected, setIsPrivacySelected] = useState(false);
 
     const getReferalData = () =>{
         setIsLoadingReferal(true);
@@ -325,6 +333,14 @@ const HomepageScreen = ({navigation}) => {
             duration: Snackbar.LENGTH_SHORT,
         });
     }
+
+    useEffect(()=>{
+        if(statusPolicy == 1 || statusPolicy == "1"){
+
+        }else{
+            //setShowAlertPrivacyPolicy(true);
+        }
+    }, [])
   return (
     <SafeAreaView style={{backgroundColor: Color.primaryMain, flex: 1}}>
         <CustomBottomSheet children={<QRView />} 
@@ -438,35 +454,37 @@ const HomepageScreen = ({navigation}) => {
             {/** survei section */}
             {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
             <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Isi Survei Yuk</Text>
+                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
                 <View style={{height: 20}}></View>
-                <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
             </View> : <></>) : 
             <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Isi Survei Yuk</Text>
+                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
                 <View style={{height: 20}}></View>
-                <CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} />
+                <View style={{flexDirection: 'row'}}>
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
+                </View>
             </View> : <></>
             }
 
             {/** misi section */}
             { status == "Diterima" ? !surveiLoading ? (dataMisi.length != 0 ?
             <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', paddingHorizontal: 15, alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 <View style={{height: 20}}></View>
-                <CustomCarousel width={width} height={190} children={<MisiView size={width*0.75} data={dataMisi} />} size={width*0.5} />
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={190} children={<MisiView size={width*0.75} data={dataMisi} />} size={width*0.5} /></View>
                 {/** <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />*/}
             </View> : 
             <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15,  justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 <View style={{height: 30}}></View>
-                <View style={{alignItems: 'center', justifyContent:'center'}}>
+                <View style={{alignItems: 'center', justifyContent:'center',  paddingHorizontal: 20,}}>
                     <Image source={IconNoMisi} style={{width: 74, height: 54}} />
                     <View style={{height: 15}}></View>
                     <Text style={{...FontConfig.titleTwo, color: Color.hitam}}>{`Belum ada misi yang Aktif`}</Text>
@@ -476,24 +494,24 @@ const HomepageScreen = ({navigation}) => {
             </View>
             ) : 
             <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row',  paddingHorizontal: 15, alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
                     <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 <View style={{height: 20}}></View>
-                <CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} />
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
             </View> : <></>
             }
 
             {/** berita terkini section */}
             {!beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15, justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Terkini</Text>
                     <Pressable onPress={()=>navigation.navigate('BeritaTerkini')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 
                 <View style={{height: 15}}></View>
-                <CustomCarousel height={225} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} />
+                <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} /></View>
             </View> : <>
             <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Berita Terkini</Text>
             <View style={{alignItems: 'center', padding: 20}}>
@@ -504,16 +522,16 @@ const HomepageScreen = ({navigation}) => {
                 <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, berita akan segera ditampilkan</Text>
             </View></> :
             <View style={styles.beritaSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Terkini</Text>
+                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Berita Terkini</Text>
                 <View style={{height: 20}}></View>
-                <CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} />
+                <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
             </View>
             }
             
             {/** berita organisasi section */}
-            <View style={styles.beritaSection}>
+            <View style={styles.beritaDaerahSection}>
                 {status == "Diterima" ? !beritaOrganisasiLoading ? dataBeritaOrganisasi.length != 0 ?
-                <><View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <><View style={{flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Daerahmu</Text>
                     <Pressable onPress={()=>navigation.navigate('BeritaOrganisasi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
@@ -547,6 +565,45 @@ const HomepageScreen = ({navigation}) => {
             </View> 
             <View style={{height: 10}}></View>
         </ScrollView>
+        <AwesomeAlert
+          show={showAlertPrivacyPolicy}
+          showProgress={false}
+          title="Butuh Persetujuanmu nih Sebelum Lanjut.."
+          customView={<View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{...FontConfig.bodyTwo, color: '#7B7B7B', width: '80%'}}>
+            Dengan menceklis kotak ini, kamu menyetujui Syarat & Ketentuan dan Kebijakan Privasi GEN Sat Set
+            </Text>
+            <Pressable onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
+                {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
+                        : <View style={styles.checkboxOff}></View>}
+            </Pressable>
+          </View>}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          confirmText="Kirim"
+          cancelText="Tutup"
+          titleStyle={{...FontConfig.titleTwo, color: Color.hitam}}
+          messageStyle={{...FontConfig.bodyTwo, color: Color.grayEight}}
+          confirmButtonStyle={privacyPolicyDisabled ? {width: '50%', height: '80%',
+            alignItems: 'center', backgroundColor: Color.grayFour,  borderRadius: 26,} : {width: '50%', height: '80%',
+            alignItems: 'center', backgroundColor: Color.primaryMain,  borderRadius: 26,}}
+          cancelButtonStyle={{width: '40%', height: '80%',  alignItems: 'center', borderColor: Color.primaryMain,
+          borderWidth:1, borderRadius: 26, backgroundColor: Color.neutralZeroOne}}
+          confirmButtonTextStyle={privacyPolicyDisabled ? {...FontConfig.buttonThree, color: Color.disable} : 
+        {...FontConfig.buttonThree, color: Color.neutralZeroOne}}
+        cancelButtonTextStyle={{color: Color.primaryMain, ...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            if(!privacyPolicyDisabled){
+                //handlePrivacyDisabled
+            }
+          }}
+          onCancelPressed={()=>{
+            setShowAlertPrivacyPolicy(false);
+          }}
+        />
     </SafeAreaView>
   )
 }
@@ -559,19 +616,32 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderColor: '#EEEEEE',
     },
+    checkboxOff: {
+        borderWidth: 1.5,
+        borderColor: Color.secondaryText,
+        width: 16,
+        height: 16,
+        backgroundColor: Color.neutralZeroOne,
+        marginHorizontal: 3
+    },
     scrollView: {
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
         backgroundColor: Color.neutralZeroOne
     }, 
     beritaSection: {
+        paddingVertical: 22,
+        borderColor: '#EEEEEE',
+        borderBottomWidth: 6
+    },
+    beritaDaerahSection: {
         paddingHorizontal: 20,
         paddingVertical: 22,
         borderColor: '#EEEEEE',
         borderBottomWidth: 6
     },
     surveiSection: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 0,
         paddingVertical: 22,
         borderColor: '#EEEEEE',
         borderBottomWidth: 6

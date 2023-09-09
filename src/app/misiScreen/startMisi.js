@@ -30,6 +30,7 @@ const StartMisiScreen = ({navigation, route}) => {
     const [judulKegiatan, setJudulKegiatan] = useState("");
     const [konsepKegiatan, setKonsepKegiatan] = useState("");
     const [laporanKegiatan, setLaporanKegiatan] = useState([]);
+    const [laporanTerkirim, setLaporanTerkirim] = useState("");
     const [namaFile, setNamaFile] = useState("");
     const [media, setMedia] = useState([]);
     const [namaFoto, setNamaFoto] = useState([]);
@@ -101,6 +102,7 @@ const StartMisiScreen = ({navigation, route}) => {
         }
         setJudulKegiatan(res.data.data[0].judul_kegiatan);
         setKonsepKegiatan(res.data.data[0].konsep_kegiatan);
+        setLaporanTerkirim(res.data.data[0].laporan_terkirim);
         let tempFile = [];
         if(res.data.data[0].laporan_kegiatan.length != 0){
           tempFile.push(res.data.data[0].laporan_kegiatan[0].base64_information);
@@ -115,7 +117,7 @@ const StartMisiScreen = ({navigation, route}) => {
           tempBase64.push(res.data.data[0].media[i].base64_information);
         }
         setNamaFoto(tempNamaFoto);
-        console.log(res.data.data[0].bisa_edit);
+        console.log(res.data.data[0].media);
         setMedia(tempBase64);
         let tempTautan = [];
         for(var i=0; i<res.data.data[0].tautan.length; i++){
@@ -156,10 +158,11 @@ const StartMisiScreen = ({navigation, route}) => {
       return (
           <>
           {data?.map((item, index)=> {
+            console.log(item);
               return(
                   <View key={index} style={{width: size, marginHorizontal: 10}}>
                     <AspectRatio w="100%" ratio={16 / 9}>
-                      <Image source={{uri: item}} />
+                      {typeof item == "string" ? <Image source={{uri: item}} /> : <></>}
                     </AspectRatio>
                   </View>
               )
@@ -193,7 +196,7 @@ const StartMisiScreen = ({navigation, route}) => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image style={{width: 16, height: 16}} source={IconTime} />
               <View style={{width: 4}}></View>
-              <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Misi dibuat : `}</Text>
+              <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Misi dipublikasi : `}</Text>
               <Text style={{...FontConfig.buttonThree, color: Color.neutralZeroSeven}}>{startDate}</Text>
           </View>
           <View style={{height: 5}}></View>
@@ -203,6 +206,13 @@ const StartMisiScreen = ({navigation, route}) => {
               <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Batas waktu : `}</Text>
               <Text style={{...FontConfig.buttonThree, color: Color.danger}}>{deadlineDate}</Text>
           </View>
+          {status == "Terkirim" || status == "Ditolak" || status == "Diterima" ? <><View style={{height: 5}}></View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Ionicons name="calendar-outline" size={16} color={Color.grayEight} />
+              <View style={{width: 4}}></View>
+              <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Laporan Terkirim : `}</Text>
+              <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>{laporanTerkirim}</Text>
+          </View></> : <></>}
           <View style={{height: 10}}></View>
 
           {/** Konsep kegiatan */}

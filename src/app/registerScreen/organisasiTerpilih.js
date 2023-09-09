@@ -54,7 +54,12 @@ const OrganisasiTerpilihScreen = ({navigation, route}) => {
             "kodepos": dataRegistrasi.alamat.kodepos,
             "foto_profil": photo,
             "organisasi": idOrganisasi,
-            "kode_referal_digunakan": kodeReferalDigunakan
+            "kode_referal_digunakan": kodeReferalDigunakan,
+            "interest": dataRegistrasi.interest,
+            "facebokk": dataRegistrasi.facebook,
+            "instagram": dataRegistrasi.instagram,
+            "tiktok": dataRegistrasi.tiktok,
+            "twitter": dataRegistrasi.twitter
         })
         .then(res=> {
             console.log(res.data.message);
@@ -284,7 +289,7 @@ const styles = StyleSheet.create({
         color: Color.graySeven
     },
     textNamaOrganisasi: {
-        ...FontConfig.titleFive,
+        ...FontConfig.titleFour,
         color: Color.title,
         textAlign: 'center',
         width: '80%',

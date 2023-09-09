@@ -41,10 +41,11 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
         const firstname = data.nama_lengkap.split(" ")[0];
         const lastname = data.nama_lengkap.split(" ")[1];
 
-        navigation.navigate("EditSimpatisan", {Foto : data.foto, Firstname: firstname, Lastname : lastname, 
+        navigation.navigate("EditSimpatisan", {Foto : data.foto, Firstname: firstname, Lastname : lastname, Pekerjaan: data.pekerjaan, Id_pekerjaan: data.id_pekerjaan,
             Phone : data.nomor_ponsel, Instagram : data.sosmed_instagram, Tiktok : data.sosmed_tiktok,
              Facebook: data.sosmed_fb, Twitter: data.sosmed_twitter, 
-            Provinsi : data.provinsi, Id_provinsi: data.id_provinsi, Kota : data.kabkot, Id_kota: data.id_kabkot, Id_kecamatan: data.id_kecamatan, Kecamatan : data.kecamatan, Capres : data.preferensi_capres,
+            Provinsi : data.provinsi, Id_provinsi: data.id_provinsi, Kota : data.kabkot, Id_kota: data.id_kabkot, Id_kecamatan: data.id_kecamatan, Kecamatan : data.kecamatan,
+            Id_kelurahan: data.id_kelurahan, Kelurahan : data.kelurahan, Alamat: data.alamat, Capres : data.preferensi_capres,
              AlasanSuka:data.alasan_preferensi_capres, CapresTidakSuka: data.capres_tidak_suka,
               AlasanTidakSuka: data.alasan_capres_tidak_suka, id: id, tanggal_lahir: data.tanggal_lahir, jenis_kelamin: data.jenis_kelamin});
     }
@@ -98,6 +99,7 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             <RowItem subject="Nama Lengkap" text={dataSimpatisan[0].nama_lengkap} />
             <RowItem subject="Nomor Ponsel" text={dataSimpatisan[0].nomor_ponsel} />
             <RowItem subject="Jenis Kelamin" text={dataSimpatisan[0].jenis_kelamin} />
+            <RowItem subject="Pekerjaan" text={dataSimpatisan[0].pekerjaan} />
             <RowItem subject="Tanggal Lahir" text={dataSimpatisan[0].tanggal_lahir} />
             <View style={{height: 15}}></View>
             {/**Media Sosial */}
@@ -113,9 +115,11 @@ const DetailSimpatisanScreen = ({navigation, route}) => {
             {/**Domisili */}
             <Text style={styles.titleContain}>Domisili</Text>
             <View style={{height: 10}}></View>
+            <RowItem subject="Alamat Lengkap" text={dataSimpatisan[0].alamat} />
             <RowItem subject="Provinsi" text={dataSimpatisan[0].provinsi} />
             <RowItem subject="Kab/Kota" text={dataSimpatisan[0].kabkot} />
             <RowItem subject="Kecamatan" text={dataSimpatisan[0].kecamatan} />
+            <RowItem subject="Kelurahan" text={dataSimpatisan[0].kelurahan} />
             <View style={{height: 15}}></View>
 
             <View style={styles.garis}></View>
@@ -168,7 +172,8 @@ const styles = StyleSheet.create({
     },
     rowContent: {
         flexDirection: 'row',
-        marginVertical: 5
+        marginVertical: 5,
+        width: '90%'
     },
     subjectContent: {
         ...FontConfig.bodyTwo,

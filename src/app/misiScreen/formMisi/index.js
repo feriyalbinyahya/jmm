@@ -228,6 +228,8 @@ const FormMisiScreen = ({navigation, route}) => {
       formdata.append('tandai_kawan[]', item);
     });
 
+    console.log(formdata);
+
 
     MisiServices.addMisi(id, formdata, type)
     .then(res=>{

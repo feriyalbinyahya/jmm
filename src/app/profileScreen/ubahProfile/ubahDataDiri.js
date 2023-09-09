@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button } from 'react-native'
+import { StyleSheet, Text, View, Button, Image, ScrollView } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import HeaderWhite from '../../../components/header/headerWhite'
 import { Color, FontConfig } from '../../../theme'
@@ -11,9 +11,14 @@ import RegistrationService from '../../../services/registration'
 import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomTextArea from '../../../components/customTextArea'
 import CustomButton from '../../../components/customButton'
+import CustomInputAddon from '../../../components/customInputAddon'
+import IconInstagram from '../../../assets/images/icon/icon_instagram.png';
+import IconTiktok from '../../../assets/images/icon/icon_tiktok.png';
+import IconTwitter from '../../../assets/images/icon/icon_twitter.png';
+import IconFacebook from '../../../assets/images/icon/icon_facebook.png';
 
 const UbahDataDiriScreen = ({navigation, route}) => {
-    const {namaLengkap, userName, biodata} = route.params;
+    const {namaLengkap, userName, biodata, medsos} = route.params;
     const [fullname, setFullname] = useState(namaLengkap);
     const [isFullname, setIsFulname] = useState(true);
     const [username, setUsername] = useState(userName);
@@ -22,12 +27,18 @@ const UbahDataDiriScreen = ({navigation, route}) => {
     const [isBio, setIsBio] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isContinue, setIsContinue] = useState(true);
+    const [instagram, setInstagram] = useState(medsos[0].instagram);
+    const [tiktok, setTiktok] = useState(medsos[0].tiktok);
+    const [twitter, setTwitter] = useState(medsos[0].twitter);
+    const [facebook, setFacebook] = useState(medsos[0].facebook);
 
     const dispatch = useDispatch();
 
     changeDataDiri = () => {
-        ProfileServices.putFullnameUsername({"nama_lengkap": fullname, "username": username, "bio": bio})
+        ProfileServices.putFullnameUsername({"nama_lengkap": fullname, "username": username, "bio": bio, 
+        "facebook": facebook, "instagram": instagram, "tiktok": tiktok, "twitter": twitter})
         .then(res=> {
+            console.log(res.data);
             if(res.data.status == 'success'){
                 setIsLoading(false);
                 navigation.goBack();
@@ -39,7 +50,9 @@ const UbahDataDiriScreen = ({navigation, route}) => {
     }
 
     handleLanjutkan = () => {
-        if(username != userName || fullname != namaLengkap || bio != biodata){
+        if(username != userName || fullname != namaLengkap || bio != biodata || facebook != medsos[0].facebook ||
+            instagram != medsos[0].instagram || tiktok != medsos[0].tiktok || twitter != medsos[0].twitter
+            ){
             setIsLoading(true);
             if(username == userName){
                 console.log("edit");
@@ -70,7 +83,7 @@ const UbahDataDiriScreen = ({navigation, route}) => {
     }
 
     handleValidation = () => {
-        if(fullname && bio && isBio){
+        if(fullname && bio && isBio && (facebook || instagram || tiktok || twitter)){
           setIsContinue(true);
         }else{
           setIsContinue(false);
@@ -91,11 +104,11 @@ const UbahDataDiriScreen = ({navigation, route}) => {
 
     useEffect(()=>{
         handleValidation();
-    }, [bio, fullname])
+    }, [bio, fullname, instagram, facebook, tiktok, twitter])
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
       <HeaderWhite navigation={navigation} title="Ubah Data Diri" />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.textUntukNama}>Untuk nama lengkap, 
         harap gunakan nama asli untuk memudahkan verifikasi.</Text>
         <Text style={styles.titleFormInput}>Nama Lengkap</Text>
@@ -103,19 +116,48 @@ const UbahDataDiriScreen = ({navigation, route}) => {
         <Text style={styles.titleFormInput}>{`Username (Optional)`}</Text>
         <CustomInput value={username} setValue={setUsername} placeholder="ex: ganjarpranowo" />
         {isUsername? <></> : <FormErrorMessage text="Username sudah diapakai." />}
-        <Text style={styles.titleFormInput}>Bio</Text>
+        <Text style={styles.titleFormInput}>Tentangmu</Text>
         <CustomTextArea value={bio} setValue={setBio} inputNotWrong={isBio} type='text' width='100%'
-            placeholder="masukan biodata diri dan ketertarikan capres" />
+            placeholder="Masukkan tentang dirimu dan komunitas yang kamu ikuti." />
         <Text style={{...styles.textMasukanDeskripsi, color: isBio ? Color.secondaryText : Color.danger}}>
         Maksimal 280 karakter.
         </Text>
-      </View>
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Instagram</Text>
+        <View style={{height: 5}}></View>
+        <CustomInputAddon placeholder="Nama akun/username" 
+        value={instagram} setValue={setInstagram}
+        leftChild={<Image source={IconInstagram} style={styles.iconStyle}
+        />} />
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tiktok</Text>
+        <View style={{height: 5}}></View>
+        <CustomInputAddon placeholder="Nama akun/username" 
+        value={tiktok} setValue={setTiktok}
+        leftChild={<Image source={IconTiktok} style={styles.iconStyle}
+        />} />
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Twitter</Text>
+        <View style={{height: 5}}></View>
+        <CustomInputAddon placeholder="Nama akun/username" 
+        value={twitter} setValue={setTwitter}
+        leftChild={<Image source={IconTwitter} style={styles.iconStyle}
+        />} />
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Facebook</Text>
+        <View style={{height: 5}}></View>
+        <CustomInputAddon placeholder="Nama akun/username" 
+        value={facebook} setValue={setFacebook}
+        leftChild={<Image source={IconFacebook} style={styles.iconStyle}
+        />} />
+        <View style={{height: 30}}></View>
+      </ScrollView>
       <View style={styles.bottomSection}>
         <View style={styles.buttonContinue}>
             <CustomButton
                 onPress={handleLanjutkan} 
                 fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}}
-                width='100%' height={44} text="Lanjutkan"
+                width='100%' height={44} text="Simpan Perubahan"
                 disabled={!isContinue}
                 backgroundColor={Color.primaryMain}
                 />
@@ -174,7 +216,11 @@ const styles = StyleSheet.create({
     textMasukanDeskripsi: {
         ...FontConfig.bodyThree,
         marginVertical: 5
-      },
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
     bottomSection: {
         backgroundColor: Color.neutralZeroOne,
         height: '12%',
