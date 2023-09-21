@@ -49,6 +49,7 @@ import IconNoMisi from '../../assets/images/warning/nomisi.png'
 import AwesomeAlert from 'react-native-awesome-alerts'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper'
+import BannerServices from '../../services/banner'
 
 
 const HomepageScreen = ({navigation}) => {
@@ -64,14 +65,12 @@ const HomepageScreen = ({navigation}) => {
     const [refreshing, setRefreshing] = React.useState(false);
     const [showAlertPrivacyPolicy, setShowAlertPrivacyPolicy] = useState(false);
     const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(true);
+    const [dataAllBanner, setDataBanner] = useState([]);
+    const [isBannerLoading, setBannerLoading] = useState(false);
     const dispatch = useDispatch();
     var status = useSelector((state)=>{
         return state.credential.status;
     })
-
-    const dataBanner =["https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg", 
-"https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg",
-"https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg"]
 
     const isReferalOrganization = useSelector((state)=>{
         return state.credential.isReferalOrganization;
@@ -211,6 +210,19 @@ const HomepageScreen = ({navigation}) => {
         })
     }
 
+    const getAllBanner = () => {
+        setBannerLoading(true);
+        BannerServices.getAllBanner()
+        .then(res=>{
+            setDataBanner(res.data.data);
+            setBannerLoading(false);
+        })
+        .catch(err=>{
+            console.log(err);
+            setBannerLoading(false);
+        })
+    }
+
     const getBeritaOrganisasi = () => {
         setBeritaOrganisasiLoading(true);
         BeritaServices.getBeritaHomepage("organisasi")
@@ -229,7 +241,6 @@ const HomepageScreen = ({navigation}) => {
         SurveiServices.getAllSurvei()
         .then(res=> {
             if(res.data.message != "Token expired."){
-                console.log(res.data.data);
                 setAllSurvei(res.data.data);
                 setSurveiLoading(false);
             }else{
@@ -276,6 +287,7 @@ const HomepageScreen = ({navigation}) => {
         }
         getBeritaTerkini();
         getAllMisiData();
+        getAllBanner();
         getReferalData();
         setRefreshing(false);
       }, [refreshing]);
@@ -290,6 +302,7 @@ const HomepageScreen = ({navigation}) => {
             }
             getBeritaTerkini();
             getAllMisiData();
+            getAllBanner();
             getReferalData();
         }, [])
     );
@@ -454,23 +467,29 @@ const HomepageScreen = ({navigation}) => {
             }
 
             {/** banner section */}
-            <Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
-        marginVertical: 20}}>Cek Sekarang Yuk</Text>
+            {status == "Diterima" ? !isBannerLoading ? <><Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
+            marginVertical: 20}}>Cek Sekarang Yuk</Text>
             <Swiper 
             bounces={false}
-            snapToInterval={width*0.7}
+            snapToInterval={width}
             decelerationRate='normal'
             activeDotColor={Color.primaryMain} 
-            style={{height: 200, marginLeft: 20}}>
-                {dataBanner.map((item, index)=>{
+            style={{height: 250, marginLeft: 30}}>
+                {dataAllBanner.map((item, index)=>{
                     return(
-                        <Pressable onPress={()=>navigation.navigate("Banner")} key={index}>
-                            <Image source={{uri: item}} style={{width: 300, height: 150 ,
+                        <Pressable onPress={()=>navigation.navigate("Banner", {id: item.id_berita})} key={index}>
+                            <Image source={{uri: `data:image/png;base64,${item.cover_berita}`}} style={{width: width-60, height: 200 ,
                             borderRadius: 10}} />
                         </Pressable>
                     )
                 })}
-            </Swiper>
+            </Swiper></> : 
+            <View style={{marginHorizontal: 20}}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111',
+                marginVertical: 20}}>Cek Sekarang Yuk</Text>
+                <Skeleton width={width-60} height={150} style={{borderRadius: 10}} />
+            </View>
+            : <></>}
 
             {/** survei section */}
             {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?

@@ -56,7 +56,7 @@ const AllBeritaContainer = ({navigation, title}) => {
 
   getBeritaTerkiniOnRefresh = () => {
     setIsLoading(true);
-    BeritaServices.getAllTerkini(1, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
+    BeritaServices.getAllTerkini(1, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search, 2)
     .then(res=>{
       setTotalPages(res.data.data.totalPages);
       setDataBerita(res.data.data.data);
@@ -85,7 +85,7 @@ const AllBeritaContainer = ({navigation, title}) => {
 
   getAllBeritaTerkini = () => {
     if(dataBerita.length == 0) setIsLoading(true);
-    BeritaServices.getAllTerkini(currentPage, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
+    BeritaServices.getAllTerkini(currentPage, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search, 2)
     .then(res=>{
       
       setTotalPages(res.data.data.totalPages);

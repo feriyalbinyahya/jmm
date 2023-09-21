@@ -19,7 +19,7 @@ function App() {
     const initialNotification = await notifee.getInitialNotification();
 
     if (initialNotification) {
-      handleNotificationOpen(initialNotification.notification);
+      handleNotificationOpen(initialNotification.notification.data);
     }
   }
 
@@ -35,7 +35,7 @@ function App() {
           break;
         case EventType.PRESS:
           console.log('User pressed notification', detail);
-          handleNotificationOpen(detail.notification);
+          handleNotificationOpen(detail.notification.data);
           break;
       }
     });
@@ -51,8 +51,7 @@ function App() {
     return null;
   }
 
-  handleNotificationOpen = ({notification}) => {
-    const {data} = notification;
+  handleNotificationOpen = (data) => {
     if(data.kategori == "Survey"){
       RootNavigation.navigate("StartSurvei", {id: data.id_content});
     }else if(data.kategori == "Berita"){

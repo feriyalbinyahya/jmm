@@ -19,9 +19,9 @@ const getHeaders = async() => {
     }
 }
 
-getAllTerkini = async (page, sort, filter, search) => {
+getAllTerkini = async (page, sort, filter, search, jenis_berita) => {
     let headersToken = await getHeaders();
-    return Request.get(`berita/terkini?size=5&page=${page}&sort=${sort}&filter=${filter}&search=${search}`, {headers: headersToken});
+    return Request.get(`berita/terkini?size=5&page=${page}&sort=${sort}&filter=${filter}&search=${search}&jenis_berita=${jenis_berita}`, {headers: headersToken});
 }
 
 getDetailBerita = async (id_berita) => {

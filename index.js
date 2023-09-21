@@ -20,15 +20,14 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
     // Check if the user pressed the "Mark as read" action
     if (type === EventType.ACTION_PRESS) {
         console.log("pencet notif");
-        handleNotificationOpen(notification);
+        handleNotificationOpen(notification.data);
   
         // Remove the notification
         await notifee.cancelNotification(notification.id);
     }
 });
 
-handleNotificationOpen = ({notification}) => {
-    const {data} = notification;
+handleNotificationOpen = (data) => {
     if(data.kategori == "Survey"){
       RootNavigation.navigate("StartSurvei", {id: data.id_content});
     }else if(data.kategori == "Berita"){
