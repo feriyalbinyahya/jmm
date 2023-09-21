@@ -61,6 +61,7 @@ const DetailLaporanScreen = ({navigation, route}) => {
             )
         })}
       </Swiper>
+      <View style={{height: 10}}></View>
       <ScrollView style={{paddingHorizontal: 20, height: '33%'}}>
         <View style={{height: 20}}></View>
         <Text style={{...FontConfig.titleThree, color:Color.primaryMain}}>Detail Laporan</Text>

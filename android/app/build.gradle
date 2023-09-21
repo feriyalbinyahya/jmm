@@ -78,7 +78,7 @@ android {
     defaultConfig {
         applicationId "com.gensatset"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 33
         versionCode 8
         versionName "1.2.4"
     }

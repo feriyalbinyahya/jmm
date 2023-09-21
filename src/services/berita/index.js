@@ -30,7 +30,6 @@ getDetailBerita = async (id_berita) => {
 }
 
 getAllOrganisasi = async (page, sort, filter, search) => {
-    console.log()
     let headersToken = await getHeaders();
     return Request.get(`berita/organisasi?size=5&page=${page}&sort=${sort}&filter=${filter}&search=${search}`, {headers: headersToken});
 }

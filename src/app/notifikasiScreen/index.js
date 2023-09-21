@@ -15,6 +15,7 @@ import {
    } from "react-native-popup-menu";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import HeaderWhite from '../../components/header/headerWhite'
+import MisiServices from '../../services/misi'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -31,12 +32,35 @@ const NotifikasiScreen = ({navigation}) => {
     const [showDeleteNotif, setShowDeleteNotif] = useState(false);
 
     const [dataPesan, setDataPesan] = useState([]);
+    const [dataInfoAkun, setDataInfoAkun] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onPressNotif = (id, kategori) => {
         if(kategori == "Berita"){
             navigation.navigate("BeritaDetail", {id: id});
         }else if(kategori == "Survei"){
             navigation.navigate("StartSurvei", {id:id});
+        }else if(kategori == "Misi" || kategori == "Misi Penting"){
+            setIsLoading(true);
+            MisiServices.getMisiNotif(id)
+            .then(res=>{
+                let data = res.data.data[0];
+                setIsLoading(false);
+                if(kategori == "Misi"){
+                    navigation.navigate("StartMisi", {id: id, judul: data.judul, deskripsi: data.deskripsi ,
+                        startDate: data.tanggal_publish, deadlineDate: data.batas_waktu, is_important: 0, kategori: data.kategori[0].nama_kategori});
+                }else{
+                    navigation.navigate("StartMisi", {id: id, judul: data.judul, deskripsi: data.deskripsi ,
+                        startDate: data.tanggal_publish, deadlineDate: data.batas_waktu, is_important: 1, kategori: data.kategori[0].nama_kategori});
+                }
+            })
+            .catch(err=>{
+                console.log(err.response.data);
+            })
+        }else if(kategori == "Laporan"){
+            navigation.navigate("DetailLaporan", {id: id});
+        }else if(kategori == "Kawan"){
+            navigation.navigate("ListSimpatisan");
         }
     }
 
@@ -85,11 +109,21 @@ const NotifikasiScreen = ({navigation}) => {
                 <Tab.Screen  name={`Pesan (${jumlahPesan})`}>
                     {()=> <NotifikasiPesan onPressNotif={onPressNotif} setJumlah={setJumlahPesan} dataPesan={dataPesan} allChecked={allChecked} setAllChecked={setAllChecked} terpilih={terpilih} setTerpilih={setTerpilih} />}
                 </Tab.Screen>
-                {/**<Tab.Screen  name="Info Akun">
-                    {()=> <NotifikasiInfoAkun />}
-        </Tab.Screen>**/}
+                <Tab.Screen  name={`Info Akun (${jumlahInfoAkun})`}>
+                    {()=> <NotifikasiInfoAkun onPressNotif={onPressNotif} setJumlah={setJumlahInfoAkun} dataPesan={dataInfoAkun} />}
+                </Tab.Screen>
             </Tab.Navigator>
         </View>
+        <AwesomeAlert
+          show={isLoading}
+          showProgress={true}
+          progressColor={Color.graySeven}
+          message="Loading"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={true}
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+        />
     </View>
   )
 }

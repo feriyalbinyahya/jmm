@@ -16,11 +16,12 @@ const StartSurveiScreen = ({navigation, route}) => {
     setLoading(true);
     SurveiServices.getSurveyDetail(id)
     .then(res=>{
+      console.log(res.data);
       setDataSurvey(res.data.data[0]);
       setLoading(false);
     })
     .catch(err=>{
-      console.log(err);
+      console.log(err.response);
     })
   }
 

@@ -54,10 +54,17 @@ getMisiDetail = async (id)=> {
     return Request.get(`misi/${id}`, {headers: headersToken});
 }
 
+getMisiNotif = async (id)=> {
+    console.log(id);
+    let headersToken = await getHeaders();
+    return Request.get(`misi/new/${id}`, {headers: headersToken});
+}
+
 const MisiServices = {
     getMisi,
     addMisi,
     getMisiDetail,
+    getMisiNotif,
     getStatusMisi,
     getMisiHomepage
   };

@@ -27,7 +27,7 @@ const CardSurvei = ({navigation, image, judul, id}) => {
         </Box>
         <Stack p="4" space={3} style={{backgroundColor: Color.neutralZeroOne}}>
           <Stack space={2}>
-            <Text style={{...FontConfig.titleThree, color: '#000000'}}>{judul}</Text>
+            <Text numberOfLines={2} style={{...FontConfig.titleThree, color: '#000000'}}>{judul}</Text>
           </Stack>
           <HStack alignItems="center" space={4} justifyContent="space-between">
             <HStack alignItems="center">

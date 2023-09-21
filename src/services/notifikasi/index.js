@@ -19,9 +19,9 @@ const getHeaders = async() => {
     }
 }
 
-getPesan = async () => {
+getNotifikasi = async (type, page) => {
     let headersToken = await getHeaders();
-    return Request.get(`notifikasi/pesan`, {headers: headersToken});
+    return Request.get(`notifikasi/pesan?type=${type}&size=5&page=${page}`, {headers: headersToken});
 }
 
 postToken = async (token, data) => {
@@ -34,7 +34,7 @@ postToken = async (token, data) => {
 
 
 const NotifikasiServices = {
-    getPesan,
+    getNotifikasi,
     postToken
   };
   

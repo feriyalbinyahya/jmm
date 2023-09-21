@@ -54,10 +54,12 @@ const SignInPage = ({navigation}) => {
     handleLogin = () => {
       setIsLoading(true);
       LoginServices.login({"no_hp": emailphone, "password": password})
-      .then(res=> {
+      .then(async(res)=> {
         console.log(res.data.data.foto_organisasi);
         if(res.data.message == "Login sukses."){
-          NotifikasiServices.postToken(res.data.data.token, {"fcmtoken": getToken})
+          let fcmToken = await getTokenNotification();
+          console.log({"fcmtoken": fcmToken});
+          NotifikasiServices.postToken(res.data.data.token, {"fcmToken": fcmToken})
           .then(res=>{
             console.log(res.data);
           })

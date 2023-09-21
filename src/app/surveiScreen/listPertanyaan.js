@@ -33,7 +33,7 @@ const ListPertanyaan = ({navigation, route}) => {
         setIsLoading(false);
       })
       .catch(err=>{
-        console.log(err);
+        console.log(err.response);
       })
     }
 
@@ -159,7 +159,7 @@ const ListPertanyaan = ({navigation, route}) => {
           }
         })
         .catch(err=>{
-          console.log(err);
+          console.log(err.response);
         })
       }
     }

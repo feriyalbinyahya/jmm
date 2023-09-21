@@ -7,6 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked, onPressNotif}) => {
     const [checked, setChecked] = useState(false);
     const [pressIn, setPressIn] = useState(false);
+    const [more, setMore] = useState(false);
+    const [isMore, setIsMore] = useState(false);
     checkedNotif = () => {
         setAllChecked(false);
         setTerpilih(terpilih-1);
@@ -27,6 +29,12 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
 
     handlePressNotif = () => {
         onPressNotif(item.id_content, item.kategori);
+    }
+
+    const handleTextLayout = (event) => {
+        if(event.nativeEvent.lines.length > 3){
+            setMore(true);
+        }
     }
 
     useEffect(()=> {
@@ -56,9 +64,14 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
                         <Text style={styles.textType}>{item.kategori}</Text>
                     </View>
                     <View style={{height: 8}}></View>
-                    <Text style={styles.textDeskripsi}>{item.deskripsi}</Text>
-                    <View style={{height: 8}}></View>
-                    <Text style={styles.textTanggal}>{item.tanggal_broadcast}</Text>
+                    {item.kategori != "Pengumuman" || isMore ? <Text style={styles.textDeskripsi}>{item.deskripsi}</Text> : 
+                    <><Text onTextLayout={handleTextLayout} numberOfLines={3} style={styles.textDeskripsi}>{item.deskripsi}</Text>
+                    {more ? <View style={{alignItems: 'flex-end'}}><Text onPress={()=>setIsMore(true)} style={styles.textMore}>Lihat Selengkapnya</Text></View> : <></>}
+                    </>
+                    }
+                    <View style={{height: 3}}></View>
+                    <Text style={styles.textTanggal}>{item.tanggal}</Text>
+                    <View style={{height: 10}}></View>
                 </View>
                 {terpilih > 0 ? <View>
                     {!checked ? <Ionicons name={"radio-button-off"}
@@ -77,7 +90,8 @@ export default NotifItem
 
 const styles = StyleSheet.create({
     notifContainer: {
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingTop: 15,
         borderColor: Color.lightBorder,
         borderBottomWidth: 1,
     },
@@ -101,6 +115,11 @@ const styles = StyleSheet.create({
     textDeskripsi: {
         ...FontConfig.bodyThree,
         color: '#000000',
+    },
+    textMore: {
+        ...FontConfig.bodyThree,
+        color: Color.blue,
+        marginVertical: 5
     },
     textTanggal: {
         ...FontConfig.bodyThree,

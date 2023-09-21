@@ -48,6 +48,7 @@ import CardWhite from '../../components/misi/cardWhite'
 import IconNoMisi from '../../assets/images/warning/nomisi.png'
 import AwesomeAlert from 'react-native-awesome-alerts'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Swiper from 'react-native-swiper'
 
 
 const HomepageScreen = ({navigation}) => {
@@ -67,6 +68,10 @@ const HomepageScreen = ({navigation}) => {
     var status = useSelector((state)=>{
         return state.credential.status;
     })
+
+    const dataBanner =["https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg", 
+"https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg",
+"https://2.bp.blogspot.com/-DV2zm83hsqk/UxVt97Ou-oI/AAAAAAAAKt4/9vri4G7mBkE/s1600/Alam10.jpg"]
 
     const isReferalOrganization = useSelector((state)=>{
         return state.credential.isReferalOrganization;
@@ -99,7 +104,6 @@ const HomepageScreen = ({navigation}) => {
       }
 
     const saveCredentials = (data) => {
-        console.log(data);
         dispatch(
           setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user,
           isNoHpVerified: data.is_no_hp_verified, fullname: data.nama_user, noHp: data.no_hp, 
@@ -181,7 +185,6 @@ const HomepageScreen = ({navigation}) => {
         setLaporanLoading(true);
         LaporanServices.getLaporanJenis()
         .then(res=>{
-            console.log(res.data.data);
             if(res.data.message != "Token expired."){
                 setLaporanJenis(res.data.data);
                 setLaporanLoading(false);
@@ -226,6 +229,7 @@ const HomepageScreen = ({navigation}) => {
         SurveiServices.getAllSurvei()
         .then(res=> {
             if(res.data.message != "Token expired."){
+                console.log(res.data.data);
                 setAllSurvei(res.data.data);
                 setSurveiLoading(false);
             }else{
@@ -241,7 +245,6 @@ const HomepageScreen = ({navigation}) => {
     const getAllMisiData = () => {
         MisiServices.getMisiHomepage()
         .then(res=>{
-            console.log(res.data.data);
             setDataMisi(res.data.data);
         })
         .catch(err=>{
@@ -300,7 +303,6 @@ const HomepageScreen = ({navigation}) => {
         setIsLoadingReferal(true);
         ProfileServices.getProfile()
         .then(res=>{
-            console.log(res.data.data[0].kode_referal)
             setReferal(res.data.data[0].kode_referal);
             setIsLoadingReferal(false);
         })
@@ -451,18 +453,37 @@ const HomepageScreen = ({navigation}) => {
             </Box>
             }
 
+            {/** banner section */}
+            <Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
+        marginVertical: 20}}>Cek Sekarang Yuk</Text>
+            <Swiper 
+            bounces={false}
+            snapToInterval={width*0.7}
+            decelerationRate='normal'
+            activeDotColor={Color.primaryMain} 
+            style={{height: 200, marginLeft: 20}}>
+                {dataBanner.map((item, index)=>{
+                    return(
+                        <Pressable onPress={()=>navigation.navigate("Banner")} key={index}>
+                            <Image source={{uri: item}} style={{width: 300, height: 150 ,
+                            borderRadius: 10}} />
+                        </Pressable>
+                    )
+                })}
+            </Swiper>
+
             {/** survei section */}
             {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
             <View style={styles.surveiSection}>
                 <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
                 <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
             </View> : <></>) : 
             <View style={styles.surveiSection}>
                 <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
                 <View style={{height: 20}}></View>
                 <View style={{flexDirection: 'row'}}>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
                 </View>
             </View> : <></>
             }
@@ -637,8 +658,6 @@ const styles = StyleSheet.create({
     beritaDaerahSection: {
         paddingHorizontal: 20,
         paddingVertical: 22,
-        borderColor: '#EEEEEE',
-        borderBottomWidth: 6
     },
     surveiSection: {
         paddingHorizontal: 0,
