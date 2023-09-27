@@ -6,7 +6,7 @@ import { Box } from 'native-base';
 
 const CardBerita = ({image, topik, tanggal, berita, id, navigation}) => {
   return (
-    <Box style={styles.cardContainer} shadow={3}>
+    <Box style={styles.cardContainer} shadow={0}>
         <Pressable style={{height: '100%'}} onPress={()=>navigation.navigate("BeritaDetail", {id:id})}>
             <Image style={styles.image} source={{uri: `data:image/png;base64,${image}`}}/>
             <View style={styles.topik}><Text style={styles.textTopik}>{topik}</Text></View>

@@ -19,7 +19,7 @@ import LaporanServices from '../../services/laporan'
 import Skeleton from '../../components/skeleton'
 import { useDispatch, useSelector } from 'react-redux'
 import { setJenisLaporan } from '../../redux/laporan'
-import { deleteCredentials, setCredentials } from '../../redux/credentials'
+import { deleteCredentials, setCredentials, setPrivacyPolicy } from '../../redux/credentials'
 import CardBerita from '../../components/cardBerita'
 import CardSurvei from '../../components/cardSurvei'
 import SurveiServices from '../../services/survei'
@@ -218,7 +218,7 @@ const HomepageScreen = ({navigation}) => {
             setBannerLoading(false);
         })
         .catch(err=>{
-            console.log(err);
+            console.log(err.response);
             setBannerLoading(false);
         })
     }
@@ -273,6 +273,12 @@ const HomepageScreen = ({navigation}) => {
         dispatch(
             setJenisLaporan({id: id, nama: nama, deskripsi: deskripsi, desc_required: desc_required,
                 is_estimasi_partisipan_required: is_estimasi_partisipan_required, is_tag_kawan: is_tag_kawan})
+        );
+    }
+
+    const savePrivacyPolicy = () => {
+        dispatch(
+            setPrivacyPolicy({statusPolicy: 1})
         );
     }
 
@@ -341,6 +347,16 @@ const HomepageScreen = ({navigation}) => {
         );
     }
 
+    const handlePrivacyDisabled = () => {
+        ProfileServices.privacyPolicy()
+        .then(res=>{
+            console.log(res.data);
+        })
+        .catch(err=>{
+            console.log(err.response);
+        })
+    }
+
     const handleSalinTautan = () => {
         Clipboard.setString(referal);
         Snackbar.show({
@@ -350,10 +366,11 @@ const HomepageScreen = ({navigation}) => {
     }
 
     useEffect(()=>{
+        console.log(statusPolicy);
         if(statusPolicy == 1 || statusPolicy == "1"){
 
         }else{
-            //setShowAlertPrivacyPolicy(true);
+            setShowAlertPrivacyPolicy(true);
         }
     }, [])
   return (
@@ -418,19 +435,20 @@ const HomepageScreen = ({navigation}) => {
                                 saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, item.is_estimasi_partisipan_required,
                                     item.is_tag_kawan);
                                 navigation.navigate("Laporan");
-                                }} style={styles.itemMenu}>
+                                }} style={{...styles.itemMenu, width: (width/5)-10}}>
                                 <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApk : 
                                 item.jenis_laporan == 'Acara' ? IconAcara : item.jenis_laporan == "Markas Komunitas" ? 
-                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : IconAksi} style={styles.iconLaporan} />
+                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : IconAksi} style={{width: (width/5)-40, height: (width/5)-40}} />
                                 <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
                             </Pressable>
+                            
                         )}
                         else{
                             return(
                                 <View key={index} style={styles.itemMenu}>
                                     <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApkDisable : 
                                     item.jenis_laporan == 'Acara' ? IconAcaraDisable : item.jenis_laporan == "Markas Komunitas" ? 
-                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={styles.iconLaporan} />
+                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={{width: (width/5)-40, height: (width/5)-40}} />
                                     <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
                                 </View>
                             )
@@ -467,11 +485,13 @@ const HomepageScreen = ({navigation}) => {
             }
 
             {/** banner section */}
-            {status == "Diterima" ? !isBannerLoading ? <><Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
+            {status == "Diterima" ? !isBannerLoading ? dataAllBanner.length !=0 ? <><Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
             marginVertical: 20}}>Cek Sekarang Yuk</Text>
             <Swiper 
             bounces={false}
             snapToInterval={width}
+            autoplay
+            autoplayTimeout={3}
             decelerationRate='normal'
             activeDotColor={Color.primaryMain} 
             style={{height: 250, marginLeft: 30}}>
@@ -484,6 +504,7 @@ const HomepageScreen = ({navigation}) => {
                     )
                 })}
             </Swiper></> : 
+            <></> : 
             <View style={{marginHorizontal: 20}}>
                 <Text style={{...FontConfig.titleTwo, color: '#111111',
                 marginVertical: 20}}>Cek Sekarang Yuk</Text>
@@ -611,7 +632,11 @@ const HomepageScreen = ({navigation}) => {
           title="Butuh Persetujuanmu nih Sebelum Lanjut.."
           customView={<View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{...FontConfig.bodyTwo, color: '#7B7B7B', width: '80%'}}>
-            Dengan menceklis kotak ini, kamu menyetujui Syarat & Ketentuan dan Kebijakan Privasi GEN Sat Set
+            Dengan menceklis kotak ini, kamu menyetujui 
+                <Text onPress={()=>Linking.openURL("https://gensatset.org/syarat-ketentuan")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
+                dan 
+                <Text onPress={()=>Linking.openURL("https://gensatset.org/kebijakan-privasi")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
+                GEN Sat Set
             </Text>
             <Pressable onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
                 {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
@@ -637,7 +662,9 @@ const HomepageScreen = ({navigation}) => {
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
             if(!privacyPolicyDisabled){
-                //handlePrivacyDisabled
+                handlePrivacyDisabled();
+                savePrivacyPolicy();
+                setShowAlertPrivacyPolicy(false);
             }
           }}
           onCancelPressed={()=>{
@@ -689,6 +716,7 @@ const styles = StyleSheet.create({
     },
     menuLaporan: {
         flexDirection: 'row',
+        justifyContent: 'center',
         flexWrap: 'wrap',
         columnGap: 0,
         paddingVertical: 20,
@@ -714,10 +742,9 @@ const styles = StyleSheet.create({
     },
     itemMenu: {
         alignItems: 'center',
-        width: 70
     },
     textMenu: {
-        ...FontConfig.bodyThree,
+        ...FontConfig.bodyFive,
         color: Color.title,
         marginTop: 10,
         textAlign: 'center'

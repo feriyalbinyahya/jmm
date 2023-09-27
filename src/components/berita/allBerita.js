@@ -16,7 +16,7 @@ import { Button } from 'native-base'
 import { width } from '../../assets/constants'
 import ImageServices from '../../services/getImage'
 import Skeleton from '../skeleton'
-import ImageEmpty from '../../assets/images/warning/empty.png'
+import ImageEmpty from '../../assets/images/warning/empty2.png'
 
 const AllBeritaContainer = ({navigation, title}) => {
   const [selectedMenuBerita, setSelectedMenuBerita] = useState("Terbaru");

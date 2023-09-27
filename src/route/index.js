@@ -57,6 +57,7 @@ import StartMisiScreen from '../app/misiScreen/startMisi';
 import FormMisiScreen from '../app/misiScreen/formMisi';
 import LaporanView from '../app/misiScreen/laporanKegiatan';
 import BannerScreen from '../app/bannerScreen';
+import PengumumanScreen from '../app/notifikasi/pengumuman';
 
 const Stack = createNativeStackNavigator();
 
@@ -92,6 +93,7 @@ const AppRoute = () => {
       <Stack.Navigator>  
         <Stack.Screen options={{ headerShown: false }} name="Homepage" component={HomepageScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Notifikasi" component={NotifikasiScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Pengumuman" component={PengumumanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Profile" component={ProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Leaderboard" component={LeaderboardScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="UbahProfile" component={UbahProfileScreen} />

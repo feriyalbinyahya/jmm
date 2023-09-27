@@ -46,6 +46,9 @@ export const credentialSlice = createSlice({
         state.fotoProfil = '';
         state.isReferalOrganization = 0;
         state.statusPolicy = 0;
+    },
+    setPrivacyPolicy : (state, action) => {
+      state.statusPolicy = action.payload.statusPolicy;
     }
   },
   extraReducers: (builder) => {
@@ -59,5 +62,5 @@ export const credentialSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setCredentials, deleteCredentials} = credentialSlice.actions
+export const { setCredentials, deleteCredentials, setPrivacyPolicy} = credentialSlice.actions
 export default credentialSlice.reducer

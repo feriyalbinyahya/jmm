@@ -49,6 +49,11 @@ refreshToken = async (data) => {
     return Request.post(`user/refreshToken`, data, {headers: headersToken});
 }
 
+privacyPolicy = async () => {
+    let headersToken = await getHeaders();
+    return Request.post(`user/registrasi/policy`, {}, {headers: headersToken});
+}
+
 
 const ProfileServices = {
     getProfile,
@@ -56,7 +61,8 @@ const ProfileServices = {
     putFotoProfil,
     putNoHp,
     putPassword,
-    refreshToken
+    refreshToken,
+    privacyPolicy
   };
   
   export default ProfileServices;

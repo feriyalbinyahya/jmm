@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, TextInput } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, TextInput, Linking } from 'react-native'
 import React , {useEffect, useState} from 'react'
 import iconBack from '../../assets/images/icon/icon_back.png'
 import { Color, FontConfig } from '../../theme'
@@ -125,7 +125,7 @@ const RegisterScreen = ({navigation}) => {
     }, [password]);
 
     useEffect(()=>{
-      if(isPhone && isPassword && isPasswordMatch && privacyPolicyDisabled && phone && password && confirmPassword){
+      if(isPhone && isPassword && isPasswordMatch && !privacyPolicyDisabled && phone && password && confirmPassword){
         setIsContinue(true);
       }else{
         setIsContinue(false);
@@ -162,7 +162,7 @@ const RegisterScreen = ({navigation}) => {
             </Pressable>} 
         />
         {isPasswordMatch? <></>: <FormErrorMessage text="Kata sandi yang dimasukkan tidak sama dengan yang kamu buat." />}
-        {/**<View style={{height: 25}}></View>
+        <View style={{height: 25}}></View>
         <View style={{flexDirection: 'row',}}>
           <Pressable style={{marginVertical: 5}} onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
               {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
@@ -170,12 +170,12 @@ const RegisterScreen = ({navigation}) => {
           </Pressable>
           <Text style={{...FontConfig.captionOne, color: Color.neutralColorGrayEight, marginHorizontal: 5, width: '90%'}}>
             Pilih untuk melanjutkan, dengan memilih kamu menyetujui 
-            <Text onPress={()=>{}} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
+            <Text onPress={()=>Linking.openURL("https://gensatset.org/syarat-ketentuan")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
             dan 
-            <Text style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
+            <Text onPress={()=>Linking.openURL("https://gensatset.org/kebijakan-privasi")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
             GEN Sat Set
           </Text>
-  </View>*/}
+        </View>
         <View style={{height: 20}}></View>
         <CustomButton disabled={!isContinue} onPress={handleDaftarButton} fontStyles={{...FontConfig.buttonOne, color: 'white'}} 
             text="Daftar" backgroundColor={Color.primaryMain} height={44} />

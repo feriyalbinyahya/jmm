@@ -153,6 +153,12 @@ export const FontConfig = StyleSheet.create({
     letterSpacing: 0.4,
     lineHeight: 16
   },
+  bodyFive: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 11,
+    letterSpacing: 0.4,
+    lineHeight: 16
+  },
   bodyFour: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,

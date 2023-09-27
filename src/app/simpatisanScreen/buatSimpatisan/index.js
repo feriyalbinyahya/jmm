@@ -237,7 +237,7 @@ const TambahkanSimpatisan = ({navigation}) => {
   handleValidation = () => {
     if(firstname && lastname && phone && isPhone && (instagram || tiktok || facebook || twitter) && provinsi && 
     kota && kecamatan && capres && alasanSuka && capresTidakSuka && alasanTidakSuka && dateOfBirth && gender && 
-    address && privacyPolicyDisabled && job){
+    address && !privacyPolicyDisabled && job){
       setIsContinue(true);
     }else{
       setIsContinue(false);
@@ -495,20 +495,20 @@ const TambahkanSimpatisan = ({navigation}) => {
         <CustomTextArea inputNotWrong={true} value={alasanTidakSuka} setValue={setAlasanTidakSuka}
           placeholder="Tulis alasanmu disini.." width='100%' />
           <View style={{height: 25}}></View>
-        {/**<View style={{flexDirection: 'row',}}>
+        <View style={{flexDirection: 'row',}}>
           <Pressable style={{marginVertical: 5}} onPress={()=>setPrivacyPolicyDisabled(!privacyPolicyDisabled)}>
               {!privacyPolicyDisabled ? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
               : <View style={styles.checkboxOff}></View>}
           </Pressable>
           <Text style={{...FontConfig.captionOne, color: Color.neutralColorGrayEight, marginHorizontal: 5, width: '90%'}}>
             Pilih untuk melanjutkan, dengan memilih kamu menyetujui 
-            <Text onPress={()=>{}} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
+            <Text onPress={()=>Linking.openURL("https://gensatset.org/syarat-ketentuan")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
             dan 
-            <Text style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
+            <Text onPress={()=>Linking.openURL("https://gensatset.org/kebijakan-privasi")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
             GEN Sat Set
           </Text>
         </View>
-        <View style={{height: 10}}></View>*/}
+        <View style={{height: 10}}></View>
         </View>
       </ScrollView>
       <View style={styles.bottomSection}>

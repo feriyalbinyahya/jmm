@@ -7,6 +7,7 @@ import { colorModeManager, config, theme } from './theme';
 import notifee, { EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from '../src/route/utils';
+import { Platform, PermissionsAndroid } from 'react-native';
 
 import AppRoute from './route';
 import './translation'
@@ -23,7 +24,22 @@ function App() {
     }
   }
 
+  const checkApplicationPermission = async() => {
+    if(Platform.OS == 'android'){
+      try {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+
+        console.log("sudah request permission");
+      } catch (error) {
+        console.log("error permission notif");
+      }
+    }
+  }
+
   useEffect(() => {
+    checkApplicationPermission();
     messaging().onMessage(onMessageReceived);
   }, []);
 

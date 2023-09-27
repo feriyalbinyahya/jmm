@@ -19,8 +19,7 @@ const PengumumanScreen = ({navigation, route}) => {
     const webViewScript = 'window.ReactNativeWebView.postMessage(document.body.scrollHeight)';
     const _editor = React.createRef();
     const isFocused = useIsFocused();
-    const {id} = route.params;
-    const [dataBerita, setDataBerita] = useState([]);
+    const {id, dataBerita} = route.params;
     const [isLiked, setIsLiked] = useState(false);
     const [jumlahLike, setJumlahLike] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +60,7 @@ const PengumumanScreen = ({navigation, route}) => {
       {!isLoading ?
         dataBerita.length != 0 ?
       <ScrollView style={{backgroundColor: Color.neutralZeroOne}}>
-        <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} />
+        {dataBerita.cover_berita?.length > 0 ? <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} /> : <></>}
         <View style={styles.containBeritaSection}>
             <Text style={styles.textJudulBerita}>{dataBerita.judul}</Text>
             <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{dataBerita.tanggal}</Text>

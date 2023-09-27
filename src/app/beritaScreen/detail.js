@@ -58,6 +58,7 @@ const BeritaDetailScreen = ({navigation, route}) => {
 
     const getDataBerita = () => {
         setIsLoading(true);
+        console.log("id berita", id);
         BeritaServices.getDetailBerita(id)
         .then(res=> {
             console.log(res.data.data);

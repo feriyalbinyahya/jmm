@@ -35,32 +35,37 @@ const NotifikasiScreen = ({navigation}) => {
     const [dataInfoAkun, setDataInfoAkun] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const onPressNotif = (id, kategori) => {
+    const onPressNotif = (item) => {
+        const {id_content, kategori} = item;
+        console.log(id_content);
         if(kategori == "Berita"){
-            navigation.navigate("BeritaDetail", {id: id});
+            navigation.navigate("BeritaDetail", {id: id_content});
         }else if(kategori == "Survei"){
-            navigation.navigate("StartSurvei", {id:id});
+            navigation.navigate("StartSurvei", {id: id_content});
         }else if(kategori == "Misi" || kategori == "Misi Penting"){
             setIsLoading(true);
-            MisiServices.getMisiNotif(id)
+            MisiServices.getMisiNotif(id_content)
             .then(res=>{
                 let data = res.data.data[0];
                 setIsLoading(false);
                 if(kategori == "Misi"){
-                    navigation.navigate("StartMisi", {id: id, judul: data.judul, deskripsi: data.deskripsi ,
+                    navigation.navigate("StartMisi", {id: id_content, judul: data.judul, deskripsi: data.deskripsi ,
                         startDate: data.tanggal_publish, deadlineDate: data.batas_waktu, is_important: 0, kategori: data.kategori[0].nama_kategori});
                 }else{
-                    navigation.navigate("StartMisi", {id: id, judul: data.judul, deskripsi: data.deskripsi ,
+                    navigation.navigate("StartMisi", {id: id_content, judul: data.judul, deskripsi: data.deskripsi ,
                         startDate: data.tanggal_publish, deadlineDate: data.batas_waktu, is_important: 1, kategori: data.kategori[0].nama_kategori});
                 }
             })
             .catch(err=>{
-                console.log(err.response.data);
+                console.log(err.response);
             })
         }else if(kategori == "Laporan"){
-            navigation.navigate("DetailLaporan", {id: id});
+            navigation.navigate("DetailLaporan", {id: id_content});
         }else if(kategori == "Kawan"){
             navigation.navigate("ListSimpatisan");
+        }else if(kategori == "Pengumuman"){
+            const dataBerita = {judul: item.judul, deskripsi: item.deskripsi, tanggal: item.tanggal, cover_berita: item.cover_berita}
+            navigation.navigate("Pengumuman", {id: id_content, dataBerita: dataBerita});
         }
     }
 

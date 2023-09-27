@@ -4,7 +4,7 @@ import { height } from '../../assets/constants'
 import { Color, FontConfig } from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked, onPressNotif}) => {
+const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked, onPressNotif, navigation}) => {
     const [checked, setChecked] = useState(false);
     const [pressIn, setPressIn] = useState(false);
     const [more, setMore] = useState(false);
@@ -28,7 +28,7 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
     }
 
     handlePressNotif = () => {
-        onPressNotif(item.id_content, item.kategori);
+        onPressNotif(item);
     }
 
     const handleTextLayout = (event) => {
@@ -66,7 +66,8 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
                     <View style={{height: 8}}></View>
                     {item.kategori != "Pengumuman" || isMore ? <Text style={styles.textDeskripsi}>{item.deskripsi}</Text> : 
                     <><Text onTextLayout={handleTextLayout} numberOfLines={3} style={styles.textDeskripsi}>{item.deskripsi}</Text>
-                    {more ? <View style={{alignItems: 'flex-end'}}><Text onPress={()=>setIsMore(true)} style={styles.textMore}>Lihat Selengkapnya</Text></View> : <></>}
+                    {more ? <View style={{alignItems: 'flex-end'}}><Text onPress={handlePressNotif}
+                        style={styles.textMore}>Lihat Selengkapnya</Text></View> : <></>}
                     </>
                     }
                     <View style={{height: 3}}></View>
