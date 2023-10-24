@@ -325,6 +325,8 @@ export const Color = {
   border: '#D9D9D9',
   error: '#DC2626',
   successMain: '#22C55E',
+  successPressed: '#087839',
+  successSurface: '#F0FFF3',
   goldSix: '#FAAD14',
   neutralZeroThree: '#EDEDED',
   purple: '#624FA1',

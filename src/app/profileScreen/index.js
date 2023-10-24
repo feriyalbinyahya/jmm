@@ -8,6 +8,7 @@ import IconLaporan from '../../assets/images/icon/icon_laporan.png'
 import IconReferral from '../../assets/images/icon/icon_referral.png'
 import IconSurvey from '../../assets/images/icon/icon_survey.png'
 import IconCopy from '../../assets/images/icon/icon_copy.png'
+import IconQR from '../../assets/images/icon/qr_id.png'
 
 import IconWaiting from '../../assets/images/icon/waiting.png'
 import CustomButton from '../../components/customButton'
@@ -88,7 +89,7 @@ const ProfileScreen = ({navigation}) => {
 
         })
         .catch(err=> {
-            console.log(err);
+            console.log(err.response);
         })
     }
 
@@ -219,6 +220,15 @@ const ProfileScreen = ({navigation}) => {
         </View> : <></>}
         <View style={{height: 20}}></View>
         <View>
+            <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image source={IconQR} style={{height: 18, width: 18}} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>GEN Sat Set ID</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+            </Pressable>
             <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>

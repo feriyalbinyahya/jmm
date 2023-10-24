@@ -58,6 +58,9 @@ import FormMisiScreen from '../app/misiScreen/formMisi';
 import LaporanView from '../app/misiScreen/laporanKegiatan';
 import BannerScreen from '../app/bannerScreen';
 import PengumumanScreen from '../app/notifikasi/pengumuman';
+import DetailAcaraScreen from '../app/acaraScreen/detail';
+import InformationEvent from '../app/acaraScreen/information';
+import GenSatSetID from '../app/profileScreen/gensatsetid';
 
 const Stack = createNativeStackNavigator();
 
@@ -136,6 +139,9 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'fade' }} name="Banner" component={BannerScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="FormMisi" component={FormMisiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanView" component={LaporanView} />
+        <Stack.Screen options={{ headerShown: false, animation: 'fade' }} name="DetailAcara" component={DetailAcaraScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="GenSatSetID" component={GenSatSetID} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="InformationEvent" component={InformationEvent} />
       </Stack.Navigator>
       }
     </NavigationContainer>}

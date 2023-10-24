@@ -50,6 +50,7 @@ import AwesomeAlert from 'react-native-awesome-alerts'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper'
 import BannerServices from '../../services/banner'
+import CardAcara from '../../components/cardAcara'
 
 
 const HomepageScreen = ({navigation}) => {
@@ -118,6 +119,26 @@ const HomepageScreen = ({navigation}) => {
                 return(
                     <View key={index} style={{width: size}}>
                         <CardBerita topik={item["kategori"]}
+                        tanggal={item["tanggal"]} 
+                        image={item["cover_berita"]} 
+                        berita={item["judul"]}
+                        id={item["id_berita"]}
+                        navigation={navigation}
+                        />
+                    </View>
+                )
+              })}
+            </>
+        )
+    }
+
+    const AcaraView = ({data, size}) => {
+        return (
+            <>
+            {data?.map((item, index)=> {
+                return(
+                    <View key={index} style={{width: size}}>
+                        <CardAcara topik={item["kategori"]}
                         tanggal={item["tanggal"]} 
                         image={item["cover_berita"]} 
                         berita={item["judul"]}
@@ -589,6 +610,31 @@ const HomepageScreen = ({navigation}) => {
                 <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Berita Terkini</Text>
                 <View style={{height: 20}}></View>
                 <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
+            </View>
+            }
+
+            {/** acara section */}
+            {!beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
+                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15, justifyContent: 'space-between'}}>
+                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Acara</Text>
+                    <Pressable onPress={()=>navigation.navigate('BeritaTerkini')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                </View>
+                
+                <View style={{height: 15}}></View>
+                <View style={{paddingLeft: 10}}><CustomCarousel height={240} width={width} children={<AcaraView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} /></View>
+            </View> : <>
+            <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Acara</Text>
+            <View style={{alignItems: 'center', padding: 20}}>
+                <Image source={IconBerita} style={{width: 123, height: 90}} />
+                <View style={{height: 5}}></View>
+                <Text style={{...FontConfig.titleTwo, color: '#000000'}}>Belum ada acara</Text>
+                <View style={{height: 5}}></View>
+                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, acara akan segera ditampilkan</Text>
+            </View></> :
+            <View style={styles.beritaSection}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Berita Acara</Text>
+                <View style={{height: 20}}></View>
+                <View style={{paddingLeft: 10}}><CustomCarousel height={240} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
             </View>
             }
             
