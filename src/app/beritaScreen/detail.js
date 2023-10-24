@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, ActivityIndicator, SafeAreaView, Dimensions, Pressable } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, ActivityIndicator, PixelRatio, SafeAreaView, Dimensions, Pressable } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import HeaderWhite from '../../components/header/headerWhite'
 import ImageExample from '../../assets/images/example/laporan.png'
@@ -85,7 +85,7 @@ const BeritaDetailScreen = ({navigation, route}) => {
     const onWebViewMessage = (event) => {
         _editor.current?.enable(false);
         console.log(`Tinggi : ${event.nativeEvent.data}`);
-        setHeight(Number(event.nativeEvent.data)+150);
+        setHeight(Number(event.nativeEvent.data)*1.25);
     }
 
     const generateHtml = (content) => `

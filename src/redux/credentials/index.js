@@ -48,7 +48,7 @@ export const credentialSlice = createSlice({
         state.statusPolicy = 0;
     },
     setPrivacyPolicy : (state, action) => {
-      state.statusPolicy = action.payload.statusPolicy;
+      state.statusPolicy = 1;
     }
   },
   extraReducers: (builder) => {

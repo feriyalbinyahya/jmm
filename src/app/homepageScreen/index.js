@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Linking, Alert } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import AppBarRelawan from '../../components/appBar'
 import { Color, FontConfig } from '../../theme'
@@ -106,7 +106,7 @@ const HomepageScreen = ({navigation}) => {
         dispatch(
           setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user,
           isNoHpVerified: data.is_no_hp_verified, fullname: data.nama_user, noHp: data.no_hp, 
-          status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization})
+          status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization, statusPolicy: data.status_policy})
         );
         AsyncStorage.setItem('token', data.token);
       }
@@ -278,7 +278,7 @@ const HomepageScreen = ({navigation}) => {
 
     const savePrivacyPolicy = () => {
         dispatch(
-            setPrivacyPolicy({statusPolicy: 1})
+            setPrivacyPolicy()
         );
     }
 
@@ -301,6 +301,7 @@ const HomepageScreen = ({navigation}) => {
     useFocusEffect(
         React.useCallback(() => {
             getLaporanJenisData();
+            handleRefreshToken();
             if(status == "Diterima"){
                 getAllSurveyData();
                 getBeritaOrganisasi();
@@ -351,6 +352,7 @@ const HomepageScreen = ({navigation}) => {
         ProfileServices.privacyPolicy()
         .then(res=>{
             console.log(res.data);
+            savePrivacyPolicy();
         })
         .catch(err=>{
             console.log(err.response);
@@ -423,41 +425,8 @@ const HomepageScreen = ({navigation}) => {
                         </View>
                 </Box>
             </View> : <></> : <></>}
-            {/** laporan section */}
-            <View style={styles.laporanSection}>
-                { status == 'Diterima' ? <View style={{height: 10}}></View> : <></>}
-                {isReferalOrganization ==1 && status=="Diterima" ? <View style={{height: 80}}></View> : <></>}
-                {!laporanLoading ? <View style={styles.menuLaporan}>
-                    {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
-                        if(status == "Diterima"){
-                        return (
-                            <Pressable key={index} onPress={()=>{ 
-                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, item.is_estimasi_partisipan_required,
-                                    item.is_tag_kawan);
-                                navigation.navigate("Laporan");
-                                }} style={{...styles.itemMenu, width: (width/5)-10}}>
-                                <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApk : 
-                                item.jenis_laporan == 'Acara' ? IconAcara : item.jenis_laporan == "Markas Komunitas" ? 
-                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : IconAksi} style={{width: (width/5)-40, height: (width/5)-40}} />
-                                <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                            </Pressable>
-                            
-                        )}
-                        else{
-                            return(
-                                <View key={index} style={styles.itemMenu}>
-                                    <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApkDisable : 
-                                    item.jenis_laporan == 'Acara' ? IconAcaraDisable : item.jenis_laporan == "Markas Komunitas" ? 
-                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={{width: (width/5)-40, height: (width/5)-40}} />
-                                    <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                                </View>
-                            )
-                        }
-                    }) : <></> }
-                </View> : <Skeleton height={100} width={width-40} style={{borderRadius: 8, marginVertical: 16}} /> 
-                }
-            </View>
-
+            { status == 'Diterima' ? <View style={{height: 10}}></View> : <></>}
+            {isReferalOrganization ==1 && status=="Diterima" ? <View style={{height: 110}}></View> : <></>}
             {status == "Diterima" ? <Box style={styles.dataKawan} shadow={1}>
                 <View style={{flexDirection: 'row', paddingHorizontal: 20, 
                 justifyContent: 'space-between', paddingVertical: 5, alignItems: 'center'}}>
@@ -465,7 +434,7 @@ const HomepageScreen = ({navigation}) => {
                         <Text style={{...FontConfig.titleThree, color: Color.neutralZeroOne}}>Ayo datakan Kawanmu</Text>
                         <Text style={{...FontConfig.captionOne, color: Color.neutralZeroOne}}>Kumpulkan poinnya!</Text>
                     </View>
-                    <CustomButton onPress={()=>navigation.navigate("ListSimpatisan")} borderRadius={16} text="Data Kawan" height="85%" width={99} 
+                    <CustomButton onPress={()=>navigation.navigate("ReferalSimpatisan")} borderRadius={16} text="Ajak Kawan" height="85%" width={99} 
                     backgroundColor={Color.neutralZeroOne}
                      borderColor={Color.primaryMain} fontStyles={{...FontConfig.buttonThree, color: Color.primaryMain}} />
                 </View>
@@ -482,50 +451,6 @@ const HomepageScreen = ({navigation}) => {
                     borderColor={Color.primaryMain} fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} />
                 </View>
             </Box>
-            }
-
-            {/** banner section */}
-            {status == "Diterima" ? !isBannerLoading ? dataAllBanner.length !=0 ? <><Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
-            marginVertical: 20}}>Cek Sekarang Yuk</Text>
-            <Swiper 
-            bounces={false}
-            snapToInterval={width}
-            autoplay
-            autoplayTimeout={3}
-            decelerationRate='normal'
-            activeDotColor={Color.primaryMain} 
-            style={{height: 250, marginLeft: 30}}>
-                {dataAllBanner.map((item, index)=>{
-                    return(
-                        <Pressable onPress={()=>navigation.navigate("Banner", {id: item.id_berita})} key={index}>
-                            <Image source={{uri: `data:image/png;base64,${item.cover_berita}`}} style={{width: width-60, height: 200 ,
-                            borderRadius: 10}} />
-                        </Pressable>
-                    )
-                })}
-            </Swiper></> : 
-            <></> : 
-            <View style={{marginHorizontal: 20}}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111',
-                marginVertical: 20}}>Cek Sekarang Yuk</Text>
-                <Skeleton width={width-60} height={150} style={{borderRadius: 10}} />
-            </View>
-            : <></>}
-
-            {/** survei section */}
-            {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
-            <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
-            </View> : <></>) : 
-            <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
-                <View style={{height: 20}}></View>
-                <View style={{flexDirection: 'row'}}>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
-                </View>
-            </View> : <></>
             }
 
             {/** misi section */}
@@ -561,6 +486,84 @@ const HomepageScreen = ({navigation}) => {
                 </View>
                 <View style={{height: 20}}></View>
                 <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
+            </View> : <></>
+            }
+
+            {/** banner section */}
+            {status == "Diterima" ? !isBannerLoading ? dataAllBanner.length !=0 ? <><Text style={{...FontConfig.titleTwo, color: '#111111', marginHorizontal: 20,
+            marginVertical: 20}}>Cek Sekarang Yuk</Text>
+            <Swiper 
+            bounces={false}
+            snapToInterval={width}
+            autoplay
+            autoplayTimeout={3}
+            decelerationRate='normal'
+            activeDotColor={Color.primaryMain} 
+            style={{height: 250, marginLeft: 30}}>
+                {dataAllBanner.map((item, index)=>{
+                    return(
+                        <Pressable onPress={()=>navigation.navigate("Banner", {id: item.id_berita})} key={index}>
+                            <Image source={{uri: `data:image/png;base64,${item.cover_berita}`}} style={{width: width-60, height: 200 ,
+                            borderRadius: 10}} />
+                        </Pressable>
+                    )
+                })}
+            </Swiper></> : 
+            <></> : 
+            <View style={{marginHorizontal: 20}}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111',
+                marginVertical: 20}}>Cek Sekarang Yuk</Text>
+                <Skeleton width={width-60} height={150} style={{borderRadius: 10}} />
+            </View>
+            : <></>}
+
+            {/** laporan section 
+            <View style={styles.laporanSection}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Kirim Laporan Yuk</Text>
+                {!laporanLoading ? <View style={styles.menuLaporan}>
+                    {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
+                        if(status == "Diterima"){
+                        return (
+                            <Pressable key={index} onPress={()=>{ 
+                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, item.is_estimasi_partisipan_required,
+                                    item.is_tag_kawan);
+                                navigation.navigate("Laporan");
+                                }} style={{...styles.itemMenu, width: (width/5)-10}}>
+                                <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApk : 
+                                item.jenis_laporan == 'Acara' ? IconAcara : item.jenis_laporan == "Markas Komunitas" ? 
+                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : IconAksi} style={{width: (width/5)-40, height: (width/5)-40}} />
+                                <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
+                            </Pressable>
+                            
+                        )}
+                        else{
+                            return(
+                                <View key={index} style={styles.itemMenu}>
+                                    <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApkDisable : 
+                                    item.jenis_laporan == 'Acara' ? IconAcaraDisable : item.jenis_laporan == "Markas Komunitas" ? 
+                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={{width: (width/5)-40, height: (width/5)-40}} />
+                                    <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
+                                </View>
+                            )
+                        }
+                    }) : <></> }
+                </View> : <Skeleton height={100} width={width-40} style={{borderRadius: 8, marginVertical: 16}} /> 
+                }
+            </View> */}
+
+            {/** survei section */}
+            {status == "Diterima" ? !surveiLoading ? (allSurvei.length != 0 ?
+            <View style={styles.surveiSection}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
+                <View style={{height: 20}}></View>
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
+            </View> : <></>) : 
+            <View style={styles.surveiSection}>
+                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
+                <View style={{height: 20}}></View>
+                <View style={{flexDirection: 'row'}}>
+                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
+                </View>
             </View> : <></>
             }
 
@@ -663,7 +666,6 @@ const HomepageScreen = ({navigation}) => {
           onConfirmPressed={() => {
             if(!privacyPolicyDisabled){
                 handlePrivacyDisabled();
-                savePrivacyPolicy();
                 setShowAlertPrivacyPolicy(false);
             }
           }}

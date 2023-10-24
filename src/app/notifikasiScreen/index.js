@@ -40,7 +40,7 @@ const NotifikasiScreen = ({navigation}) => {
         console.log(id_content);
         if(kategori == "Berita"){
             navigation.navigate("BeritaDetail", {id: id_content});
-        }else if(kategori == "Survei"){
+        }else if(kategori == "Survey"){
             navigation.navigate("StartSurvei", {id: id_content});
         }else if(kategori == "Misi" || kategori == "Misi Penting"){
             setIsLoading(true);

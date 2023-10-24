@@ -55,7 +55,7 @@ const SignInPage = ({navigation}) => {
       setIsLoading(true);
       LoginServices.login({"no_hp": emailphone, "password": password})
       .then(async(res)=> {
-        console.log(res.data.data.foto_organisasi);
+        console.log(res.data.data);
         if(res.data.message == "Login sukses."){
           let fcmToken = await getTokenNotification();
           console.log({"fcmtoken": fcmToken});
@@ -81,7 +81,7 @@ const SignInPage = ({navigation}) => {
         setIsLoading(false);
       })
       .catch(err=> {
-        console.log(err);
+        console.log(err.response);
         setIsLoading(false);
       })
     }

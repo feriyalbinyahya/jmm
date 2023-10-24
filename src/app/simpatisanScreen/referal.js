@@ -35,7 +35,7 @@ const ReferalSimpatisan = ({navigation}) => {
             SimpatisanServices.getReferalSimpatisan(res.data.data[0].kode_referal)
             .then(res=>{
                 setReferal(res.data.data[0].kode_referral);
-                setTautan(`https://pendaftaran.gensatset.org/pendaftaran?refCode=${res.data.data[0].kode_referral}`)
+                setTautan(`https://gensatset.org/register?refCode=${res.data.data[0].kode_referral}`)
                 setIsLoading(false);
             })
             .catch(err=>{

@@ -79,8 +79,8 @@ android {
         applicationId "com.gensatset"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 33
-        versionCode 9
-        versionName "1.2.5"
+        versionCode 12
+        versionName "1.2.9"
     }
     signingConfigs {
         debug {

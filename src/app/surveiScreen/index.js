@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Dimensions, Button, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Image, Dimensions, Button, ActivityIndicator, ScrollView } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { Color, FontConfig } from '../../theme'
 import HeaderRed from '../../components/header/headerRed'
@@ -37,7 +37,9 @@ const StartSurveiScreen = ({navigation, route}) => {
         </View>
         {!isLoading ? <View style={styles.container}>
           <Image style={styles.imageSurvei} source={{uri: `data:image/png;base64,${dataSurvey.cover_survey}`}} />
-          <Text style={styles.textDeskripsi}>{dataSurvey.deskripsi}</Text>
+          <ScrollView style={{height: '33%',}}>
+            <Text style={styles.textDeskripsi}>{dataSurvey.deskripsi}</Text>
+          </ScrollView>
         </View> : <ActivityIndicator size="large" style={{marginTop: 30}} color={Color.graySix} />}
       </View>
       <View style={styles.bottomSection}>
