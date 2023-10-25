@@ -7,8 +7,9 @@ import CustomButton from '../../components/customButton'
 import CustomBottomSheet from '../../components/bottomSheet'
 import CancelEventView from './cancelEventView'
 
-const InformationEvent = ({navigation}) => {
+const InformationEvent = ({navigation, route}) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const {id, setIsRegistered} = route.params;
 
     const SyaratText = ({text}) => {
         return (
@@ -51,7 +52,7 @@ const InformationEvent = ({navigation}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
         title=""
-        children={<CancelEventView setModalVisible={setIsModalVisible} navigation={navigation} />}
+        children={<CancelEventView setModalVisible={setIsModalVisible} navigation={navigation} id={id} setIsRegistered={setIsRegistered} />}
         />
     </View>
   )

@@ -29,6 +29,7 @@ import Logo from '../../assets/images/LogoAplikasi.png';
 import IconArrowLeft from '../../assets/images/icon/button_left.png'
 import IconSetting from '../../assets/images/icon/button_setting.png'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient'
 
 const ProfileScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -82,6 +83,7 @@ const ProfileScreen = ({navigation}) => {
         setIsLoading(true);
         ProfileServices.getProfile()
         .then(res=> {
+            console.log(res.data.data);
             if(res.data.message != "Token expired."){
                 setProfileData(res.data.data[0]);
                 setIsLoading(false);
@@ -203,32 +205,19 @@ const ProfileScreen = ({navigation}) => {
             <View style={{height: '40%', justifyContent: 'center'}}><ActivityIndicator size="large" color={Color.neutralZeroOne} /></View>
         </View>
         }
-        {isReferalOrganization == 1 ? <View style={styles.boxReferral}>
-            { !isLoading ?
-                <><View style={{width: '48%'}}>
-                    <Text style={styles.textKodeAnda}>Referral untuk ajak GENSatSet</Text>
-                    {status == "Diterima" ? <Text style={styles.textReferral}>{profileData.kode_referal}</Text> : 
-                    <Ionicons name="eye-off-outline" color={Color.neutralZeroSeven} size={20} />
-                    }
-                </View>
-                {status == "Diterima" ? <Pressable onPress={handleCopyReferral} style={styles.buttonCopy}><Image style={styles.iconCopy} source={IconCopy} /></Pressable> : <></>}
-                <CustomButton disabled={status != "Diterima"} onPress={handleLihatQRButton} text="Lihat QR" 
-                fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} 
-                width={90} height={40} backgroundColor={Color.primaryMain} /></> : 
-                <Skeleton height={40} width={width*0.8} style={{borderRadius: 5}}/>
-            }
-        </View> : <></>}
         <View style={{height: 20}}></View>
+        <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{ marginHorizontal: 20
+        }}>
+            <LinearGradient style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'space-between',  borderRadius: 6, borderColor: Color.purple}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#F7F2FF', '#ECDDFF']}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}><Ionicons name="qr-code-outline" size={18} color={Color.purple} />
+                <View style={{width: 10}}></View>
+                <Text style={{...FontConfig.buttonOne, color: Color.purple}}>GEN Sat Set ID</Text></View>
+                <Ionicons name="chevron-forward-outline" size={18} color={Color.purple}  />
+            </LinearGradient>
+        </Pressable>
+        
+        <View style={{height: 10}}></View>
         <View>
-            <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
-            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Image source={IconQR} style={{height: 18, width: 18}} />
-                    <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>GEN Sat Set ID</Text>
-                </View>
-                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
-            </Pressable>
             <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>

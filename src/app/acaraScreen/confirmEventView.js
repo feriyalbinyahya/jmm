@@ -3,8 +3,9 @@ import React from 'react'
 import ConfirmIcon from '../../assets/images/confirm.png'
 import { Color, FontConfig } from '../../theme';
 import CustomButton from '../../components/customButton';
+import AcaraServices from '../../services/acara';
 
-const ConfirmEventView = ({navigation, setModalVisible}) => {
+const ConfirmEventView = ({navigation, setModalVisible, id, setIsRegistered}) => {
     const title="Apakah kamu yakin ingin mendaftar acara ini?";
     const subtitle=`Dengan mendaftar acara ini berarti kamu telah menyetujui untuk membagikan datamu kepada penyelenggara acara yaitu, nama nomer hp, jenis kelamin dan tanggal lahir.`;
     
@@ -16,6 +17,20 @@ const ConfirmEventView = ({navigation, setModalVisible}) => {
                 <Text style={{...FontConfig.bodyTwo, color: Color.primaryMain}}>{text}</Text>
             </View>
         )
+    }
+
+    const handleDaftar = ()=>{
+      AcaraServices.daftarAcara(id)
+      .then(res=>{
+        console.log(res.data);
+        if(res.data.message == "Berhasil daftar acara."){
+          setIsRegistered(true);
+          setModalVisible(false);
+        }
+      })
+      .catch(err=>{
+        console.log(err.response);
+      })
     }
   
     return (
@@ -36,7 +51,7 @@ const ConfirmEventView = ({navigation, setModalVisible}) => {
         <CustomButton width='36%' text={"Batal"} height={38} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.primaryMain,}}
         borderWidth={1} borderColor={Color.primaryMain} onPress={()=>setModalVisible(false)} />
         <View style={{width: 15, }}></View>
-        <CustomButton width='60%' height={38} text={"Setuju dan Daftar"} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne,}}
+        <CustomButton width='60%' height={38} text={"Setuju dan Daftar"} onPress={handleDaftar} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne,}}
         borderWidth={1} borderColor={Color.primaryMain} backgroundColor={Color.primaryMain} />
       </View>
     </View>

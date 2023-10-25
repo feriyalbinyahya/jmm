@@ -14,6 +14,7 @@ import Snackbar from 'react-native-snackbar'
 import IconShare from '../../assets/images/icon/icon_share.png';
 import Share from 'react-native-share';
 import Skeleton from '../../components/skeleton'
+import HeaderWhite from '../../components/header/headerWhite'
 
 const GenSatSetID = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -32,15 +33,9 @@ const GenSatSetID = ({navigation}) => {
         setIsLoading(true);
         ProfileServices.getProfile()
         .then(res=>{
-            SimpatisanServices.getReferalSimpatisan(res.data.data[0].kode_referal)
-            .then(res=>{
-                setReferal(res.data.data[0].kode_referral);
-                setTautan(`https://gensatset.org/register?refCode=${res.data.data[0].kode_referral}`)
-                setIsLoading(false);
-            })
-            .catch(err=>{
-                console.log(err.response.data);
-            })
+            setReferal(res.data.data[0].gensatset_id);
+            setTautan(res.data.data[0].gensatset_id)
+            setIsLoading(false);
         })
         .catch(err=>{
             console.log(err);
@@ -70,16 +65,10 @@ const GenSatSetID = ({navigation}) => {
         getReferalData();
     },[])
   return (
-    <LinearGradient style={{backgroundColor: Color.primaryMain,flex:1}} start={{x: 0, y: 0}} end={{x: 0, y: 1}} colors={['#000000', '#000000']}>
-      <View style={{padding: 20}}>
-        <Pressable onPress={()=>navigation.goBack()}><Image source={IconArrowLeft} style={{width: 36, height: 36}} /></Pressable>
-      </View>
+    <View style={{backgroundColor: Color.neutralZeroOne,flex:1}}>
+      <HeaderWhite title="" navigation={navigation} />
       {!isLoading ? <View style={{alignItems: 'center',}}>
-        <View style={{height: 20}}></View>
-        <Text style={{...FontConfig.headingTwo, color: Color.neutralZeroOne}}>Berikan ke Kawanmu</Text>
-        <View style={{height: 10}}></View>
-        <Text style={{...FontConfig.bodyTwo, color: Color.neutralZeroOne, width: '80%', textAlign: 'center'}}>Berikan QR Code atau salin tautan dibawah agar kawanmu bisa mendatakan dirinya</Text>
-        <View style={{height: 30}}></View>
+        <View style={{height: 40}}></View>
         <View style={styles.boxReferal}>
             <View style={{flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#EDEDED', paddingBottom: 10}}>
                 <View style={{width: 20}}></View>
@@ -102,18 +91,13 @@ const GenSatSetID = ({navigation}) => {
                 <View style={{alignItems: 'center'}}><Pressable onPress={handleCopyReferral} style={styles.buttonCopy}>
                     <Image style={styles.iconCopy} source={IconCopy} /></Pressable>
                     <View style={{height: 5}}></View>
-                    <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayNine}}>Salin Tautan</Text>
+                    <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayNine}}>Salin GEN Sat Set ID</Text>
                 </View>
                 <View style={{width: 20}}></View>
-                <View style={{alignItems: 'center'}}><Pressable onPress={handleShare} style={styles.buttonCopy}>
-                    <Image style={styles.iconCopy} source={IconShare} /></Pressable>
-                    <View style={{height: 5}}></View>
-                    <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayNine}}>Bagikan</Text>
-                </View>
             </View>
         </View>
       </View> : <View style={{flex: 1, marginTop: '40%'}}><ActivityIndicator size="large" color={Color.graySix} /></View>}
-    </LinearGradient>
+    </View>
   )
 }
 

@@ -5,11 +5,11 @@ import { Color, FontConfig } from '../../theme';
 import { Box } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 
-const CardAcara = ({image, topik, tanggal, berita, id, navigation}) => {
+const CardAcara = ({image, topik, tanggal, berita, id, navigation, data_acara}) => {
   return (
     <Box style={styles.cardContainer} shadow={0}>
         <LinearGradient style={{borderRadius: 6, height: '100%', borderColor: Color.purple}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#FFFFFF', Color.purpleSurface]}>
-            <Pressable style={{height: '100%'}} onPress={()=>navigation.navigate("DetailAcara", {id:id})}>
+            <Pressable style={{height: '100%'}} onPress={()=>navigation.navigate("DetailAcara", {id:id, dataAcara:data_acara})}>
                 <Image style={styles.image} source={{uri: `data:image/png;base64,${image}`}}/>
                 <View style={{height: 5}}></View>
                 <Text style={styles.textTopik}>{topik.toUpperCase()}</Text>

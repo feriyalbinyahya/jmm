@@ -23,13 +23,13 @@ const DetailAcaraScreen = ({navigation, route}) => {
     const webViewScript = 'window.ReactNativeWebView.postMessage(document.body.scrollHeight)';
     const _editor = React.createRef();
     const isFocused = useIsFocused();
-    const {id} = route.params;
+    const {id, dataAcara} = route.params;
     const [dataBerita, setDataBerita] = useState([]);
     const [isLiked, setIsLiked] = useState(false);
     const [jumlahLike, setJumlahLike] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isRegistered, setIsRegistered] = useState(true);
+    const [isRegistered, setIsRegistered] = useState(false);
 
 
     const getDataBerita = () => {
@@ -38,6 +38,7 @@ const DetailAcaraScreen = ({navigation, route}) => {
         .then(res=> {
             console.log(res.data.data);
             setDataBerita(res.data.data[0]);
+            setIsRegistered(res.data.data[0].data_acara.sudah_daftar);
             setIsLiked(res.data.data[0].is_liked);
             setJumlahLike(res.data.data[0].jumlah_like);
             setIsLoading(false);
@@ -76,7 +77,8 @@ const DetailAcaraScreen = ({navigation, route}) => {
     `
     useEffect(()=> {
         if(isFocused){
-            //getDataBerita();
+            setHeight(0);
+            getDataBerita();
         }
     },[isFocused]);
 
@@ -86,16 +88,20 @@ const DetailAcaraScreen = ({navigation, route}) => {
       isModalVisible={isModalVisible}
       setModalVisible={setIsModalVisible}
       title=""
-      children={<ConfirmEventView setModalVisible={setIsModalVisible} navigation={navigation} />}
+      children={<ConfirmEventView setModalVisible={setIsModalVisible} navigation={navigation} id={dataBerita.id_berita} setIsRegistered={setIsRegistered} />}
       />
       <HeaderWhite navigation={navigation} />
       {!isLoading ?
-        dataBerita.length == 0 ?
+        dataBerita.length != 0 ?
       <ScrollView style={{backgroundColor: Color.neutralZeroOne}}>
         <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} />
         <View style={styles.containBeritaSection}>
+            <View style={{height: 5}}></View>
+            <Text style={{...FontConfig.captionUpperTwo, color: Color.primaryMain, paddingHorizontal: 20}}>{dataBerita.kategori.toUpperCase()}</Text>
             <Text style={styles.textJudulBerita}>{dataBerita.judul}</Text>
             <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{dataBerita.tanggal}</Text>
+            <View style={{height: 10}}></View>
+            <Text style={{...FontConfig.titleThree, color: Color.primaryMain,  paddingHorizontal: 20}}>Informasi</Text>
             <QuillEditor
                 autoSize={true}
                 webview={{
@@ -105,7 +111,7 @@ const DetailAcaraScreen = ({navigation, route}) => {
                 }}
                 style={{...styles.editor, height: height,  width: '100%', marginHorizontal: 0}}
                 ref={_editor}
-                initialHtml={generateHtml(value)}
+                initialHtml={generateHtml(dataBerita.deskripsi)}
                 container={false}
             />
             {isRegistered ? <View>{/*<View style={styles.kategoriSection}>
@@ -120,7 +126,7 @@ const DetailAcaraScreen = ({navigation, route}) => {
                     })
                 }
             </View>*/}
-            <Pressable onPress={()=>navigation.navigate("InformationEvent")} 
+            <Pressable onPress={()=>navigation.navigate("InformationEvent", {id: id, setIsRegistered: setIsRegistered})} 
             style={{flexDirection: 'row', borderWidth:1, borderColor: Color.successPressed,
             paddingHorizontal: 10, alignSelf: 'baseline', paddingVertical: 5, borderRadius: 32,
             backgroundColor: Color.successSurface, alignItems: 'center', marginHorizontal: 25,
@@ -137,12 +143,19 @@ const DetailAcaraScreen = ({navigation, route}) => {
         <ActivityIndicator style={{marginTop: '50%'}} size="large" color={Color.primaryMain} />
         </View>
       }
-      {!isRegistered ? <View style={styles.bottomSection}>
+      {dataBerita.length != 0 ? dataBerita.data_acara.is_closed ? 
+        <View style={styles.bottomSection}>
+        <View style={styles.buttonContinue}><CustomButton 
+        text="Pendaftaran Ditutup" backgroundColor={Color.primaryMain}
+        disabled={true} 
+        height={40} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} /></View>
+      </View> : !isRegistered ? <View style={styles.bottomSection}>
         <View style={styles.buttonContinue}><CustomButton 
         text="Mulai Mendaftar" backgroundColor={Color.primaryMain}
         onPress={()=>setIsModalVisible(true)} 
         height={40} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} /></View>
-      </View> : <></>}
+      </View> : <></> : <></> 
+    }
     </SafeAreaView>
   )
 }

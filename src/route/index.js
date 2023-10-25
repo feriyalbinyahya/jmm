@@ -61,6 +61,7 @@ import PengumumanScreen from '../app/notifikasi/pengumuman';
 import DetailAcaraScreen from '../app/acaraScreen/detail';
 import InformationEvent from '../app/acaraScreen/information';
 import GenSatSetID from '../app/profileScreen/gensatsetid';
+import ListAcaraScreen from '../app/acaraScreen/listAcara';
 
 const Stack = createNativeStackNavigator();
 
@@ -125,6 +126,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanTerkirim" component={LaporanTerkirimScreen} />
 
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BeritaTerkini" component={BeritaTerkiniScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListAcara" component={ListAcaraScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BeritaOrganisasi" component={BeritaOrganisasiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="BeritaDetail" component={BeritaDetailScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="KomentarBerita" component={ListKomentarBeritaScreen} />

@@ -51,12 +51,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper'
 import BannerServices from '../../services/banner'
 import CardAcara from '../../components/cardAcara'
+import AcaraServices from '../../services/acara'
 
 
 const HomepageScreen = ({navigation}) => {
     const [laporanJenis, setLaporanJenis] = useState([]);
     const [dataBeritaTerkini, setDataBeritaTerkini] = useState([]);
     const [dataMisi, setDataMisi] = useState([]);
+    const [dataAcara, setDataAcara] = useState([]);
     const [dataBeritaOrganisasi, setDataBeritaOrganisasi] = useState([]);
     const [beritaTerkiniLoading, setBeritaTerkiniLoading] = useState(false);
     const [beritaOrganisasiLoading, setBeritaOrganisasiLoading] = useState(false);
@@ -144,6 +146,7 @@ const HomepageScreen = ({navigation}) => {
                         berita={item["judul"]}
                         id={item["id_berita"]}
                         navigation={navigation}
+                        data_acara={item["data_acara"]}
                         />
                     </View>
                 )
@@ -284,6 +287,17 @@ const HomepageScreen = ({navigation}) => {
         })
     }
 
+    const getAllAcaraData = () => {
+        AcaraServices.getAcaraHomepage()
+        .then(res=>{
+            console.log(res.data.data);
+            setDataAcara(res.data.data);
+        })
+        .catch(err=>{
+            console.log(err.response);
+        })
+    }
+
     const [selectedMenuBeritaTerkini, setSelectedMenuBeritaTerkini] = useState("Terbaru");
     const [selectedMenuBeritaOrganisasi, setSelectedMenuBeritaOrganisasi] = useState("Terbaru");
 
@@ -315,6 +329,7 @@ const HomepageScreen = ({navigation}) => {
         getBeritaTerkini();
         getAllMisiData();
         getAllBanner();
+        getAllAcaraData();
         getReferalData();
         setRefreshing(false);
       }, [refreshing]);
@@ -331,6 +346,7 @@ const HomepageScreen = ({navigation}) => {
             getBeritaTerkini();
             getAllMisiData();
             getAllBanner();
+            getAllAcaraData();
             getReferalData();
         }, [])
     );
@@ -614,25 +630,17 @@ const HomepageScreen = ({navigation}) => {
             }
 
             {/** acara section */}
-            {!beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
+            {!beritaTerkiniLoading ? dataAcara.length !=0 ? <View style={styles.beritaSection}>
                 <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15, justifyContent: 'space-between'}}>
                     <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Acara</Text>
-                    <Pressable onPress={()=>navigation.navigate('BeritaTerkini')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
+                    <Pressable onPress={()=>navigation.navigate('ListAcara')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
                 </View>
                 
                 <View style={{height: 15}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel height={240} width={width} children={<AcaraView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} /></View>
-            </View> : <>
-            <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Acara</Text>
-            <View style={{alignItems: 'center', padding: 20}}>
-                <Image source={IconBerita} style={{width: 123, height: 90}} />
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.titleTwo, color: '#000000'}}>Belum ada acara</Text>
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, acara akan segera ditampilkan</Text>
-            </View></> :
+                <View style={{paddingLeft: 10}}><CustomCarousel height={240} width={width} children={<AcaraView data={dataAcara} size={width*0.67} />} size={width*0.5} /></View>
+            </View> : <></> :
             <View style={styles.beritaSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Berita Acara</Text>
+                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Acara</Text>
                 <View style={{height: 20}}></View>
                 <View style={{paddingLeft: 10}}><CustomCarousel height={240} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
             </View>

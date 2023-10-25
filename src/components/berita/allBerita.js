@@ -17,6 +17,8 @@ import { width } from '../../assets/constants'
 import ImageServices from '../../services/getImage'
 import Skeleton from '../skeleton'
 import ImageEmpty from '../../assets/images/warning/empty2.png'
+import AcaraServices from '../../services/acara'
+import { useFocusEffect } from '@react-navigation/native'
 
 const AllBeritaContainer = ({navigation, title}) => {
   const [selectedMenuBerita, setSelectedMenuBerita] = useState("Terbaru");
@@ -42,6 +44,10 @@ const AllBeritaContainer = ({navigation, title}) => {
     navigation.navigate("BeritaDetail", {id: id});
   }
 
+  handlePressAcara = (id, dataAcara) => {
+    navigation.navigate("DetailAcara", {id: id, dataAcara: dataAcara});
+  }
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setDataBerita([]);
@@ -50,6 +56,8 @@ const AllBeritaContainer = ({navigation, title}) => {
       getBeritaTerkiniOnRefresh()
     }else if(title == 'Berita Daerah'){
       getBeritaOrganisasiOnRefresh();
+    }else{
+      getAcaraOnRefresh();
     }
     setRefreshing(false);
   }, [refreshing]);
@@ -57,6 +65,20 @@ const AllBeritaContainer = ({navigation, title}) => {
   getBeritaTerkiniOnRefresh = () => {
     setIsLoading(true);
     BeritaServices.getAllTerkini(1, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search, 2)
+    .then(res=>{
+      setTotalPages(res.data.data.totalPages);
+      setDataBerita(res.data.data.data);
+      setIsLoading(false);
+    })
+    .catch(err=>{
+      console.log(err);
+      setIsLoading(false);
+    })
+  }
+
+  getAcaraOnRefresh = () => {
+    setIsLoading(true);
+    AcaraServices.getAllAcara(currentPage, selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
     .then(res=>{
       setTotalPages(res.data.data.totalPages);
       setDataBerita(res.data.data.data);
@@ -83,6 +105,7 @@ const AllBeritaContainer = ({navigation, title}) => {
   }
 
 
+
   getAllBeritaTerkini = () => {
     if(dataBerita.length == 0) setIsLoading(true);
     BeritaServices.getAllTerkini(currentPage, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search, 2)
@@ -94,6 +117,21 @@ const AllBeritaContainer = ({navigation, title}) => {
     })
     .catch(err=>{
       console.log(err.response.data.message);
+      setIsLoading(false);
+    })
+  }
+
+  getAllAcara = () => {
+    if(dataBerita.length == 0) setIsLoading(true);
+    AcaraServices.getAllAcara(currentPage, selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
+    .then(res=>{
+      console.log(res.data.data);
+      setTotalPages(res.data.data.totalPages);
+      setDataBerita([...dataBerita, ...res.data.data.data]);
+      setIsLoading(false);
+    })
+    .catch(err=>{
+      console.log(err.response);
       setIsLoading(false);
     })
   }
@@ -160,11 +198,30 @@ const AllBeritaContainer = ({navigation, title}) => {
     })
   }
 
+  const getKategoriAcara = () => {
+    AcaraServices.getKategori()
+    .then(res=>{
+      let temp = ["Terbaru"];
+      let tempId = [0];
+      for(var i=0; i<res.data.data.length; i++){
+        temp.push(res.data.data[i].kategori);
+        tempId.push(res.data.data[i].id_berita_kategori);
+      }
+      setMenus(temp);
+      setIdMenu(tempId);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
   const handleSearch = () => {
     if(title == 'Berita Terkini'){
       getBeritaTerkiniOnRefresh();
     }else if(title == 'Berita Daerah'){
       getBeritaOrganisasiOnRefresh();
+    }else{
+      getAcaraOnRefresh();
     }
   }
 
@@ -173,6 +230,8 @@ const AllBeritaContainer = ({navigation, title}) => {
       getAllBeritaTerkini();
     }else if(title == 'Berita Daerah'){
       getAllBeritaOrganisasi();
+    }else{
+      getAllAcara();
     }
   }, [currentPage, selectedMenuBerita])
 
@@ -181,12 +240,28 @@ const AllBeritaContainer = ({navigation, title}) => {
       getKategoriBerita("terkini");
     }else if(title == 'Berita Daerah'){
       getKategoriBerita("organisasi");
+    }else{
+      getKategoriAcara();
     }
   }, [])
 
   useEffect(()=> {
     handleSearch();
   }, [search])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setCurrentPage(1);
+      setDataBerita([]);
+      if(title == 'Berita Terkini'){
+        getBeritaTerkiniOnRefresh();
+      }else if(title == 'Berita Daerah'){
+        getBeritaOrganisasiOnRefresh();
+      }else{
+        getAcaraOnRefresh();
+      }
+    }, [])
+  );
 
   const InfoLaporan =  ({text, icon}) => (
     <View style={styles.rowInfo}>
@@ -195,7 +270,7 @@ const AllBeritaContainer = ({navigation, title}) => {
     </View>
   );
 
-  const LaporanItem = ({image, judul, kategori, tanggal, likes, comments, seen, onPress}) => {
+  const LaporanItem = ({image, judul, kategori, tanggal, likes, comments, seen, onPress, data_acara}) => {
     const [dataImage, setDataImage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -223,18 +298,27 @@ const AllBeritaContainer = ({navigation, title}) => {
       <View style={{width: 10}}></View>
       <View style={{width: '80%'}}>
         <View>
-          <Text style={{...FontConfig.captionUpperOne, color: Color.primaryMain}}>
+          <Text style={{...FontConfig.captionUpperOne, color: Color.blue}}>
             {kategori.toUpperCase()}</Text>
         </View>
         <View style={{height: 5}}></View>
         <Text style={styles.textJudulLaporan}>{judul}</Text>
         <View style={{height: 3}}></View>
-        <View style={styles.infoBerita}>
+        {title != "Acara" ? <View style={styles.infoBerita}>
           <InfoLaporan text={tanggal} icon={IconCalendar} />
           <InfoLaporan text={comments} icon={IconComment} />
           <InfoLaporan text={likes} icon={IconLike} />
           <InfoLaporan text={seen >= 1000 ? `${parseFloat(seen % 1000 == 0 ? seen/1000 : parseFloat(seen/1000).toFixed(1))}K` : seen} icon={IconSeen} />
-        </View>
+        </View> : 
+        data_acara.sudah_daftar ? <View style={{alignSelf: 'baseline', borderWidth: 1,
+        borderRadius: 32, borderColor: Color.successPressed, backgroundColor: Color.successSurface,
+        paddingHorizontal: 10, paddingVertical: 5, marginVertical: 5}}>
+          <Text style={{...FontConfig.captionOne, color: Color.successPressed}}>Sudah Terdaftar</Text>
+        </View> : data_acara.is_closed ? <View style={{alignSelf: 'baseline', borderWidth: 1,
+        borderRadius: 32, borderColor: Color.neutralZeroSeven, backgroundColor: Color.neutralZeroThree,
+        paddingHorizontal: 10, paddingVertical: 5, marginVertical: 5}}>
+          <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>Pendaftaran Ditutup</Text>
+        </View> : <></>}
       </View>
     </Pressable>
     );
@@ -243,7 +327,7 @@ const AllBeritaContainer = ({navigation, title}) => {
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
       <HeaderWhite navigation={navigation} title={title} />
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}> 
-        <SearchBar width='100%' search={search} setSearch={setSearch} deleted={true} text="berita" />
+        <SearchBar width='100%' search={search} setSearch={setSearch} deleted={true} text={title == "Acara" ? `acara` : `berita`} />
         {/**<Button onPress={()=>{
           onPressMenu("");
           handleSearch();}} style={{marginRight: 20,
@@ -262,7 +346,13 @@ const AllBeritaContainer = ({navigation, title}) => {
           onEndReached={loadMoreItem}
           onEndReachedThreshold={0}
           refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
-          renderItem={({item}) => <LaporanItem onPress={()=>handlePressBerita(item.id_berita)} image={item.cover_berita} judul={item.judul} 
+          renderItem={({item}) => <LaporanItem onPress={()=>{
+            if(title == "Acara"){
+              handlePressAcara(item.id_berita, item.data_acara);
+            }else{
+              handlePressBerita(item.id_berita);
+            }
+          }} data_acara={item.data_acara} image={item.cover_berita} judul={item.judul} 
           kategori={item.kategori} likes={item.jumlah_like} tanggal={item.tanggal} comments={item.jumlah_komen} seen={item.jumlah_dilihat} />}
         /> : 
         <View style={{alignItems: 'center', padding: 20, justifyContent: 'center', height: '50%'}}>

@@ -3,8 +3,9 @@ import React from 'react'
 import ConfirmIcon from '../../assets/images/confirm.png'
 import { Color, FontConfig } from '../../theme';
 import CustomButton from '../../components/customButton';
+import AcaraServices from '../../services/acara';
 
-const CancelEventView = ({navigation, setModalVisible}) => {
+const CancelEventView = ({navigation, setModalVisible, id, setIsRegistered}) => {
     const title="Sayang Sekali...";
     const subtitle=`Yakin ingin batalkan pendaftaranmu?`;
     
@@ -16,6 +17,21 @@ const CancelEventView = ({navigation, setModalVisible}) => {
                 <Text style={{...FontConfig.bodyTwo, color: Color.primaryMain}}>{text}</Text>
             </View>
         )
+    }
+
+    const handleBatal = () => {
+      AcaraServices.batalAcara(id)
+      .then(res=>{
+        console.log(res.data);
+        if(res.data.message = "Berhasil membatalkan daftar acara."){
+          setIsRegistered(false);
+          setModalVisible(false);
+          navigation.pop();
+        }
+      })
+      .catch(err=>{
+        console.log(err.response);
+      })
     }
   
     return (
@@ -30,7 +46,7 @@ const CancelEventView = ({navigation, setModalVisible}) => {
         <CustomButton width='36%' text={"Kembali"} height={38} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne,}}
         borderWidth={1} borderColor={Color.primaryMain} backgroundColor={Color.primaryMain} onPress={()=>setModalVisible(false)} />
         <View style={{width: 15, }}></View>
-        <CustomButton width='60%' height={38} text={"Ya, Batalkan"} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.danger,}}
+        <CustomButton width='60%' height={38} onPress={handleBatal} text={"Ya, Batalkan"} fontStyles={{...FontConfig.buttonZeroTwo, color: Color.danger,}}
         borderWidth={1} borderColor={Color.danger} backgroundColor={Color.neutralZeroOne} />
       </View>
     </View>
