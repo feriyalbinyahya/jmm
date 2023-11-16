@@ -34,14 +34,14 @@ import UbahKataSandiScreen from '../app/profileScreen/ubahProfile/UbahKataSandi'
 import BeritaDetailScreen from '../app/beritaScreen/detail';
 import ListKomentarBeritaScreen from '../app/beritaScreen/listKomentar';
 import NotifikasiScreen from '../app/notifikasiScreen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import BeritaOrganisasiScreen from '../app/beritaScreen/beritaOrganisasi';
 import LaporanScreen from '../app/laporanScreen/laporan';
 import StartSurveiScreen from '../app/surveiScreen';
 import ListPertanyaan from '../app/surveiScreen/listPertanyaan';
 import SurveiTerkirim from '../app/surveiScreen/surveiTerkirim';
 import BantuanScreen from '../app/bantuanScreen';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SplashScreen from '../app/splashScreen';
 import ListSimpatisan from '../app/simpatisanScreen';
 import TambahkanSimpatisan from '../app/simpatisanScreen/buatSimpatisan';
@@ -62,19 +62,68 @@ import DetailAcaraScreen from '../app/acaraScreen/detail';
 import InformationEvent from '../app/acaraScreen/information';
 import GenSatSetID from '../app/profileScreen/gensatsetid';
 import ListAcaraScreen from '../app/acaraScreen/listAcara';
+import { setDataPendukung } from '../redux/pendukung';
+import LoginServices from '../services/login';
+import analytics from '@react-native-firebase/analytics';
+import PoinkuScreen from '../app/poinkuScreen';
 
 const Stack = createNativeStackNavigator();
 
 const AppRoute = () => {
   const [splashLoading, setSplashLoading] = useState(true);
+  const dispatch = useDispatch();
   const token = useSelector((state)=> {
     return state.credential.token;
   })
 
+  const routeNameRef = useRef();
+
+  const savePendukung = (data) => {
+    dispatch(
+      setDataPendukung({google_api_key: data.google_api_key, no_hp_cs: data.no_hp_cs})
+    );
+  }
+
+  const getDataPendukung = () =>{
+    LoginServices.pendukung()
+    .then(res=>{
+      savePendukung(res.data.data);
+    })
+    .catch(err=>{
+      console.log(err.response);
+    })
+  }
+
+  useEffect(()=>{
+    getDataPendukung();
+  },[])
+
   return (
     <>{splashLoading ? 
     <SplashScreen setIsLoading={setSplashLoading} /> 
-    :<NavigationContainer ref={navigationRef}>
+    :<NavigationContainer ref={navigationRef}
+    onReady={() => {
+      routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+    }}
+    onStateChange={async () => {
+      const previousRouteName = routeNameRef.current;
+      const currentRouteName = navigationRef.current.getCurrentRoute().name;
+      console.log(previousRouteName);
+      console.log(currentRouteName);
+
+      if (previousRouteName !== currentRouteName) {
+        await analytics().logScreenView({
+          screen_name: currentRouteName,
+          screen_class: currentRouteName,
+        });
+        await analytics().logEvent('screen_view', {
+          firebase_screen: currentRouteName,
+          firebase_screen_class: currentRouteName,
+        });
+      }
+      routeNameRef.current = currentRouteName;
+    }}
+    >
       { token == ''?
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={SignInScreen} />
@@ -100,6 +149,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Pengumuman" component={PengumumanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Profile" component={ProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Leaderboard" component={LeaderboardScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="PoinLeaderboard" component={PoinkuScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="UbahProfile" component={UbahProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahDataDiriProfile" component={UbahDataDiriScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahAkunProfile" component={UbahAkunScreen} />

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator, Linking } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, ActivityIndicator, Linking, ScrollView } from "react-native";
 import {
   Margin,
   FontFamily,
@@ -19,7 +19,7 @@ import CustomButton from "../../components/customButton";
 import ChildrenButton from "../../components/customButtonChildren";
 import LoginServices from "../../services/login";
 import { setCredentials } from "../../redux/credentials";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import CustomBottomSheet from "../../components/bottomSheet";
@@ -43,6 +43,7 @@ const SignInPage = ({navigation}) => {
     const [showAlertPhoneNotVerified, setShowAlertPhoneNotVerified] = useState(false);
     const [showAlertSomethingWrong, setShowAlertSomethingWrong] = useState(false);
     const [showAlertNoWhatsapp, setShowAlertNoWhatsapp] = useState(false);
+    const [showAlertVersionWrong, setShowAlertVersionWrong] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isStatusActiveVisible, setStatusActiveVisible] = useState(false);
@@ -50,6 +51,10 @@ const SignInPage = ({navigation}) => {
     const getToken = async() =>{
       return await getTokenNotification();
     }
+
+    const no_hp_cs = useSelector((state)=>{
+      return state.pendukung.no_hp_cs;
+    })
 
     handleLogin = () => {
       setIsLoading(true);
@@ -95,6 +100,17 @@ const SignInPage = ({navigation}) => {
       AsyncStorage.setItem('token', data.token);
     }
 
+    const getAppVersion = () => {
+      LoginServices.appVersion(VERSION.split(" ")[1])
+      .then(res=>{
+        console.log(res.data.data);
+        setShowAlertVersionWrong(res.data.data.need_update);
+      })
+      .catch(err=>{
+        console.log(err.response);
+      })
+    }
+
     handleLupaKatSandi = () => {
       navigation.navigate("LupaPassword");
     }
@@ -107,15 +123,16 @@ const SignInPage = ({navigation}) => {
       }
     }
 
+    const openGooglePlay = () => {
+      Linking.openURL(
+        'http://play.google.com/store/apps/details?id=com.gensatset'
+      );
+    };
+
     const handleWhatsapp = () => {
-      const url = `whatsapp://send?phone=081210412537`;
-      Linking.canOpenURL(url).then(supported => {
-          if (supported) {
-              Linking.openURL(url);
-          } else {
-              setShowAlertNoWhatsapp(true);
-          }
-      });
+      var no_hp = no_hp_cs.substring(1);
+      const url = `https://wa.me/62${no_hp}`;
+      Linking.openURL(url);
     }
 
     const ContactUs = () => {
@@ -124,7 +141,7 @@ const SignInPage = ({navigation}) => {
           <View style={{alignItems: 'center'}}>
             <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
             <View style={{height: 5}}></View>
-            <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>081210412537</Text>
+            <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>{no_hp_cs}</Text>
           </View>
           <View style={{height: 10}}></View>
           <ChildrenButton borderColor={Color.successMain} 
@@ -162,6 +179,10 @@ const SignInPage = ({navigation}) => {
     useEffect(()=> {
       handleContinue();
     }, [emailphone, password])
+
+    useEffect(()=>{
+      getAppVersion();
+    },[])
     return (
     <View style={styles.signInPage}>
         <CustomBottomSheet children={<ContactUs />} 
@@ -179,41 +200,43 @@ const SignInPage = ({navigation}) => {
               </Text>
           </View>
           <Box shadow={2} style={styles.bottomSection}>
-              <Text style={styles.titleFormInput}>Nomor Ponsel</Text>
-              <View style={{marginVertical: 5}}><CustomInput value={emailphone} setValue={setEmailPhone} placeholder="08" type="text" /></View>
-              <View style={{height: 10}}></View>
-              <Text style={styles.titleFormInput}>Kata Sandi</Text>
-              <View style={{marginVertical: 5}}>
-                <CustomInput value={password} setValue={setPassword} type={show? "text" : "password"} children={<Pressable onPress={() => setShow(!show)}>
-                  <Icon as={<Ionicons name={show ? "eye" : "eye-off"} />} size={5} mr="2" color={Color.secondaryText} />
-                  </Pressable>} 
-                />
-              </View>
-              <View style={styles.forgotPassword}>
-                <Pressable onPress={handleLupaKatSandi}><Text style={styles.textForgotPassword}>Lupa Kata Sandi</Text></Pressable>
-              </View>
-              <CustomButton disabled={!isContinue} onPress={handleLogin} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} 
-              text="Masuk" backgroundColor={Color.primaryMain} height={44} />
-              {/***<View style={styles.atau}><Text style={{...FontConfig.captionTwo, color: Color.grayEight}}>ATAU</Text></View>
-      
-              <ChildrenButton children={<View style={styles.masukGoogle}>
-                <Image source={iconGoogle} style={{height:20, width:20}} />
-                <Text style={styles.textMasukGoogle}>Masuk dengan Google</Text>
-                </View>} borderColor={Color.graySix} /> **/}
+            <ScrollView>
+                <Text style={styles.titleFormInput}>Nomor Ponsel</Text>
+                <View style={{marginVertical: 5}}><CustomInput value={emailphone} setValue={setEmailPhone} placeholder="08" type="text" /></View>
+                <View style={{height: 10}}></View>
+                <Text style={styles.titleFormInput}>Kata Sandi</Text>
+                <View style={{marginVertical: 5}}>
+                  <CustomInput value={password} setValue={setPassword} type={show? "text" : "password"} children={<Pressable onPress={() => setShow(!show)}>
+                    <Icon as={<Ionicons name={show ? "eye" : "eye-off"} />} size={5} mr="2" color={Color.secondaryText} />
+                    </Pressable>} 
+                  />
+                </View>
+                <View style={styles.forgotPassword}>
+                  <Pressable onPress={handleLupaKatSandi}><Text style={styles.textForgotPassword}>Lupa Kata Sandi</Text></Pressable>
+                </View>
+                <CustomButton disabled={!isContinue} onPress={handleLogin} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} 
+                text="Masuk" backgroundColor={Color.primaryMain} height={44} />
+                {/***<View style={styles.atau}><Text style={{...FontConfig.captionTwo, color: Color.grayEight}}>ATAU</Text></View>
+        
+                <ChildrenButton children={<View style={styles.masukGoogle}>
+                  <Image source={iconGoogle} style={{height:20, width:20}} />
+                  <Text style={styles.textMasukGoogle}>Masuk dengan Google</Text>
+                  </View>} borderColor={Color.graySix} /> **/}
 
-              <View style={styles.tidakPunyaAkun}>
-                <Text style={styles.textBelumPunyaAkun}>Belum punya akun?</Text>
-                <Pressable onPress={()=> navigation.navigate('Register')}><Text style={styles.textDaftar}>Daftar disini</Text></Pressable>
-              </View>
+                <View style={styles.tidakPunyaAkun}>
+                  <Text style={styles.textBelumPunyaAkun}>Belum punya akun?</Text>
+                  <Pressable onPress={()=> navigation.navigate('Register')}><Text style={styles.textDaftar}>Daftar disini</Text></Pressable>
+                </View>
 
-              <View style={styles.butuhBantuan}>
-                <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
-                <View style={{width: 10}}></View>
-                <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
-                <View style={{width: 5}}></View>
-                <Pressable onPress={()=>setModalVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
-                </Pressable>
-              </View>
+                <View style={styles.butuhBantuan}>
+                  <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
+                  <View style={{width: 10}}></View>
+                  <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
+                  <View style={{width: 5}}></View>
+                  <Pressable onPress={()=>setModalVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
+                  </Pressable>
+                </View>
+              </ScrollView>
           </Box>
           <View style={styles.version}>
             <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
@@ -327,6 +350,25 @@ const SignInPage = ({navigation}) => {
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
             setShowAlertSomethingWrong(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertVersionWrong}
+          showProgress={false}
+          title="Ikuti terus pembaruan aplikasi terbaru kami!"
+          message="Anda perlu mengupdate aplikasi GEN Sat Set ke versi terbaru untuk dapat melanjutkan"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Perbarui Sekarang"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '80%', height: '80%',  alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            openGooglePlay();
           }}
         />
     </View>

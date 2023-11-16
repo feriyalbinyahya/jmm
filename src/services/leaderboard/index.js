@@ -24,10 +24,17 @@ getLeaderboard = async (type) => {
     return Request.get(`user/leaderboard?type=${type}`, {headers: headersToken, timeout: 8000,});
 }
 
+getLeaderboardNew = async (type) => {
+    let headersToken = await getHeaders();
+    return Request.get(`user/leaderboard/jumlah/${type}?filter=${filter}`, {headers: headersToken, timeout: 8000,});
+}
+
+
 
 
 const LeaderboardServices = {
     getLeaderboard,
+    getLeaderboardNew,
   };
   
   export default LeaderboardServices;

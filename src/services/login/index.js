@@ -14,9 +14,20 @@ forgetPassword = (data) => {
     return Request.post("user/lupa-password", data, {headers: headers});
 }
 
+appVersion = (version) => {
+    return Request.get(`app-version?app_version=${version}`, {headers: headers});
+}
+
+pendukung = () => {
+    return Request.get(`pendukung`, {headers: headers});
+}
+
+
 const LoginServices = {
     login,
-    forgetPassword
+    forgetPassword,
+    appVersion,
+    pendukung
   };
   
   export default LoginServices;

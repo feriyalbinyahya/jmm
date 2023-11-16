@@ -78,7 +78,7 @@ const AllBeritaContainer = ({navigation, title}) => {
 
   getAcaraOnRefresh = () => {
     setIsLoading(true);
-    AcaraServices.getAllAcara(currentPage, selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
+    AcaraServices.getAllAcara(1, selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search)
     .then(res=>{
       setTotalPages(res.data.data.totalPages);
       setDataBerita(res.data.data.data);

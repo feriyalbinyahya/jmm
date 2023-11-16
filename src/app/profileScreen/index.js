@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, ActivityIndicator, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, ActivityIndicator, Dimensions, Linking, ScrollView } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { Color, FontConfig } from '../../theme'
 import HeaderRedLinear from '../../components/header/headerRedLinear'
@@ -30,6 +30,15 @@ import IconArrowLeft from '../../assets/images/icon/button_left.png'
 import IconSetting from '../../assets/images/icon/button_setting.png'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient'
+import ChildrenButton from '../../components/customButtonChildren';
+import BadgeNoMember from '../../assets/images/icon/badge_nomember.png';
+import BadgeBronze from '../../assets/images/icon/badge_bronze.png';
+import BadgeSilver from '../../assets/images/icon/badge_silver.png';
+import BadgeGold from '../../assets/images/icon/badge_gold.png';
+import BadgePlatinum from '../../assets/images/icon/badge_platinum.png';
+import BadgeDiamond from '../../assets/images/icon/badge_diamond.png';
+import IconPoinWhite from '../../assets/images/icon/icon_poin_white.png';
+import { rankPoin } from '../../utils/const'
 
 const ProfileScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -41,6 +50,7 @@ const ProfileScreen = ({navigation}) => {
     const referral = "A-1234567";
     const [copiedText, setCopiedText] = useState('');
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalWhatsappVisible, setModalWhatsappVisible] = useState(false);
     const [isLogoutVisible, setLogoutVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const status = useSelector((state)=>{
@@ -74,6 +84,11 @@ const ProfileScreen = ({navigation}) => {
 
     handleKeluarButton = () => {
         setLogoutVisible(true);
+    }
+
+
+    handlePoinButton = () => {
+        navigation.navigate("PoinLeaderboard");
     }
     handleEditButton = () => {
         navigation.navigate("UbahProfile");
@@ -151,12 +166,60 @@ const ProfileScreen = ({navigation}) => {
         );
     }
 
+    const no_hp_cs = useSelector((state)=>{
+        return state.pendukung.no_hp_cs;
+      })
+
+    const handleWhatsapp = () => {
+        var no_hp = no_hp_cs.substring(1);
+        const url = `https://wa.me/62${no_hp}`;
+        Linking.openURL(url);
+    }
+
+    const ContactUs = () => {
+        return(
+          <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
+            <View style={{alignItems: 'center'}}>
+              <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
+              <View style={{height: 5}}></View>
+              <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>{no_hp_cs}</Text>
+            </View>
+            <View style={{height: 10}}></View>
+            <ChildrenButton borderColor={Color.successMain} 
+            borderRadius={26}
+            onPress={handleWhatsapp}
+            height={44} backgroundColor={Color.neutralZeroOne}
+            children={<View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Ionicons name="logo-whatsapp" size={21} color={Color.successMain} />
+              <View style={{width: 5}}></View>
+              <Text style={{...FontConfig.buttonOne, color: Color.successMain}}>Hubungi Whatsapp</Text>
+            </View>}
+            />
+          </View>
+        )
+    }
+
+    const rank = "bronze";
+
+    const RankPoin = ({image, rank}) =>{
+        return(
+            <View style={{flexDirection: 'row', alignSelf: 'baseline', alignItems: 'center',
+            paddingHorizontal: 10, paddingVertical: 2, backgroundColor: '#404040', borderRadius: 34}}>
+                <Image style={{width: 11.7, height: 12}} source={image} />
+                <Text style={{...FontConfig.buttonThree, marginTop: 2, color: Color.neutralZeroOne, marginHorizontal: 3}}>{rank}</Text>
+            </View>
+        )
+    }
+
     const width = Dimensions.get('window').width;
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
         <CustomBottomSheet children={<QRView qr={ImageQRCode} />} 
         isModalVisible={isModalVisible} setModalVisible={setModalVisible} 
         title="Kode QR Referral" />
+        <CustomBottomSheet children={<ContactUs />} 
+        isModalVisible={isModalWhatsappVisible} setModalVisible={setModalWhatsappVisible} 
+        title="Hubungi Kami" />
         <CustomBottomSheet children={<LogoutView />} 
         isModalVisible={isLogoutVisible} setModalVisible={setLogoutVisible} 
         title="" />
@@ -184,9 +247,9 @@ const ProfileScreen = ({navigation}) => {
             <View style={{height: 20}}></View>
             
             <View style={styles.aksiSection}>
-                <BoxAksi image={IconLaporan} text="LAPORAN" jumlah={profileData.total_laporan} imageHeight={18} imageWidth={14} />
+                <BoxAksi image={IconLaporan} text="KAWAN" jumlah={profileData.total_kawan} imageHeight={18} imageWidth={14} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
-                <BoxAksi image={IconReferral} text="REFERAL" jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
+                <BoxAksi image={IconReferral} text="GENSATSET" jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
                 <BoxAksi image={IconSurvey} text="SURVEI" jumlah={profileData.total_survey} imageHeight={22} imageWidth={22} />
             </View>
@@ -205,20 +268,37 @@ const ProfileScreen = ({navigation}) => {
             <View style={{height: '40%', justifyContent: 'center'}}><ActivityIndicator size="large" color={Color.neutralZeroOne} /></View>
         </View>
         }
-        <View style={{height: 20}}></View>
-        <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{ marginHorizontal: 20
-        }}>
-            <LinearGradient style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'space-between',  borderRadius: 6, borderColor: Color.purple}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#F7F2FF', '#ECDDFF']}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}><Ionicons name="qr-code-outline" size={18} color={Color.purple} />
-                <View style={{width: 10}}></View>
-                <Text style={{...FontConfig.buttonOne, color: Color.purple}}>GEN Sat Set ID</Text></View>
-                <Ionicons name="chevron-forward-outline" size={18} color={Color.purple}  />
-            </LinearGradient>
-        </Pressable>
-        
-        <View style={{height: 10}}></View>
-        <View>
-            <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+    
+        <ScrollView>
+            <View style={{height: 20}}></View>
+            <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{ marginHorizontal: 20
+            }}>
+                <LinearGradient style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'space-between',  borderRadius: 6, borderColor: Color.purple}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#F7F2FF', '#ECDDFF']}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}><Ionicons name="qr-code-outline" size={18} color={Color.purple} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: Color.purple}}>GEN Sat Set ID</Text></View>
+                    <Ionicons name="chevron-forward-outline" size={18} color={Color.purple}  />
+                </LinearGradient>
+            </Pressable>
+            <Pressable onPress={handlePoinButton} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image source={IconPoinWhite} style={{height: 18, width: 18}} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Poinku</Text>
+                    <View style={{width: 10}}></View>
+                    {rank == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
+                    rank == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
+                    rank == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
+                    rank == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
+                    rank == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
+                    rank == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : <></>}
+                </View>
+                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+            </Pressable>
+            <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Ionicons name="trophy-outline" color={status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive} size={18} />
@@ -236,7 +316,8 @@ const ProfileScreen = ({navigation}) => {
                 </View>
                 <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
         </Pressable>**/}
-            <Pressable onPress={handleKeluarButton} style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            <Pressable onPress={handleKeluarButton} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Ionicons name="log-out-outline" color={Color.primaryMain} size={18} />
@@ -245,16 +326,21 @@ const ProfileScreen = ({navigation}) => {
                 </View>
                 <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
             </Pressable>
-            <View style={{height: 10}}></View>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                {status == "Diterima" ? <Image source={Logo} style={{width: 137, height: 55}} /> : 
-                <View style={{height: 96}}></View>
-                }
+            <View style={{height: 20}}></View>
+            <View style={styles.butuhBantuan}>
+                <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
+                <View style={{width: 10}}></View>
+                <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
+                <View style={{width: 5}}></View>
+                <Pressable onPress={()=>setModalWhatsappVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
+                </Pressable>
             </View>
+            <View style={{height: 10}}></View>
             <View style={styles.version}>
                 <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
             </View>
-        </View>
+            <View style={{height: 20}}></View>
+        </ScrollView>
     </View>
   )
 }
@@ -271,6 +357,15 @@ const styles = StyleSheet.create({
         padding: 20
 
     },
+    butuhBantuan: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Color.neutralZeroTwo,
+        alignSelf: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 30,
+        borderRadius: 8,
+      },
     boxReferral: {
         marginHorizontal: 20,
         marginTop: -30,

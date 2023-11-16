@@ -52,6 +52,8 @@ import Swiper from 'react-native-swiper'
 import BannerServices from '../../services/banner'
 import CardAcara from '../../components/cardAcara'
 import AcaraServices from '../../services/acara'
+import LoginServices from '../../services/login'
+import { VERSION } from '../../utils/environment'
 
 
 const HomepageScreen = ({navigation}) => {
@@ -70,6 +72,7 @@ const HomepageScreen = ({navigation}) => {
     const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(true);
     const [dataAllBanner, setDataBanner] = useState([]);
     const [isBannerLoading, setBannerLoading] = useState(false);
+    const [showAlertVersionWrong,setShowAlertVersionWrong] = useState(false);
     const dispatch = useDispatch();
     var status = useSelector((state)=>{
         return state.credential.status;
@@ -90,6 +93,23 @@ const HomepageScreen = ({navigation}) => {
         dispatch(
           deleteCredentials()
         );
+    }
+
+    const openGooglePlay = () => {
+        Linking.openURL(
+          'http://play.google.com/store/apps/details?id=com.gensatset'
+        );
+    };
+
+    const getAppVersion = () => {
+        LoginServices.appVersion(VERSION.split(" ")[1])
+        .then(res=>{
+          console.log(res.data.data);
+          setShowAlertVersionWrong(res.data.data.need_update);
+        })
+        .catch(err=>{
+          console.log(err.response);
+        })
     }
 
     handleRefreshToken = () => {
@@ -328,6 +348,7 @@ const HomepageScreen = ({navigation}) => {
         }
         getBeritaTerkini();
         getAllMisiData();
+        getAppVersion();
         getAllBanner();
         getAllAcaraData();
         getReferalData();
@@ -405,6 +426,7 @@ const HomepageScreen = ({navigation}) => {
     }
 
     useEffect(()=>{
+        getAppVersion();
         console.log(statusPolicy);
         if(statusPolicy == 1 || statusPolicy == "1"){
 
@@ -725,6 +747,25 @@ const HomepageScreen = ({navigation}) => {
           }}
           onCancelPressed={()=>{
             setShowAlertPrivacyPolicy(false);
+          }}
+        />
+        <AwesomeAlert
+          show={showAlertVersionWrong}
+          showProgress={false}
+          title="Ikuti terus pembaruan aplikasi terbaru kami!"
+          message="Anda perlu mengupdate aplikasi GEN Sat Set ke versi terbaru untuk dapat melanjutkan"
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="Perbarui Sekarang"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '80%', height: '80%',  alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            openGooglePlay();
           }}
         />
     </SafeAreaView>

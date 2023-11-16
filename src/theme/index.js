@@ -165,6 +165,10 @@ export const FontConfig = StyleSheet.create({
     letterSpacing: 0.4,
     lineHeight: 16
   },
+  buttonZero: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 10,
+  },
   buttonOne: {
     fontFamily: 'Poppins-Medium',
     fontSize: 16,

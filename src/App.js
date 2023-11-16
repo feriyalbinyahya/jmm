@@ -8,6 +8,7 @@ import notifee, { EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from '../src/route/utils';
 import { Platform, PermissionsAndroid } from 'react-native';
+import analytics from '@react-native-firebase/analytics'
 
 import AppRoute from './route';
 import './translation'
@@ -15,6 +16,10 @@ import { onMessageReceived } from './utils/Utils';
 
 function App() {
   const [loading, setLoading] = useState(true);
+
+  const openAppEvent = async () => {
+    await analytics().logAppOpen();
+  }
 
   async function bootstrap() {
     const initialNotification = await notifee.getInitialNotification();
@@ -39,6 +44,7 @@ function App() {
   }
 
   useEffect(() => {
+    openAppEvent();
     checkApplicationPermission();
     messaging().onMessage(onMessageReceived);
   }, []);
