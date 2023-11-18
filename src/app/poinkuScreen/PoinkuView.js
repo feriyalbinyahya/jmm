@@ -13,7 +13,7 @@ import IconPoin from '../../assets/images/icon/icon_poin.png';
 import IconPoinWhite from '../../assets/images/icon/icon_poin_white.png';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const PoinkuView = () => {
+const PoinkuView = ({navigation}) => {
     const poin = 150;
     const rank = "bronze";
     const maxPoin = 500;
@@ -79,7 +79,7 @@ const PoinkuView = () => {
                             marginTop: 2, marginHorizontal: 4}}>{`${poin} Poin`}</Text>
                         </View>
                     </View>
-                    <Pressable style={{flexDirection: 'row', alignItems: 'center',
+                    <Pressable onPress={()=>navigation.navigate("TukarPoin")} style={{flexDirection: 'row', alignItems: 'center',
                 backgroundColor: Color.primaryMain, borderRadius: 32, paddingHorizontal: 18, height: 35}}>
                         <Text style={{...FontConfig.buttonZero, color: Color.neutralZeroOne}}>Tukarkan Poinku</Text>
                         <View style={{width: 5}}></View>

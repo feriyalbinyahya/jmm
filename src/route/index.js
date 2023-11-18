@@ -66,6 +66,8 @@ import { setDataPendukung } from '../redux/pendukung';
 import LoginServices from '../services/login';
 import analytics from '@react-native-firebase/analytics';
 import PoinkuScreen from '../app/poinkuScreen';
+import TukarPoinScreen from '../app/poinkuScreen/tukarPoin';
+import DetailTukarPoin from '../app/poinkuScreen/tukarPoin/detail';
 
 const Stack = createNativeStackNavigator();
 
@@ -149,7 +151,9 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Pengumuman" component={PengumumanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Profile" component={ProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Leaderboard" component={LeaderboardScreen} />
-        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="PoinLeaderboard" component={PoinkuScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="PoinLeaderboard" component={PoinkuScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="TukarPoin" component={TukarPoinScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="DetailTukarPoin" component={DetailTukarPoin} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="UbahProfile" component={UbahProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahDataDiriProfile" component={UbahDataDiriScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahAkunProfile" component={UbahAkunScreen} />
