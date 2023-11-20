@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Color, FontConfig } from '../../theme'
 import LinearGradient from 'react-native-linear-gradient'
 import { colorBadge, rankPoin } from '../../utils/const'
@@ -12,11 +12,13 @@ import BadgeDiamond from '../../assets/images/icon/badge_diamond.png';
 import IconPoin from '../../assets/images/icon/icon_poin.png';
 import IconPoinWhite from '../../assets/images/icon/icon_poin_white.png';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomBottomSheet from '../../components/bottomSheet'
+import BenefitBadge from './benefitBadge'
 
-const PoinkuView = ({navigation}) => {
-    const poin = 150;
-    const rank = "bronze";
+const PoinkuView = ({route}) => {
     const maxPoin = 500;
+    const {navigation, infoPoin} = route.params;
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const RankPoin = ({image, rank}) =>{
         return(
@@ -30,43 +32,46 @@ const PoinkuView = ({navigation}) => {
   return (
     <View style={{backgroundColor:  Color.neutralZeroOne, flex: 1,
     paddingVertical: 20}}>
+        <CustomBottomSheet children={<BenefitBadge />} 
+        isModalVisible={isModalVisible} setModalVisible={setModalVisible} 
+        title="" />
         <View style={{paddingHorizontal: 20}}>
-            <LinearGradient style={{borderRadius: 8, padding: 15}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={rank == rankPoin.no_member ? 
-            colorBadge.no_member : rank == rankPoin.bronze ? colorBadge.bronze : rank == rankPoin.silver ?
-        colorBadge.silver : rank == rankPoin.gold ? colorBadge.gold : rank == rankPoin.platinum ? colorBadge.platinum :
+            <LinearGradient style={{borderRadius: 8, padding: 15}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={infoPoin.badge == rankPoin.no_member ? 
+            colorBadge.no_member : infoPoin.badge == rankPoin.bronze ? colorBadge.bronze : infoPoin.badge == rankPoin.silver ?
+        colorBadge.silver : infoPoin.badge == rankPoin.gold ? colorBadge.gold : infoPoin.badge == rankPoin.platinum ? colorBadge.platinum :
         colorBadge.diamond}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View>
                         <Text style={{...FontConfig.captionZero, color:Color.primaryMain}}>Poin Bulan ini</Text>
-                        <Text style={{...FontConfig.buttonThree, color:Color.primaryMain}}>{poin}</Text>
+                        <Text style={{...FontConfig.buttonThree, color:Color.primaryMain}}>{infoPoin.poin_bulanan}</Text>
                     </View>
-                    {rank == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
-                    rank == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
-                    rank == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
-                    rank == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
-                    rank == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
-                    rank == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : <></>}
+                    {infoPoin.badge == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
+                    infoPoin.badge == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
+                    infoPoin.badge == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
+                    infoPoin.badge == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
+                    infoPoin.badge == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
+                    infoPoin.badge == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : <></>}
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flexDirection: 'row',}}>
-                    <Image style={{width: 13.65, height: 14}} source={rank == rankPoin.no_member ? BadgeNoMember : 
-                    rank == rankPoin.bronze ? BadgeBronze : 
-                    rank == rankPoin.silver ? BadgeSilver :
-                    rank == rankPoin.gold ? BadgeGold : 
-                    rank == rankPoin.platinum ? BadgePlatinum:
+                    <Image style={{width: 13.65, height: 14}} source={infoPoin.badge == rankPoin.no_member ? BadgeNoMember : 
+                    infoPoin.badge == rankPoin.bronze ? BadgeBronze : 
+                    infoPoin.badge == rankPoin.silver ? BadgeSilver :
+                    infoPoin.badge == rankPoin.gold ? BadgeGold : 
+                    infoPoin.badge == rankPoin.platinum ? BadgePlatinum:
                     BadgeDiamond} />
                     <View style={styles.progressBar}>
-                        <View style={{...styles.progressMain, flex: poin}}></View>
-                        <View style={{...styles.progressRest, flex: maxPoin-poin}}></View>
+                        <View style={{...styles.progressMain, flex: infoPoin.poin_bulanan}}></View>
+                        <View style={{...styles.progressRest, flex: maxPoin-infoPoin.poin_bulanan}}></View>
                     </View>
-                    {rank != rankPoin.diamond ? <Image style={{width: 13.65, height: 14}} source={rank == rankPoin.no_member ? BadgeBronze : 
-                    rank == rankPoin.bronze ? BadgeSilver : 
-                    rank == rankPoin.silver ? BadgeGold :
-                    rank == rankPoin.gold ? BadgePlatinum : BadgeDiamond} /> : <></>}
+                    {infoPoin.badge != rankPoin.diamond ? <Image style={{width: 13.65, height: 14}} source={infoPoin.badge == rankPoin.no_member ? BadgeBronze : 
+                    infoPoin.badge == rankPoin.bronze ? BadgeSilver : 
+                    infoPoin.badge == rankPoin.silver ? BadgeGold :
+                    infoPoin.badge == rankPoin.gold ? BadgePlatinum : BadgeDiamond} /> : <></>}
                 </View>
                 <Text style={{...FontConfig.captionZero, color: Color.primaryMain,
-                width: '95%', marginVertical: 8}}>{rank != rankPoin.diamond ? `${maxPoin - poin} Poin lagi untuk nikmatin benefit ${rank == rankPoin.no_member ? "Bronze" :
-                rank == rankPoin.bronze ? "Silver" : rank==rankPoin.silver ? "Gold" : rank==rankPoin.gold ? "Platinum" :
+                width: '95%', marginVertical: 8}}>{infoPoin.badge != rankPoin.diamond ? `${maxPoin - infoPoin.poin_bulanan} Poin lagi untuk nikmatin benefit ${infoPoin.badge == rankPoin.no_member ? "Bronze" :
+                infoPoin.badge == rankPoin.bronze ? "Silver" : infoPoin.badge==rankPoin.silver ? "Gold" : infoPoin.badge==rankPoin.gold ? "Platinum" :
                 "Diamond"} di bulan berikutnya. Yuk sat set kumpulin sebelum ganti bulan !` : `Selamat kamu mencapai badge Diamond, Tetap Pertahankan poin ini agar tetap nimatin benefitnya dibulan depan !`}</Text>
                 <View style={{height: 10}}></View>
                 <View style={{backgroundColor: Color.neutralZeroOne, borderRadius: 4,
@@ -76,10 +81,10 @@ const PoinkuView = ({navigation}) => {
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Image style={{width: 12, height: 12}} source={IconPoin} />
                             <Text style={{...FontConfig.buttonThree, color: Color.warning,
-                            marginTop: 2, marginHorizontal: 4}}>{`${poin} Poin`}</Text>
+                            marginTop: 2, marginHorizontal: 4}}>{`${infoPoin.poin_total} Poin`}</Text>
                         </View>
                     </View>
-                    <Pressable onPress={()=>navigation.navigate("TukarPoin")} style={{flexDirection: 'row', alignItems: 'center',
+                    <Pressable onPress={()=>navigation.navigate("TukarPoin", {infoPoin: infoPoin})} style={{flexDirection: 'row', alignItems: 'center',
                 backgroundColor: Color.primaryMain, borderRadius: 32, paddingHorizontal: 18, height: 35}}>
                         <Text style={{...FontConfig.buttonZero, color: Color.neutralZeroOne}}>Tukarkan Poinku</Text>
                         <View style={{width: 5}}></View>
@@ -88,7 +93,7 @@ const PoinkuView = ({navigation}) => {
                 </View>
             </LinearGradient>
             <View style={{height: 15}}></View>
-            <Pressable style={{borderWidth: 1, borderColor: Color.primaryMain,
+            <Pressable onPress={()=>setModalVisible(true)} style={{borderWidth: 1, borderColor: Color.primaryMain,
             borderRadius: 32, alignItems: 'center', paddingVertical: 5}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{...FontConfig.buttonThree, color: Color.primaryMain,
@@ -99,7 +104,7 @@ const PoinkuView = ({navigation}) => {
             </Pressable>
         </View>
         <View style={{height: 15}}></View>
-        <Pressable onPress={()=>{}}  style={{flexDirection: 'row', paddingHorizontal: 20,
+        <Pressable onPress={()=>navigation.navigate("TukarPoin", {infoPoin: infoPoin, screen: 'Riwayat Penukaran'})}  style={{flexDirection: 'row', paddingHorizontal: 20,
         paddingVertical: 15, alignItems: 'center', 
         justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F5F5F5'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -109,7 +114,7 @@ const PoinkuView = ({navigation}) => {
             </View>
             <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
         </Pressable>
-        <Pressable onPress={()=>{}}  style={{flexDirection: 'row', paddingHorizontal: 20,
+        <Pressable onPress={()=>navigation.navigate("RiwayatPengumpulanPoin")}  style={{flexDirection: 'row', paddingHorizontal: 20,
         paddingVertical: 15, alignItems: 'center', 
         justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F5F5F5'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>

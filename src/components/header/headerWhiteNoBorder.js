@@ -30,13 +30,14 @@ const styles = StyleSheet.create({
         height: 24
     },
     textTitle: {
-        ...FontConfig.titleOne,
-        color: Color.neutralTen,
+        ...FontConfig.titleTwo,
+        color: Color.title,
         marginLeft: -20,
         
     },
     textSubtitle: {
         ...FontConfig.bodyTwo,
-        color: Color.neutralZeroSix
+        color: Color.neutralZeroSix,
+        marginLeft: -20,
     },
 })

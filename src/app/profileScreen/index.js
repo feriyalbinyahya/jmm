@@ -88,7 +88,7 @@ const ProfileScreen = ({navigation}) => {
 
 
     handlePoinButton = () => {
-        navigation.navigate("PoinLeaderboard");
+        navigation.navigate("PoinLeaderboard",  {infoPoin: profileData.infoPoin});
     }
     handleEditButton = () => {
         navigation.navigate("UbahProfile");
@@ -98,7 +98,7 @@ const ProfileScreen = ({navigation}) => {
         setIsLoading(true);
         ProfileServices.getProfile()
         .then(res=> {
-            console.log(res.data.data);
+            console.log(res.data.data[0].infoPoin.badge);
             if(res.data.message != "Token expired."){
                 setProfileData(res.data.data[0]);
                 setIsLoading(false);
@@ -199,8 +199,6 @@ const ProfileScreen = ({navigation}) => {
         )
     }
 
-    const rank = "bronze";
-
     const RankPoin = ({image, rank}) =>{
         return(
             <View style={{flexDirection: 'row', alignSelf: 'baseline', alignItems: 'center',
@@ -288,24 +286,16 @@ const ProfileScreen = ({navigation}) => {
                     <View style={{width: 10}}></View>
                     <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Poinku</Text>
                     <View style={{width: 10}}></View>
-                    {rank == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
-                    rank == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
-                    rank == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
-                    rank == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
-                    rank == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
-                    rank == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : <></>}
+                    { profileData?.infoPoin?.badge == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
+                    profileData?.infoPoin?.badge == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
+                    profileData?.infoPoin?.badge == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
+                    profileData?.infoPoin?.badge == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
+                    profileData?.infoPoin?.badge == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
+        profileData?.infoPoin?.badge == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : 
+            <Skeleton width={90} height={25} style={{borderRadius: 10}} />
+        }
                 </View>
                 <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
-            </Pressable>
-            <Pressable onPress={status == "Diterima" ? ()=>navigation.navigate('Leaderboard') : ()=>{}}  style={{flexDirection: 'row', paddingHorizontal: 20,
-            paddingVertical: 15, alignItems: 'center', 
-            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="trophy-outline" color={status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive} size={18} />
-                    <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive}}>Leaderboard</Text>
-                </View>
-                <Ionicons name="chevron-forward-outline" color={status == "Diterima" ? Color.primaryMain : Color.neutralZeroFive} size={18} />
             </Pressable>
             {/**<Pressable onPress={()=>navigation.navigate('Bantuan')}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>

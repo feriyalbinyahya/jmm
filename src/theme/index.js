@@ -187,6 +187,11 @@ export const FontConfig = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 10,
   },
+  bodySix: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    letterSpacing: 0.4
+  },
   captionOne: {
     fontFamily: 'Poppins-Medium',
     fontSize: 11,
@@ -338,7 +343,8 @@ export const Color = {
   hitam: '#000000',
   putih: '#FFFFFF',
   blue: '#3785C7',
-  purpleSurface: '#F7F2FF'
+  purpleSurface: '#F7F2FF',
+  pink: '#E8519E'
 };
 /* Paddings */
 export const Padding = {

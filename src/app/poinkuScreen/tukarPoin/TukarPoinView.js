@@ -2,10 +2,13 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Color, FontConfig } from '../../../theme'
 import IconVoucher from '../../../assets/images/icon/icon_voucher.png'
+import IconLock from '../../../assets/images/icon/icon_lock.png'
 import IconPoin from '../../../assets/images/icon/icon_poin.png'
 import { Box } from 'native-base'
+import { rankPoin } from '../../../utils/const'
 
-const TukarPoinView = ({navigation}) => {
+const TukarPoinView = ({route}) => {
+  const {navigation, infoPoin} = route.params;
 
   const VoucherItem = ({judul, kategori, poin}) => {
     return (
@@ -33,11 +36,22 @@ const TukarPoinView = ({navigation}) => {
       </Box>
     )
   }
+
+  const titleLock = "Yah, Penukaran poinku masih terkunci";
+  const descLock = "Yuk Sat Set ajak kawanmu, selesaikan misi, dan isi survei agar naik ke bronze untuk nikmatin reward yang tersedia.";
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne, padding: 20}}>
       <Text style={{...FontConfig.titleThree, color: Color.title}}>Voucher Tersedia</Text>
       <View style={{height: 10}}></View>
-      <VoucherItem judul={`Saldo OVO 1.500`} kategori={`E-Wallet`} poin={100} />
+      {infoPoin.badge != rankPoin.no_member ?<VoucherItem judul={`Saldo OVO 1.500`} kategori={`E-Wallet`} poin={100} /> :
+      <View style={{alignItems: 'center', marginVertical: 20}}>
+        <Image style={{width: 41, height: 41}} source={IconLock} />
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.buttonOne, color: Color.neutralZeroSeven, textAlign: 'center'}}>{titleLock}</Text>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, textAlign: 'center',
+      width: '90%'}}>{descLock}</Text>
+      </View>
+      }
     </View>
   )
 }
