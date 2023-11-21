@@ -124,7 +124,7 @@ const PoinkuView = ({route}) => {
             </View>
             <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
         </Pressable>
-        <Pressable onPress={()=>{}}  style={{flexDirection: 'row', paddingHorizontal: 20,
+        <Pressable onPress={()=>navigation.navigate("PertanyaanPoin")}  style={{flexDirection: 'row', paddingHorizontal: 20,
         paddingVertical: 15, alignItems: 'center', 
         justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F5F5F5'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>

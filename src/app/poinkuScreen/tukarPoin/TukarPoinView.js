@@ -1,14 +1,33 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Color, FontConfig } from '../../../theme'
 import IconVoucher from '../../../assets/images/icon/icon_voucher.png'
 import IconLock from '../../../assets/images/icon/icon_lock.png'
 import IconPoin from '../../../assets/images/icon/icon_poin.png'
 import { Box } from 'native-base'
 import { rankPoin } from '../../../utils/const'
+import VoucherServices from '../../../services/voucher'
 
 const TukarPoinView = ({route}) => {
   const {navigation, infoPoin} = route.params;
+  const [dataVoucher, setDataVoucher] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setLoading] = useState(false);
+
+  const getDataVoucher = () =>{
+    VoucherServices.getAllVoucher()
+    .then(res=>{
+      console.log(res.data);
+    })
+    .catch(err=>{
+      console.log(err.response);
+    })
+  }
+
+  useEffect(()=>{
+    getDataVoucher();
+  }, [])
 
   const VoucherItem = ({judul, kategori, poin}) => {
     return (
