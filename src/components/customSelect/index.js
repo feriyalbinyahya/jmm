@@ -3,7 +3,7 @@ import React, {useState} from 'react'
 import { Dropdown } from 'react-native-element-dropdown';
 import { Color, FontConfig } from '../../theme';
 
-const CustomSelect = ({value, setValue, data, title, labelField, valueField}) => {
+const CustomSelect = ({value, setValue, data, title, labelField, valueField, search=true}) => {
     const [isFocus, setIsFocus] = useState(false);
   return (
     <View>
@@ -14,7 +14,7 @@ const CustomSelect = ({value, setValue, data, title, labelField, valueField}) =>
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             data={data}
-            search
+            search={search}
             maxHeight={300}
             labelField={labelField}
             valueField={valueField}

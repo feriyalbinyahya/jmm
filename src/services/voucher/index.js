@@ -19,15 +19,39 @@ const getHeaders = async() => {
     }
 }
 
-getAllVoucher = async () => {
+getAllVoucher = async (page) => {
     let headersToken = await getHeaders();
-    return Request.get(`voucher`, {headers: headersToken});
+    return Request.get(`voucher?size=5&page=${page}`, {headers: headersToken});
+}
+
+getDetailVoucher = async (id) => {
+    let headersToken = await getHeaders();
+    return Request.get(`voucher/${id}`, {headers: headersToken});
+}
+
+redeemVoucher = async (id) => {
+    let headersToken = await getHeaders();
+    return Request.post(`voucher/${id}`, {}, {headers: headersToken});
+}
+
+getAllRiwayatVoucher = async (page) => {
+    let headersToken = await getHeaders();
+    return Request.get(`voucher/riwayat?size=5&page=${page}`, {headers: headersToken});
+}
+
+getAllRiwayatPengumpulan = async (page, fromDate, toDate, kategori) => {
+    let headersToken = await getHeaders();
+    console.log(`voucher/riwayat-pengumpulan?size=5&page=${page}&tanggal_dari=${fromDate}&tanggal_sampai=${toDate}&kategori_poin=${kategori}`)
+    return Request.get(`voucher/riwayat-pengumpulan?size=5&page=${page}&tanggal_dari=${fromDate}&tanggal_sampai=${toDate}&kategori_poin=${kategori}`, {headers: headersToken});
 }
 
 
-
 const VoucherServices = {
-    getAllVoucher
+    getAllVoucher,
+    getDetailVoucher,
+    redeemVoucher,
+    getAllRiwayatVoucher,
+    getAllRiwayatPengumpulan
 }
   
   export default VoucherServices;

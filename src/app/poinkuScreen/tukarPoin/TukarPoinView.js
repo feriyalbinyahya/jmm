@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Image, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Color, FontConfig } from '../../../theme'
 import IconVoucher from '../../../assets/images/icon/icon_voucher.png'
@@ -7,32 +7,86 @@ import IconPoin from '../../../assets/images/icon/icon_poin.png'
 import { Box } from 'native-base'
 import { rankPoin } from '../../../utils/const'
 import VoucherServices from '../../../services/voucher'
+import { useFocusEffect } from '@react-navigation/native'
 
 const TukarPoinView = ({route}) => {
   const {navigation, infoPoin} = route.params;
   const [dataVoucher, setDataVoucher] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [infoPoinku, setInfoPoinku] = useState(infoPoin.poin_total)
 
-  const getDataVoucher = () =>{
-    VoucherServices.getAllVoucher()
+  const getDataVoucher = (page) =>{
+    if(dataVoucher.length ==0 ) setIsLoading(true);
+    VoucherServices.getAllVoucher(page)
     .then(res=>{
-      console.log(res.data);
+      console.log(res.data.data);
+      setDataVoucher([...dataVoucher, ...res.data.data.data.data_voucher]);
+      setInfoPoinku(res.data.data.data.poin_saat_ini);
+      setTotalPages(res.data.data.totalPages);
+      setIsLoading(false);
     })
     .catch(err=>{
       console.log(err.response);
     })
   }
 
-  useEffect(()=>{
-    getDataVoucher();
-  }, [])
+  const loadMoreItem = () => {
+    if(currentPage < parseInt(totalPages)){
+      setCurrentPage(currentPage + 1);
+    }
+  }
 
-  const VoucherItem = ({judul, kategori, poin}) => {
+  const renderLoader = () => {
+    return(
+      <View style={styles.loaderStyle}>
+          <ActivityIndicator size="large" color={Color.graySix} />
+      </View>
+    );
+  }
+
+  const getVoucherDataOnRefresh = (page) => {
+    setIsLoading(true);
+    VoucherServices.getAllVoucher(page)
+    .then(res=> {
+      console.log(res.data.data);
+      setDataVoucher(res.data.data.data.data_voucher);
+      setInfoPoinku(res.data.data.data.poin_saat_ini);
+      //setTotalPages(res.data.data.totalPages);
+      setIsLoading(false);
+    })
+    .catch(err=> {
+      console.log(err);
+    })
+  }
+
+  const onRefresh =  () => {
+    setRefreshing(true);
+    setCurrentPage(1);
+    setDataVoucher([]);
+    getVoucherDataOnRefresh(1);
+    setRefreshing(false);
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if(dataVoucher.length != 0){
+        console.log("refresh data voucher");
+        getDataVoucher(currentPage);
+      }
+      }, [])
+  );
+
+  useEffect(()=>{
+    getDataVoucher(currentPage);
+  }, [currentPage])
+
+  const VoucherItem = ({judul, kategori, poin, id}) => {
     return (
-      <Box shadow={2} style={{paddingHorizontal: 10, paddingVertical: 15, backgroundColor: Color.neutralZeroOne,
-      borderRadius: 8}}>
+      <Box shadow={0} style={{paddingHorizontal: 10, paddingVertical: 15, backgroundColor: Color.neutralZeroOne,
+      borderRadius: 8, marginVertical: 5}}>
         <View style={{flexDirection: 'row', alignItems:'center'}}>
           <Image source={IconVoucher} style={{width: 36, height: 36}} />
           <View style={{width: 10}}></View>
@@ -47,7 +101,7 @@ const TukarPoinView = ({route}) => {
           <View style={{width: 5}}></View>
           <Text style={{...FontConfig.titleFour, color: Color.warning}}>{`${poin} Poinku`}</Text>
           <View style={{width: 8}}></View>
-          <Pressable onPress={()=>navigation.navigate("DetailTukarPoin")} style={{borderRadius: 24, alignSelf: 'baseline', borderWidth: 1,
+          <Pressable onPress={()=>navigation.navigate("DetailTukarPoin", {id: id, poinku: infoPoinku})} style={{borderRadius: 24, alignSelf: 'baseline', borderWidth: 1,
         borderColor: Color.primaryMain, paddingHorizontal: 8, paddingVertical: 2}}>
             <Text style={{...FontConfig.captionTwo, color: Color.primaryMain}}>Tukarkan</Text>
           </Pressable>
@@ -62,7 +116,19 @@ const TukarPoinView = ({route}) => {
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne, padding: 20}}>
       <Text style={{...FontConfig.titleThree, color: Color.title}}>Voucher Tersedia</Text>
       <View style={{height: 10}}></View>
-      {infoPoin.badge != rankPoin.no_member ?<VoucherItem judul={`Saldo OVO 1.500`} kategori={`E-Wallet`} poin={100} /> :
+      {infoPoin.badge != rankPoin.no_member ?
+      <FlatList
+        data={dataVoucher}
+        ListFooterComponent={currentPage.toString() != totalPages ? renderLoader : <></>}
+        onEndReached={loadMoreItem}
+        onEndReachedThreshold={0}
+        refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
+        style={{height: '78%'}}
+        renderItem={({item})=>{
+          return <VoucherItem id={item.id_voucher} judul={item.nama_voucher} kategori={item.nama_kategori} poin={item.harga_voucher} />
+        }}
+       /> 
+      :
       <View style={{alignItems: 'center', marginVertical: 20}}>
         <Image style={{width: 41, height: 41}} source={IconLock} />
         <View style={{height: 10}}></View>
