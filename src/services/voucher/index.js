@@ -29,6 +29,12 @@ getDetailVoucher = async (id) => {
     return Request.get(`voucher/${id}`, {headers: headersToken});
 }
 
+getDetailRiwayatVoucher = async (id) => {
+    console.log(`voucher/riwayat/${id}`)
+    let headersToken = await getHeaders();
+    return Request.get(`voucher/riwayat/${id}`, {headers: headersToken});
+}
+
 redeemVoucher = async (id) => {
     let headersToken = await getHeaders();
     return Request.post(`voucher/${id}`, {}, {headers: headersToken});
@@ -51,7 +57,8 @@ const VoucherServices = {
     getDetailVoucher,
     redeemVoucher,
     getAllRiwayatVoucher,
-    getAllRiwayatPengumpulan
+    getAllRiwayatPengumpulan,
+    getDetailRiwayatVoucher
 }
   
   export default VoucherServices;

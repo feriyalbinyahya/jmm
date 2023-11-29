@@ -32,6 +32,7 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
     const [dariTanggal, setDariTanggal] = useState('');
     const [sampaiTanggal, setSampaiTanggal] = useState('');
     const [kategoriPilihan, setKategoriPilihan] = useState('');
+    const [isFiltered, setIsFiltered] = useState(false);
 
 
     const handleTerapkanFilter = (fromdate, todate, kategori) => {
@@ -40,6 +41,7 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
       setDariTanggal(fromdate);
       setSampaiTanggal(todate);
       setKategoriPilihan(kategori);
+      setIsFiltered(true);
       setModalVisible(false);
     }
 
@@ -47,6 +49,7 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
       setDariTanggal('');
       setSampaiTanggal('');
       setKategoriPilihan('');
+      setIsFiltered(false);
       setModalVisible(false);
     }
 
@@ -123,14 +126,14 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
               <View style={{height: 5}}></View>
               <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 5}}>Dari tanggal</Text>
               <DropDownButton placeholder='yyyy-mm-dd' text={fromDate.toString()} onPress={handleDateFromButton} />
-              {isCalendarFromVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
-            display="calendar" onChange={handleDateChangeFrom} value={new Date(2000, 10, 20)}
+              {isCalendarFromVisible? <DateTimePicker maximumDate={new Date()} 
+            display="calendar" onChange={handleDateChangeFrom} value={new Date()}
              /> : <></>}
              <View style={{height: 5}}></View>
              <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 5}}>Sampai tanggal</Text>
               <DropDownButton placeholder='yyyy-mm-dd' text={toDate.toString()} onPress={handleDateToButton} />
-              {isCalendarToVisible? <DateTimePicker maximumDate={new Date(2020, 10, 20)} 
-            display="calendar" onChange={handleDateChangeTo} value={new Date(2000, 10, 20)}
+              {isCalendarToVisible? <DateTimePicker maximumDate={new Date()} 
+            display="calendar" onChange={handleDateChangeTo} value={new Date()}
              /> : <></>}
              <View style={{height: 10}}></View>
 
@@ -258,7 +261,7 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{...FontConfig.titleThree, color: Color.title}}>Riwayat Pengumpulan Poin</Text>
             <Pressable onPress={()=>setModalVisible(true)} 
-            style={{...styles.buttonFilter, backgroundColor:  Color.neutralZeroOne}}>
+            style={{...styles.buttonFilter, backgroundColor: isFiltered ? Color.redOne :  Color.neutralZeroOne}}>
                 <Text style={{...FontConfig.bodyThree, color: Color.neutralTen}}>Filter</Text>
                 <View style={{width: 3}}></View>
                 <Ionicons name="filter" color={Color.neutralTen} size={14} />

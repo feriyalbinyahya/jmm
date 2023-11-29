@@ -17,7 +17,7 @@ import IconSuccess from '../../../assets/images/success.png'
 import AwesomeAlert from 'react-native-awesome-alerts'
 
 const DetailTukarPoin = ({navigation, route}) => {
-    const {id, poinku} = route.params;
+    const {id, poinku, jenis} = route.params;
     const kategori = "E-Wallet";
     const judul = "Saldo OVO 1.500";
     const poin ="100";
@@ -28,7 +28,7 @@ const DetailTukarPoin = ({navigation, route}) => {
     const _editor = React.createRef();
     const [dataDetail, setDataDetail] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSwiped, setSwiped] = useState(false);
+    const [isSwiped, setSwiped] = useState(jenis == 'tukar' ? false : true);
     const [message, setMessage] = useState("");
     const [showAlertSwiped, setShowAlertSwiped] = useState(false);
     const [showAlertWrong, setShowAlertWrong] = useState(false);
@@ -49,6 +49,19 @@ const DetailTukarPoin = ({navigation, route}) => {
     const getDataDetail = () => {
       setIsLoading(true);
       VoucherServices.getDetailVoucher(id)
+      .then(res=>{
+        console.log(res.data.data);
+        setDataDetail(res.data.data[0]);
+        setIsLoading(false);
+      })
+      .catch(err=>{
+        console.log(err.response);
+      })
+    }
+
+    const getDataRiwayatDetail = () => {
+      setIsLoading(true);
+      VoucherServices.getDetailRiwayatVoucher(id)
       .then(res=>{
         console.log(res.data.data);
         setDataDetail(res.data.data[0]);
@@ -106,8 +119,11 @@ const DetailTukarPoin = ({navigation, route}) => {
     const value = `<h1 class="ql-align-center">PONGO EDISI TERBARU</h1><p class="ql-align-center"><br></p><iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/11nBqHolLng?showinfo=0" __idm_id__="11804673" width="1367px" height="371" style="display: block; margin: auto;"></iframe><p><br></p> <p>Suspendisse fermentum fermentum ex. Praesent a odio ac tortor bibendum faucibus.</p><p><br></p><p>Pellentesque pulvinar gravida nulla tristique rhoncus. Donec rutrum magna lacus, sed ultrices dui tincidunt sed. Ut quis mauris risus. Cras volutpat tempor ultricies. Pellentesque neque lacus, consequat in tortor ut, fringilla varius quam. Fusce iaculis felis in ullamcorper auctor. Integer lectus libero, ornare sit amet eleifend eu, ornare nec justo. Nam pellentesque vitae erat eu porta. Nam dictum iaculis quam in maximus. Fusce sit amet metus in neque dapibus viverra ut eget eros. Fusce elementum, sapien et cursus consectetur, felis sapien semper turpis, ac sagittis ante augue in nunc.</p><p><br></p><p>Integer eu sapien eu velit feugiat posuere. Morbi at dui quis ante placerat .</p><p><br></p><p>Nunc ut leo quis purus mollis laoreet nec non felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus libero sed nulla ullamcorper, nec consequat quam elementum. Cras sit amet efficitur metus. Donec ut porta erat. Nam lacus tortor, congue malesuada velit in, mollis faucibus risus. Mauris sit amet justo semper eros varius euismod. Integer sagittis tincidunt elementum. Nunc neque eros, tempor et erat vel, lacinia condimentum metus. Vivamus tempor mollis ligula, euismod rhoncus sem ullamcorper ut. Donec placerat fringilla lorem, ac posuere erat venenatis id. Vestibulum volutpat id ipsum vel pellentesque.</p><p>Morbi elementum ante sit amet augue eleifend, in condimentum lorem posuere. Curabitur a mauris id velit dapibus mollis. Duis nec nulla nisl. Cras vitae velit eget turpis aliquet luctus. Ut sem nunc, ornare sed mattis at, cursus non nisi. Phasellus maximus, tellus dapibus ornare faucibus, nunc nunc aliquam ex, at pellentesque lectus massa eget erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque quis tellus a odio lacinia volutpat at non sem. Sed eget lacinia libero, a egestas massa.</p> </p> `;
 
   useEffect(()=>{
-    console.log(id);
-    getDataDetail();
+    if(jenis == 'tukar'){
+      getDataDetail();
+    }else{
+      getDataRiwayatDetail();
+    }
   },[])
 
   return (

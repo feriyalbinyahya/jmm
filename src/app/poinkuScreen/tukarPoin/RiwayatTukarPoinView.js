@@ -66,14 +66,6 @@ const RiwayatTukarPoinView = ({route}) => {
       setRefreshing(false);
     }
 
-    useFocusEffect(
-      React.useCallback(() => {
-        if(dataRiwayatVoucher.length != 0){
-          console.log("refresh data voucher");
-          getDataRiwayatVoucher(currentPage);
-        }
-        }, [])
-    );
   
     useEffect(()=>{
       getDataRiwayatVoucher(currentPage);
@@ -98,7 +90,7 @@ const RiwayatTukarPoinView = ({route}) => {
                 <View style={{width: 5}}></View>
                 <Text style={{...FontConfig.titleFour, color: Color.warning}}>{`${poin} Poinku`}</Text>
                 <View style={{width: 10}}></View>
-                <Pressable onPress={()=>navigation.navigate("DetailTukarPoin", {id: id, poinku: infoPoin.poin_total})} style={{borderRadius: 24, alignSelf: 'baseline',
+                <Pressable onPress={()=>navigation.navigate("DetailTukarPoin", {id: id, poinku: infoPoin.poin_total, jenis: 'riwayat'})} style={{borderRadius: 24, alignSelf: 'baseline',
                  paddingHorizontal: 15, paddingVertical: 4, backgroundColor: Color.primaryMain}}>
                     <Text style={{...FontConfig.captionTwo, color: Color.neutralZeroOne}}>Lihat Detail</Text>
                 </Pressable>
@@ -113,7 +105,7 @@ const RiwayatTukarPoinView = ({route}) => {
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne, padding: 20}}>
       <Text style={{...FontConfig.titleThree, color: Color.title}}>Voucherku</Text>
       <View style={{height: 10}}></View>
-      {!isLoading ? 
+      {!isLoading ? dataRiwayatVoucher.length != 0 ?
       <FlatList
       data={dataRiwayatVoucher}
       ListFooterComponent={currentPage.toString() != totalPages ? renderLoader : <></>}
@@ -132,6 +124,11 @@ const RiwayatTukarPoinView = ({route}) => {
             <Text style={{...FontConfig.buttonOne, color: Color.neutralZeroSeven, textAlign: 'center'}}>{titleLock}</Text>
             <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, textAlign: 'center',
             width: '90%'}}>{descLock}</Text>
+        </View>
+
+        :
+        <View style={{height: '100%', backgroundColor: Color.neutralZeroOne}}>
+        <ActivityIndicator style={{marginTop: '50%'}} size="large" color={Color.primaryMain} />
         </View>
       }
     </View>
