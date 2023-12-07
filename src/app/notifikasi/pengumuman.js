@@ -13,6 +13,9 @@ import BeritaServices from '../../services/berita'
 import { useIsFocused } from '@react-navigation/native';
 import Share from 'react-native-share';
 import IconLiked from '../../assets/images/icon/icon_liked.png'
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../utils/Utils';
 
 const PengumumanScreen = ({navigation, route}) => {
     const [height, setHeight] = useState(0);
@@ -23,6 +26,23 @@ const PengumumanScreen = ({navigation, route}) => {
     const [isLiked, setIsLiked] = useState(false);
     const [jumlahLike, setJumlahLike] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const [convertedDate, setConvertedDate] = useState("");
+
+    // Make moment of right now, using the device timezone
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+    useEffect(()=>{
+        if(dataBerita.length != 0){
+            const convertedToLocalTime = formatTimeByOffset(
+                dataBerita.tanggal,
+                currentTimeZoneOffsetInHours,
+            );
+            setConvertedDate(convertedToLocalTime);
+        }
+    },[dataBerita])
 
     const value = `<h1 class="ql-align-center">PONGO EDISI TERBARU</h1><p class="ql-align-center"><br></p><iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/11nBqHolLng?showinfo=0" __idm_id__="11804673" width="1367px" height="371" style="display: block; margin: auto;"></iframe><p><br></p> <p>Suspendisse fermentum fermentum ex. Praesent a odio ac tortor bibendum faucibus.</p><p><br></p><p>Pellentesque pulvinar gravida nulla tristique rhoncus. Donec rutrum magna lacus, sed ultrices dui tincidunt sed. Ut quis mauris risus. Cras volutpat tempor ultricies. Pellentesque neque lacus, consequat in tortor ut, fringilla varius quam. Fusce iaculis felis in ullamcorper auctor. Integer lectus libero, ornare sit amet eleifend eu, ornare nec justo. Nam pellentesque vitae erat eu porta. Nam dictum iaculis quam in maximus. Fusce sit amet metus in neque dapibus viverra ut eget eros. Fusce elementum, sapien et cursus consectetur, felis sapien semper turpis, ac sagittis ante augue in nunc.</p><p><br></p><p>Integer eu sapien eu velit feugiat posuere. Morbi at dui quis ante placerat .</p><p><br></p><p>Nunc ut leo quis purus mollis laoreet nec non felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus libero sed nulla ullamcorper, nec consequat quam elementum. Cras sit amet efficitur metus. Donec ut porta erat. Nam lacus tortor, congue malesuada velit in, mollis faucibus risus. Mauris sit amet justo semper eros varius euismod. Integer sagittis tincidunt elementum. Nunc neque eros, tempor et erat vel, lacinia condimentum metus. Vivamus tempor mollis ligula, euismod rhoncus sem ullamcorper ut. Donec placerat fringilla lorem, ac posuere erat venenatis id. Vestibulum volutpat id ipsum vel pellentesque.</p><p>Morbi elementum ante sit amet augue eleifend, in condimentum lorem posuere. Curabitur a mauris id velit dapibus mollis. Duis nec nulla nisl. Cras vitae velit eget turpis aliquet luctus. Ut sem nunc, ornare sed mattis at, cursus non nisi. Phasellus maximus, tellus dapibus ornare faucibus, nunc nunc aliquam ex, at pellentesque lectus massa eget erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque quis tellus a odio lacinia volutpat at non sem. Sed eget lacinia libero, a egestas massa.</p> </p> `;
 
@@ -63,7 +83,7 @@ const PengumumanScreen = ({navigation, route}) => {
         {dataBerita.cover_berita?.length > 0 ? <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} /> : <></>}
         <View style={styles.containBeritaSection}>
             <Text style={styles.textJudulBerita}>{dataBerita.judul}</Text>
-            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{dataBerita.tanggal}</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{convertedDate}</Text>
             <QuillEditor
                 autoSize={true}
                 webview={{

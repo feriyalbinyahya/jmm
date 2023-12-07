@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Color, FontConfig } from '../../../theme'
 import IconVoucher from '../../../assets/images/icon/icon_voucher.png'
@@ -15,6 +15,10 @@ import Snackbar from 'react-native-snackbar'
 import VoucherServices from '../../../services/voucher'
 import IconSuccess from '../../../assets/images/success.png'
 import AwesomeAlert from 'react-native-awesome-alerts'
+import CustomButton from '../../../components/customButton'
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../../utils/Utils';
 
 const DetailTukarPoin = ({navigation, route}) => {
     const {id, poinku, jenis} = route.params;
@@ -32,6 +36,9 @@ const DetailTukarPoin = ({navigation, route}) => {
     const [message, setMessage] = useState("");
     const [showAlertSwiped, setShowAlertSwiped] = useState(false);
     const [showAlertWrong, setShowAlertWrong] = useState(false);
+    const [dataRedeem, setDataRedeem] = useState([]);
+    const [convertedDate, setConvertedDate] = useState('');
+    const [pin, setPin] = useState('');
     const onWebViewMessage = (event) => {
         _editor.current?.enable(false);
         console.log(`Tinggi : ${event.nativeEvent.data}`);
@@ -39,9 +46,9 @@ const DetailTukarPoin = ({navigation, route}) => {
     }
 
     handleCopyReferral = () => {
-        Clipboard.setString(referal);
+        Clipboard.setString(pin);
         Snackbar.show({
-            text: 'Kode voucher telah disalin',
+            text: 'Pin voucher telah disalin',
             duration: Snackbar.LENGTH_SHORT,
         });
     }
@@ -52,6 +59,12 @@ const DetailTukarPoin = ({navigation, route}) => {
       .then(res=>{
         console.log(res.data.data);
         setDataDetail(res.data.data[0]);
+        setPin(res.data.data[0].pin);
+        setDataRedeem({
+          pin: res.data.data[0].pin,
+          link: res.data.data[0].link_voucher,
+          kode: res.data.data[0].kode_voucher
+        });
         setIsLoading(false);
       })
       .catch(err=>{
@@ -65,6 +78,12 @@ const DetailTukarPoin = ({navigation, route}) => {
       .then(res=>{
         console.log(res.data.data);
         setDataDetail(res.data.data[0]);
+        setPin(res.data.data[0].pin);
+        setDataRedeem({
+          pin: res.data.data[0].pin,
+          link: res.data.data[0].link_voucher,
+          kode: res.data.data[0].kode_voucher
+        });
         setIsLoading(false);
       })
       .catch(err=>{
@@ -78,6 +97,12 @@ const DetailTukarPoin = ({navigation, route}) => {
         console.log(res.data.data.message);
         if(res.data.message == "Sukses redeem voucher"){
           console.log(res.data);
+          setPin(res.data.data.pin);
+          setDataRedeem({
+            pin: res.data.data.pin,
+            link: res.data.data.link_voucher,
+            kode: res.data.data.kode_voucher
+          });
           setShowAlertSwiped(true);
           setSwiped(true);
           setTimeout(function callback(){
@@ -126,6 +151,21 @@ const DetailTukarPoin = ({navigation, route}) => {
     }
   },[])
 
+  const deviceTimeZone = RNLocalize.getTimeZone();
+
+  // Make moment of right now, using the device timezone
+  const today = moment().tz(deviceTimeZone);
+
+  // Get the UTC offset in hours
+  const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+  useEffect(()=>{
+      const convertedToLocalTime = formatTimeByOffset(
+          dataDetail.waktu,
+          currentTimeZoneOffsetInHours,
+        );
+      setConvertedDate(convertedToLocalTime);
+  },[dataDetail])
+
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne}}>
       <HeaderWhiteNoBorder title="Detail Penukaran Poinku" navigation={navigation} />
@@ -144,10 +184,16 @@ const DetailTukarPoin = ({navigation, route}) => {
             <Text style={{...FontConfig.titleSeven, color: '#000000'}} >{tanggal}</Text>
         </View>
         <View style={styles.garisVertical}></View>
+        {jenis == 'tukar' ?
         <View>
             <Text style={{...FontConfig.captionOne, color: '#616161'}}>Sisa Voucher</Text>
             <Text style={{...FontConfig.titleSeven, color: Color.purple}} >{dataDetail.sisa_voucher}</Text>
-        </View>
+        </View> : 
+        <View>
+            <Text style={{...FontConfig.captionOne, color: '#616161'}}>Waktu Penukaran</Text>
+            <Text style={{...FontConfig.titleSeven, color: Color.purple}} >{convertedDate}</Text>
+        </View> 
+        }
       </View>
       <Text style={{...FontConfig.bodyThree, color: '#616161', marginTop: 20,
        marginHorizontal: 20, marginBottom: 10}}>Deskripsi</Text>
@@ -176,11 +222,22 @@ const DetailTukarPoin = ({navigation, route}) => {
             iconContainerStyle={{backgroundColor: Color.primaryMain, }}
             titleStyle={{...FontConfig.buttonThree, color: '#757575'}}
         /> : 
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', 
-        paddingHorizontal: 20, paddingVertical: 15, backgroundColor: Color.primaryMain,
-        borderRadius: 32, height: 50}}>
-            <Text style={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne}}>{referal}</Text>
-            <Pressable onPress={handleCopyReferral}><Image source={IconCopy} style={{width: 18, height: 18}} /></Pressable>
+        <View>
+          <View style={{alignItems: 'center'}}>
+            <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>Klaim Voucher dengan cara :</Text>
+            <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven}}>
+              <Text style={{color: Color.hitam}}>Salin Pin Voucher </Text>dan<Text style={{color: Color.hitam}}> Buka Tautan Voucher</Text></Text>
+            <Text style={{...FontConfig.captionOne, color: Color.neutralZeroSeven, paddingVertical: 10}}>{`ID Voucher: ${dataRedeem.kode}`}</Text>          
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', 
+          paddingHorizontal: 20, paddingVertical: 15, backgroundColor: Color.primaryMain,
+          borderRadius: 32, height: 50}}>
+              <Text style={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne}}>{dataRedeem.pin}</Text>
+              <Pressable onPress={handleCopyReferral}><Image source={IconCopy} style={{width: 18, height: 18}} /></Pressable>
+          </View>
+          <View style={{height: 5}}></View>
+          <CustomButton onPress={()=>Linking.openURL(dataRedeem.link)} text={`Buka Tautan Voucher`} fontStyles={{...FontConfig.buttonZeroTwo,
+          color: Color.neutralTen}} borderColor={Color.neutralZeroFive} borderWidth={1} height={40} />
         </View>
         :
         <View style={{ 

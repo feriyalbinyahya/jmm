@@ -26,7 +26,7 @@ getLeaderboard = async (type) => {
 
 getLeaderboardNew = async (filter) => {
     let headersToken = await getHeaders();
-    return Request.get(`user/leaderboard/jumlah/misi?filter=${filter}`, {headers: headersToken, timeout: 8000,});
+    return Request.get(`user/leaderboard/jumlah/poin?filter=${filter}`, {headers: headersToken, timeout: 8000,});
 }
 
 

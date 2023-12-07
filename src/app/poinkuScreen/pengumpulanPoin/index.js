@@ -169,11 +169,11 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
         );
       }
     
-      const getRiwayatPengumpulanDataOnRefresh = (page) => {
+      const getRiwayatPengumpulanDataOnRefresh = (page, dariTanggal, sampaiTanggal, kategoriPilihan) => {
         setIsLoading(true);
-        VoucherServices.getAllRiwayatPengumpulan(page)
+        VoucherServices.getAllRiwayatPengumpulan(page, dariTanggal, sampaiTanggal, kategoriPilihan)
         .then(res=>{
-          setDataRiwayat(res.data.data);
+          setDataRiwayat(res.data.data.data);
           setIsLoading(false);
         })
         .catch(err=>{
@@ -185,7 +185,7 @@ const RiwayatPengumpulanPoinScreen = ({navigation}) => {
         setRefreshing(true);
         setCurrentPage(1);
         setDataRiwayat([]);
-        getRiwayatPengumpulanDataOnRefresh(1);
+        getRiwayatPengumpulanDataOnRefresh(1, dariTanggal, sampaiTanggal, kategoriPilihan);
         setRefreshing(false);
       }
 

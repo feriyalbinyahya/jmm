@@ -7,7 +7,7 @@ let headers = {
 
 
 login = (data) => {
-    return Request.post("user/login", data, {headers: headers, timeout: 8000,});
+    return Request.post("user/login", data, {headers: headers});
 }
 
 forgetPassword = (data) => {

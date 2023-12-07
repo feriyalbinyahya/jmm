@@ -13,6 +13,9 @@ import BeritaServices from '../../services/berita'
 import { useIsFocused } from '@react-navigation/native';
 import Share from 'react-native-share';
 import IconLiked from '../../assets/images/icon/icon_liked.png'
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../utils/Utils';
 
 const BannerScreen = ({navigation, route}) => {
     const [height, setHeight] = useState(0);
@@ -24,6 +27,23 @@ const BannerScreen = ({navigation, route}) => {
     const [isLiked, setIsLiked] = useState(false);
     const [jumlahLike, setJumlahLike] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const [convertedDate, setConvertedDate] = useState("");
+
+    // Make moment of right now, using the device timezone
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+    useEffect(()=>{
+        if(dataBerita.length != 0){
+            const convertedToLocalTime = formatTimeByOffset(
+                dataBerita.tanggal,
+                currentTimeZoneOffsetInHours,
+            );
+            setConvertedDate(convertedToLocalTime);
+        }
+    },[dataBerita])
 
 
     const getDataBerita = () => {
@@ -83,7 +103,7 @@ const BannerScreen = ({navigation, route}) => {
         <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} />
         <View style={styles.containBeritaSection}>
             <Text style={styles.textJudulBerita}>{dataBerita.judul}</Text>
-            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{dataBerita.tanggal}</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{convertedDate}</Text>
             <QuillEditor
                 autoSize={true}
                 webview={{

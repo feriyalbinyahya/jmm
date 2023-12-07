@@ -19,6 +19,10 @@ import Skeleton from '../skeleton'
 import ImageEmpty from '../../assets/images/warning/empty2.png'
 import AcaraServices from '../../services/acara'
 import { useFocusEffect } from '@react-navigation/native'
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../utils/Utils';
+
 
 const AllBeritaContainer = ({navigation, title}) => {
   const [selectedMenuBerita, setSelectedMenuBerita] = useState("Terbaru");
@@ -273,6 +277,21 @@ const AllBeritaContainer = ({navigation, title}) => {
   const LaporanItem = ({image, judul, kategori, tanggal, likes, comments, seen, onPress, data_acara}) => {
     const [dataImage, setDataImage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const deviceTimeZone = moment.tz.guess(true);
+    const [convertedDate, setConvertedDate] = useState("");
+
+    // Make moment of right now, using the device timezone
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+    useEffect(()=>{
+        const convertedToLocalTime = formatTimeByOffset(
+            tanggal,
+            currentTimeZoneOffsetInHours,
+          );
+        setConvertedDate(convertedToLocalTime);
+    },[])
 
       const getDataImage = () =>{
         setIsLoading(true);
@@ -305,7 +324,7 @@ const AllBeritaContainer = ({navigation, title}) => {
         <Text style={styles.textJudulLaporan}>{judul}</Text>
         <View style={{height: 3}}></View>
         {title != "Acara" ? <View style={styles.infoBerita}>
-          <InfoLaporan text={tanggal} icon={IconCalendar} />
+          <InfoLaporan text={convertedDate} icon={IconCalendar} />
           <InfoLaporan text={comments} icon={IconComment} />
           <InfoLaporan text={likes} icon={IconLike} />
           <InfoLaporan text={seen >= 1000 ? `${parseFloat(seen % 1000 == 0 ? seen/1000 : parseFloat(seen/1000).toFixed(1))}K` : seen} icon={IconSeen} />

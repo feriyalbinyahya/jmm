@@ -3,12 +3,30 @@ import React, {useState, useEffect} from 'react'
 import { height } from '../../assets/constants'
 import { Color, FontConfig } from '../../theme';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../utils/Utils';
 
 const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked, onPressNotif, navigation}) => {
     const [checked, setChecked] = useState(false);
     const [pressIn, setPressIn] = useState(false);
     const [more, setMore] = useState(false);
     const [isMore, setIsMore] = useState(false);
+    const deviceTimeZone = moment.tz.guess(true);
+    const [convertedDate, setConvertedDate] = useState("");
+
+    // Make moment of right now, using the device timezone
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+    useEffect(()=>{
+        const convertedToLocalTime = formatTimeByOffset(
+            item.tanggal,
+            currentTimeZoneOffsetInHours,
+          );
+        setConvertedDate(convertedToLocalTime);
+    },[])
     checkedNotif = () => {
         setAllChecked(false);
         setTerpilih(terpilih-1);
@@ -71,7 +89,7 @@ const NotifItem = ({item, setTerpilih, terpilih, allChecked=false, setAllChecked
                     </>
                     }
                     <View style={{height: 3}}></View>
-                    <Text style={styles.textTanggal}>{item.tanggal}</Text>
+                    <Text style={styles.textTanggal}>{convertedDate}</Text>
                     <View style={{height: 10}}></View>
                 </View>
                 {terpilih > 0 ? <View>

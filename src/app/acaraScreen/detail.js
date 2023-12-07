@@ -17,6 +17,9 @@ import CustomButton from '../../components/customButton'
 import CustomBottomSheet from '../../components/bottomSheet'
 import ConfirmEventView from './confirmEventView'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../utils/Utils';
 
 const DetailAcaraScreen = ({navigation, route}) => {
     const [height, setHeight] = useState(0);
@@ -30,6 +33,23 @@ const DetailAcaraScreen = ({navigation, route}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const [convertedDate, setConvertedDate] = useState("");
+
+    // Make moment of right now, using the device timezone
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
+    useEffect(()=>{
+        if(dataBerita.length != 0){
+            const convertedToLocalTime = formatTimeByOffset(
+                dataBerita.tanggal,
+                currentTimeZoneOffsetInHours,
+            );
+            setConvertedDate(convertedToLocalTime);
+        }
+    },[dataBerita])
 
 
     const getDataBerita = () => {
@@ -99,7 +119,7 @@ const DetailAcaraScreen = ({navigation, route}) => {
             <View style={{height: 5}}></View>
             <Text style={{...FontConfig.captionUpperTwo, color: Color.primaryMain, paddingHorizontal: 20}}>{dataBerita.kategori.toUpperCase()}</Text>
             <Text style={styles.textJudulBerita}>{dataBerita.judul}</Text>
-            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{dataBerita.tanggal}</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.graySeven, paddingHorizontal: 20}}>{convertedDate}</Text>
             <View style={{height: 10}}></View>
             <Text style={{...FontConfig.titleThree, color: Color.primaryMain,  paddingHorizontal: 20}}>Informasi</Text>
             <QuillEditor
