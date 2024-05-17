@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { deleteDataRegistration, setAuthRegistration } from '../../redux/registration'
 import RegistrationServices from '../../services/registration'
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { NAMA_APP } from '../../utils/const'
 
 const RegisterScreen = ({navigation}) => {
     const [phone, setPhone] = useState('');
@@ -142,7 +143,7 @@ const RegisterScreen = ({navigation}) => {
       <View style={styles.section}>
         <Pressable onPress={() => navigation.goBack()}><Image style={styles.buttonBack} source={iconBack} /></Pressable>
         <View style={{height: 40}}></View>
-        <View><Text style={styles.textHeading}>Ayo, jadi bagian dari GENSatSet!</Text></View>
+        <View><Text style={styles.textHeading}>{`Ayo, jadi bagian dari ${NAMA_APP}!`}</Text></View>
         <View style={{height: 20}}></View>
         <Text style={styles.titleFormInput}>{`Nomor Ponsel (terdaftar di whatsapp)`}</Text>
         <TextInput value={phone} onChangeText={setPhone} onBlur={() => setPhoneIsFocused(false)} onFocus={() => setPhoneIsFocused(true)} 
@@ -173,7 +174,7 @@ const RegisterScreen = ({navigation}) => {
             <Text onPress={()=>Linking.openURL("https://gensatset.org/syarat-ketentuan")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Syarat & Ketentuan`} </Text>
             dan 
             <Text onPress={()=>Linking.openURL("https://gensatset.org/kebijakan-privasi")} style={{color: Color.purple, textDecorationLine: 'underline'}}>{` Kebijakan Privasi`} </Text>
-            GEN Sat Set
+            {`${NAMA_APP}`}
           </Text>
         </View>
         <View style={{height: 20}}></View>

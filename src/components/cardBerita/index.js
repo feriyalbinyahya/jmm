@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
     },
     textBerita: {
         ...FontConfig.titleThree,
-        color: Color.primaryMain,
+        color: Color.hitam,
         marginVertical: 3,
         paddingHorizontal: 12,
     },
     textTanggal: {
         ...FontConfig.captionOne,
-        color: Color.primaryMain,
+        color: Color.hitam,
         marginVertical: 3,
         paddingHorizontal: 10,
     },

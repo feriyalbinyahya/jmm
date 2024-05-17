@@ -14,7 +14,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ReplyKomenView from '../../components/berita/replyKomen'
 import ImageServices from '../../services/getImage'
 import Skeleton from '../../components/skeleton'
-
+import CustomBottomSheet from '../../components/bottomSheet'
+import TentangKomentar from './tentangKomentar'
+import AwesomeAlert from 'react-native-awesome-alerts'
+import ProfileServices from '../../services/profile'
+import Snackbar from 'react-native-snackbar'
 
 const ListKomentarBeritaScreen = ({navigation, route}) => {
     const [inputKomentar, setInputKomentar] = useState('')
@@ -26,6 +30,8 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
     const [idBalasKomen, setIdBalasKomen] = useState('');
     const [userBalasKomen, setUserBalasKomen] = useState('');
     const [isLoadMore, setIsLoadMore] = useState(false);
+    const [dataAlasan, setDataAlasan] = useState();
+    const [reportSent, setReportSent] = useState(false);
 
     const getDataKomentar = () => {
         console.log("get data komentar");
@@ -40,7 +46,7 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
             setIsLoadMore(false);
         })
         .catch(err=> {
-            console.log(err);
+            console.log(err.response);
             setIsLoading(false);
             setIsLoadMore(false);
         })
@@ -91,6 +97,9 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
         const [showReply, setShowReply] = useState(false);
         const [dataImage, setDataImage] = useState("");
         const [imageLoading, setImageLoading] = useState(false);
+        const [isModalVisible, setIsModalVisible] = useState(false);
+        const [mode, setMode] = useState("");
+        const [showBlokir, setShowBlokir] = useState(false);
 
         const handleLike = () => {
             if (isLiked) {
@@ -160,6 +169,23 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
             })
         }
 
+        const handleBlokir = () => {
+            ProfileServices.blockPerson(item.id_user)
+            .then(res=>{
+                console.log(res.data);
+                if(res.data.message == "Berhasil block user terkait."){
+                    Snackbar.show({
+                        text: `Berhasil block ${item.username}`,
+                        duration: Snackbar.LENGTH_SHORT,
+                        marginBottom: 10
+                    });
+                }
+            })
+            .catch(err=>{
+                console.log(err.response);
+            })
+        }
+
 
         useEffect(()=>{
             getDataImage();
@@ -171,11 +197,24 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
 
         return(
             <View style={styles.komentarContainer}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                 <CustomBottomSheet 
+                isModalVisible={isModalVisible}
+                setModalVisible={setIsModalVisible}
+                title={mode == "" ? item.username : mode == "lapor" ? "Laporankan Komentar" : `Blokir ${item.username}`}
+                children={<TentangKomentar setReportSent={setReportSent} id={item.id_berita_komen} dataAlasan={dataAlasan} setModalVisible={setIsModalVisible} setMode={setMode} item={item} mode={mode} setBlokir={setShowBlokir} />}
+                />
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center',}}>
                     {!imageLoading ? <Image style={styles.fotoProfile} source={{uri: `data:image/png;base64, ${dataImage}`}} /> : 
                     <Skeleton height={32} width={32} style={{borderRadius: 16}} />
                     }
-                    <Text style={styles.textUsername}>{item.username}</Text> 
+                    <Text style={styles.textUsername}>{item.username}</Text>
+                    </View>
+                    <Pressable onPress={()=>{
+                        setMode("");
+                        setIsModalVisible(true)}}>
+                        <Ionicons name="ellipsis-vertical-outline" size={14} color={Color.neutralColorGrayEight} /> 
+                    </Pressable>
                 </View>
                 <View style={{height: 8}}></View>
                 <Text style={styles.textKomen}>{item.komen}</Text>
@@ -210,6 +249,32 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
                     </Pressable>}
                 </View>
                  : null}
+
+                <AwesomeAlert
+                    show={showBlokir}
+                    showProgress={false}
+                    title={`Blokir ${item.username}?`}
+                    message="Dengan memblokir anda tidak dapat melihat lagi komentar pengguna, dan pengguna tidak dapat melihat komentar anda."
+                    closeOnTouchOutside={false}
+                    closeOnHardwareBackPress={false}
+                    showCancelButton={true}
+                    showConfirmButton={true}
+                    confirmText="Ya, Blokir"
+                    cancelText="Batal"
+                    titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+                    messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+                    confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '50%', height: '80%',  alignItems: 'center'}}
+                    cancelButtonStyle={{width: '40%', height: '80%',  alignItems: 'center'}}
+                    confirmButtonTextStyle={{...FontConfig.buttonThree}}
+                    confirmButtonColor="#DD6B55"
+                    onConfirmPressed={() => {
+                        handleBlokir()
+                        setShowBlokir(false);
+                    }}
+                    onCancelPressed={()=>{
+                        setShowBlokir(false);
+                    }}
+                />
             </View>
         );
     }
@@ -264,9 +329,24 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
     useEffect(()=> {
         getDataKomentar();
     },[currentPage]);
+
+    const getDataAlasan = () => {
+        BeritaServices.getReportKomen()
+        .then(res=>{
+          console.log(res.data);
+          setDataAlasan(res.data.data);
+        })
+        .catch(err=>{
+  
+        })
+      }
+
+    useEffect(()=>{
+        getDataAlasan();
+    }, [])
   return (
     <View style={{flex: 1, backgroundColor: Color.neutralZeroOne, justifyContent: 'space-between'}}>
-        <HeaderWhite navigation={navigation} title="Komentar Artikel" />
+        <HeaderWhite navigation={navigation} title="Komentar" />
         {
         isLoading ? <ActivityIndicator style={{marginVertical: 100}} size="large" color={Color.graySix} /> :
         dataKomentar.length != 0 ?
@@ -295,6 +375,25 @@ const ListKomentarBeritaScreen = ({navigation, route}) => {
                 />
             </View>
         </View>
+        <AwesomeAlert
+          show={reportSent}
+          showProgress={false}
+          title="Berhasil mengirim laporan"
+          message="Sukses melaporkan komentar."
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          confirmText="OK"
+          titleStyle={{...FontConfig.titleTwo, color: Color.title}}
+          messageStyle={{...FontConfig.bodyThree, color: Color.grayEight}}
+          confirmButtonStyle={{backgroundColor: Color.primaryMain, width: '80%', height: '80%',  alignItems: 'center'}}
+          confirmButtonTextStyle={{...FontConfig.buttonThree}}
+          confirmButtonColor="#DD6B55"
+          onConfirmPressed={() => {
+            setReportSent(false);
+          }}
+        />
     </View>
   )
 }

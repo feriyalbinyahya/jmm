@@ -58,6 +58,8 @@ const AllBeritaContainer = ({navigation, title}) => {
     setCurrentPage(1);
     if(title == 'Berita Terkini'){
       getBeritaTerkiniOnRefresh()
+    }else if(title == "Diskusi"){
+      getBeritaTerkiniOnRefresh()
     }else if(title == 'Berita Daerah'){
       getBeritaOrganisasiOnRefresh();
     }else{
@@ -232,6 +234,8 @@ const AllBeritaContainer = ({navigation, title}) => {
   useEffect(()=> {
     if(title == 'Berita Terkini'){
       getAllBeritaTerkini();
+    }else if(title == "Diskusi"){
+      getAllBeritaTerkini();
     }else if(title == 'Berita Daerah'){
       getAllBeritaOrganisasi();
     }else{
@@ -242,6 +246,8 @@ const AllBeritaContainer = ({navigation, title}) => {
   useEffect(()=>{
     if(title == 'Berita Terkini'){
       getKategoriBerita("terkini");
+    }else if(title == "Diskusi"){
+      getAllBeritaTerkini();
     }else if(title == 'Berita Daerah'){
       getKategoriBerita("organisasi");
     }else{
@@ -258,6 +264,8 @@ const AllBeritaContainer = ({navigation, title}) => {
       setCurrentPage(1);
       setDataBerita([]);
       if(title == 'Berita Terkini'){
+        getBeritaTerkiniOnRefresh();
+      }else if(title == "Diskusi"){
         getBeritaTerkiniOnRefresh();
       }else if(title == 'Berita Daerah'){
         getBeritaOrganisasiOnRefresh();
@@ -311,7 +319,24 @@ const AllBeritaContainer = ({navigation, title}) => {
 
     return(
     <Pressable onPress={onPress} style={styles.laporanItem}>
-      {!isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
+      {title == "Diskusi" ? <>
+        <View style={{width: 10}}></View>
+        <View style={{width: '100%'}}>
+          <View>
+            <Text style={{...FontConfig.captionUpperOne, color: Color.blue}}>
+              {kategori.toUpperCase()}</Text>
+          </View>
+          <View style={{height: 5}}></View>
+          <Text style={styles.textJudulLaporan}>{judul}</Text>
+          <View style={{height: 3}}></View>
+          <View style={styles.infoBerita}>
+            <InfoLaporan text={convertedDate} icon={IconCalendar} />
+            <InfoLaporan text={comments} icon={IconComment} />
+            <InfoLaporan text={likes} icon={IconLike} />
+            <InfoLaporan text={seen >= 1000 ? `${parseFloat(seen % 1000 == 0 ? seen/1000 : parseFloat(seen/1000).toFixed(1))}K` : seen} icon={IconSeen} />
+          </View>
+        </View></> :
+       !isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
       <Skeleton width={98} height={80} style={{borderRadius: 4}} />
       }
       <View style={{width: 10}}></View>

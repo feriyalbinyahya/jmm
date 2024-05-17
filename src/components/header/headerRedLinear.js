@@ -6,7 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const HeaderRedLinear = ({navigation, title, children}) => {
   return (
-    <LinearGradient style={styles.header} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#000000', '#000000']}>
+    <LinearGradient style={styles.header} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={[Color.primaryMain, Color.primaryMain]}>
         <View style={{padding: 20, flexDirection: 'row'}}>
             <Pressable onPress={() => navigation.goBack()}><Image style={styles.iconArrowLeft} source={iconArrowLeft} /></Pressable>
             <View style={{alignItems: 'center', flex:1}}><Text style={styles.textTitle}>{title}</Text></View>

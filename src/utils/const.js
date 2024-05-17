@@ -1,4 +1,6 @@
 export const GOOGLE_API_KEY = "AIzaSyBWC43j15MvMbwVVYPCs_RUTGmX8rXpqDc";
+export const NAMA_APP = "Organisasi"
+export const NAMA_APP_CAPS = "ORGANISASI";
 
 export const rankPoin = {
     no_member: "Member",

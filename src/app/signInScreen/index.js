@@ -8,8 +8,8 @@ import {
   Padding,
   Border,
   FontConfig,
-} from "../../theme";
-import Logo from '../../assets/images/LogoLogin.png';
+} from '../../theme';
+import Logo from '../../assets/images/logo_blue.png';
 import iconGoogle from '../../assets/images/icon/icon_google.png';
 import { TextInput } from "react-native/Libraries/Components/TextInput/TextInput";
 import CustomInput from "../../components/customInput";
@@ -30,6 +30,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Box } from "native-base";
 import NotifikasiServices from "../../services/notifikasi";
 import { getTokenNotification } from "../../utils/Utils";
+import { NAMA_APP } from "../../utils/const";
 
 const SignInPage = ({navigation}) => {
     const dispatch = useDispatch();
@@ -56,7 +57,7 @@ const SignInPage = ({navigation}) => {
       return state.pendukung.no_hp_cs;
     })
 
-    handleLogin = () => {
+    const handleLogin = () => {
       setIsLoading(true);
       LoginServices.login({"no_hp": emailphone, "password": password})
       .then(async(res)=> {
@@ -111,11 +112,11 @@ const SignInPage = ({navigation}) => {
       })
     }
 
-    handleLupaKatSandi = () => {
+    const handleLupaKatSandi = () => {
       navigation.navigate("LupaPassword");
     }
 
-    handleContinue = () => {
+    const handleContinue = () => {
       if(emailphone && password){
         setIsContinue(true);
       }else{
@@ -139,7 +140,7 @@ const SignInPage = ({navigation}) => {
       return(
         <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
           <View style={{alignItems: 'center'}}>
-            <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service {NAMA_APP}</Text>
             <View style={{height: 5}}></View>
             <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>{no_hp_cs}</Text>
           </View>
@@ -397,8 +398,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   logoDashboard:{
-    width: 320,
-    height: 129
+    width: 56,
+    height: 56,
+    borderRadius: 151,
+    marginVertical: 20
   },
   masukGoogle: {
     flexDirection:'row',

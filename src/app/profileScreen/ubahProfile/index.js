@@ -191,30 +191,6 @@ const UbahProfileScreen = ({navigation}) => {
             <View style={{borderWidth: 0.5, borderColor: Color.lightBorder}}></View>
             <View style={styles.containSection}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <Text style={styles.textTitleSection}>Info Akun</Text>
-                </View>
-                <View style={{height: 10}}></View>
-                <View>
-                    {subjectAccount.map((item, index) => {
-                        return(
-                            <View key={index} style={styles.editInfoAkun}>
-                                <View style={styles.rowSection}>
-                                    <Text style={styles.textSubject}>{item.text}</Text>
-                                    <Text style={styles.textData}>{account[index]}</Text>
-                                </View>
-                                <Pressable onPress={()=> {
-                                navigation.navigate(item.editPath, 
-                                {phone: account[0], onPress: "ubahakun"});
-                                }}>
-                                <Image style={styles.iconEdit} source={IconEdit} /></Pressable>
-                            </View>
-                        );
-                    })}
-                </View>
-            </View>
-            <View style={{borderWidth: 0.5, borderColor: Color.lightBorder}}></View>
-            <View style={styles.containSection}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={styles.textTitleSection}>Alamat Lengkap</Text>
                 </View>
                 <View style={{height: 10}}></View>

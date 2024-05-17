@@ -159,6 +159,12 @@ export const FontConfig = StyleSheet.create({
     letterSpacing: 0.4,
     lineHeight: 16
   },
+  body5: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    letterSpacing: 0.4,
+    lineHeight: 16
+  },
   bodyFour: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
@@ -178,14 +184,35 @@ export const FontConfig = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     fontSize: 14,
   },
+  buttonZeroOne: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
+    lineHeight: 24
+  },
   buttonThree: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: 12,
     letterSpacing: 0.4
   },
+  buttonFour: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  button5: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+  },
+  buttonSix: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 10,
+  },
   captionZero: {
     fontFamily: 'Poppins-Regular',
     fontSize: 10,
+  },
+  captionMediumOne: {
+    fontFamily: 'Inter-Medium',
+    fontSize: 10
   },
   bodySix: {
     fontFamily: 'Poppins-Regular',
@@ -211,9 +238,13 @@ export const FontConfig = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22
   },
+  captionFive: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 9,
+  },
   captionUpperOne: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 10
+    fontSize: 11
   },
   captionUpperTwo: {
     fontFamily: 'Poppins-Medium',
@@ -263,6 +294,11 @@ export const FontConfig = StyleSheet.create({
     fontSize: 22,
     lineHeight: 28
   },
+  title1: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 22,
+    lineHeight: 28
+  },
   titleTwo: {
     fontFamily: 'Poppins-Bold',
     fontSize: 16,
@@ -274,6 +310,10 @@ export const FontConfig = StyleSheet.create({
     fontSize: 14,
     letterSpacing: 0.1,
     lineHeight: 20
+  },
+  title3: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 18,
   },
   titleFive: {
     fontFamily: 'Poppins-Bold',
@@ -305,8 +345,10 @@ export const Color = {
   neutralZeroFive: '#C2C2C2',
   neutralZeroSix: '#9E9E9E',
   neutralTen: '#0A0A0A',
+  neutral70: '#697586',
+  neutral100: '#121926',
   linear: '#E02638',
-  primaryMain: "#0A0A0A",
+  primaryMain: "#27374D",
   primaryText: '#262626',
   neutralColorGrayThirteen: "#000",
   neutralColorGrayEight: "#595959",
@@ -338,7 +380,7 @@ export const Color = {
   successSurface: '#F0FFF3',
   goldSix: '#FAAD14',
   neutralZeroThree: '#EDEDED',
-  purple: '#624FA1',
+  purple: '#4744D5',
   magenta: '#E0195E',
   hitam: '#000000',
   putih: '#FFFFFF',

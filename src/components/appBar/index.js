@@ -5,7 +5,7 @@ import ExampleOrganisasi from '../../assets/images/example/exampleOrganisasi.png
 import { Color, FontConfig } from '../../theme'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux'
-import Logo from '../../assets/images/LogoAplikasi.png';
+import Logo from '../../assets/images/logo_blue.png';
 import LogoFacebook from '../../assets/images/icon/icon_facebook_monokrom.png';
 import LogoTiktok from '../../assets/images/icon/icon_tiktok_monokrom.png';
 import LogoInstagram from '../../assets/images/icon/icon_instagram_monokrom.png';
@@ -48,19 +48,15 @@ const AppBarRelawan = ({navigation, isReferal}) => {
         <View style={styles.container}>
             <View style={styles.leftSection}>
                 <Image style={styles.logo} source={Logo} />
-                <View style={{height: 5}}></View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', width: 100}}>
-                    <Pressable onPress={()=>Linking.openURL("https://www.facebook.com/profile.php?id=100095385183978&mibextid=D4KYlr")}><Image source={LogoFacebook} style={{width: 24, height: 24}} /></Pressable>
-                    <Pressable onPress={()=>Linking.openURL("https://instagram.com/gensatset?igshid=MzRlODBiNWFlZA==")}><Image source={LogoInstagram} style={{width: 24, height: 24}} /></Pressable>
-                    <Pressable onPress={()=>Linking.openURL("https://www.tiktok.com/@gensatset?_t=8eDwzpEyhA9&_r=1")}><Image source={LogoTiktok} style={{width: 24, height: 24}} /></Pressable>
-                </View>
+                <View style={{width: 8}}></View>
+                <Text style={styles.textTitle}>Hai, {nama}</Text>
+                <View style={{width:10}}></View>
             </View>
             <View style={styles.rightSection}>
-                <Pressable onPress={handleNotifikasi}><Ionicons name="notifications" color={Color.neutralZeroOne} size={22} /></Pressable>
+                {/**<Pressable onPress={handleNotifikasi}><Ionicons name="notifications-outline" color={Color.hitam} size={22} /></Pressable>*/}
                 <View style={{width:10}}></View>
                 <Pressable style={styles.rightSection} onPress={handleProfile}>
-                    <Text style={styles.textTitle}>Hai, {nama}</Text>
-                    <View style={{width:10}}></View>
+                    
                     <Image style={styles.imageOrganisasi} source={{uri: `data:image/png;base64, ${fotoProfil}`}} />
                 </Pressable>
                 <View style={{width:16}}></View>
@@ -81,12 +77,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingTop: 20,
         alignItems: 'center',
-        backgroundColor: Color.primaryMain,
+        backgroundColor: Color.neutralZeroOne,
     },
     leftSection: {
-        alignItems: 'center'
+        alignItems: 'center',
+        flexDirection: 'row'
 
     },
     rightSection: {
@@ -100,11 +97,12 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     logo: {
-        width: 126,
-        height: 52
+        width: 33,
+        height: 33,
+        borderRadius: 100
     },
     textTitle: {
         ...FontConfig.titleThree,
-        color: Color.neutralZeroOne
+        color: Color.hitam
     },
 })

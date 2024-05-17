@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
     },
     textAksi: {
         ...FontConfig.captionUpperOne,
-        color: Color.neutralZeroOne
+        color: Color.primaryMain
     },
     textJumlah: {
       ...FontConfig.titleTwo,
-      color: Color.neutralZeroOne
+      color: Color.primaryMain
     }
 })

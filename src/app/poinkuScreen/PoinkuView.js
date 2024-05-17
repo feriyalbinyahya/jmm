@@ -118,7 +118,7 @@ const PoinkuView = ({route}) => {
         paddingVertical: 15, alignItems: 'center', 
         justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F5F5F5'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Image source={IconPoinWhite} style={{height: 18, width: 18}} />
+            <Ionicons name="server-outline" color={Color.primaryMain} size={18} />
                 <View style={{width: 10}}></View>
                 <Text style={{...FontConfig.buttonOne, color: Color.primaryMain, marginTop: 2}}>Riwayat Pengumpulan Poin</Text>
             </View>

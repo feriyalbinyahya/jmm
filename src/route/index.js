@@ -70,6 +70,15 @@ import TukarPoinScreen from '../app/poinkuScreen/tukarPoin';
 import DetailTukarPoin from '../app/poinkuScreen/tukarPoin/detail';
 import RiwayatPengumpulanPoinScreen from '../app/poinkuScreen/pengumpulanPoin';
 import PertanyaanPoinScreen from '../app/poinkuScreen/pertanyaan';
+import ListBlokirScreen from '../app/profileScreen/blokir';
+import ListFigur from '../app/figurScreen';
+import BuatFigurScreen from '../app/figurScreen/buatFigur';
+import DetailFigurScreen from '../app/figurScreen/detailFigur';
+import KartuAnggotaScreen from '../app/kartuAnggotaScreen';
+import KeluarOrganisasiScreen from '../app/kartuAnggotaScreen/keluarOrganisasi';
+import PindahOrganisasiScreen from '../app/kartuAnggotaScreen/pindahOrganisasi';
+import DiskusiScreen from '../app/diskusiScreen/beritaTerkini';
+import InfoAkunScreen from '../app/profileScreen/infoAkun';
 
 const Stack = createNativeStackNavigator();
 
@@ -152,6 +161,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Notifikasi" component={NotifikasiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Pengumuman" component={PengumumanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Profile" component={ProfileScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListBlokir" component={ListBlokirScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Leaderboard" component={LeaderboardScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="PoinLeaderboard" component={PoinkuScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="TukarPoin" component={TukarPoinScreen} />
@@ -161,6 +171,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="UbahProfile" component={UbahProfileScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahDataDiriProfile" component={UbahDataDiriScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahAkunProfile" component={UbahAkunScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="InfoAkunProfile" component={InfoAkunScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahKataSandiProfile" component={UbahKataSandiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilUbahFoto" component={HasilUbahFotoScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilGalleryFoto" component={HasilGalleryFotoScreen} />
@@ -170,6 +181,9 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="DetailSimpatisan" component={DetailSimpatisanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="ReferalSimpatisan" component={ReferalSimpatisan} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="TambahkanSimpatisan" component={TambahkanSimpatisan} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListFigur" component={ListFigur} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="BuatFigur" component={BuatFigurScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="DetailFigur" component={DetailFigurScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="DropDown" component={DropDownPage} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="EditSimpatisan" component={EditSimpatisanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilUnggahFotoSimpatisan" component={HasilUnggahFotoSimpatisan} />
@@ -184,6 +198,7 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanTerkirim" component={LaporanTerkirimScreen} />
 
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BeritaTerkini" component={BeritaTerkiniScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Diskusi" component={DiskusiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListAcara" component={ListAcaraScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BeritaOrganisasi" component={BeritaOrganisasiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="BeritaDetail" component={BeritaDetailScreen} />
@@ -201,6 +216,9 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanView" component={LaporanView} />
         <Stack.Screen options={{ headerShown: false, animation: 'fade' }} name="DetailAcara" component={DetailAcaraScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="GenSatSetID" component={GenSatSetID} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="KartuAnggota" component={KartuAnggotaScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="KeluarOrganisasi" component={KeluarOrganisasiScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="PindahOrganisasi" component={PindahOrganisasiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="InformationEvent" component={InformationEvent} />
       </Stack.Navigator>
       }

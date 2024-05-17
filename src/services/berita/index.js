@@ -36,6 +36,7 @@ getAllOrganisasi = async (page, sort, filter, search) => {
 
 getKomentarByBerita = async (id_berita, page) => {
     let headersToken = await getHeaders();
+    console.log(id_berita);
     return Request.get(`berita/komen/${id_berita}?size=10&page=${page}`, {headers: headersToken})
 }
 
@@ -79,6 +80,16 @@ getKategori = async (type) => {
     return Request.get(`berita/semua/kategori/${type}`, {headers: headersToken})
 }
 
+getReportKomen = async (type) => {
+    let headersToken = await getHeaders();
+    return Request.get(`komentar/report/alasan`, {headers: headersToken})
+}
+
+reportKomentar = async(data, id) => {
+    let headersToken = await getHeaders();
+    return Request.post(`komentar/report/${id}`, data, {headers: headersToken})
+}
+
 const BeritaServices = {
     getAllTerkini,
     getAllOrganisasi,
@@ -91,7 +102,9 @@ const BeritaServices = {
     getFilterBerita,
     getBeritaHomepage,
     getBalasanByKomen,
-    getKategori
+    getKategori,
+    reportKomentar,
+    getReportKomen
   };
   
   export default BeritaServices;

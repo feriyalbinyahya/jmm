@@ -54,6 +54,21 @@ privacyPolicy = async () => {
     return Request.post(`user/registrasi/policy`, {}, {headers: headersToken});
 }
 
+blockPerson = async (id) => {
+    let headersToken = await getHeaders();
+    return Request.post(`block/user/${id}`, {}, {headers: headersToken});
+}
+
+unblockPerson = async (id) => {
+    let headersToken = await getHeaders();
+    return Request.delete(`unblock/user/${id}`, {headers: headersToken});
+}
+
+getListBlokir = async () => {
+    let headersToken = await getHeaders();
+    return Request.get(`block/users`, {headers: headersToken});
+}
+
 
 const ProfileServices = {
     getProfile,
@@ -62,7 +77,10 @@ const ProfileServices = {
     putNoHp,
     putPassword,
     refreshToken,
-    privacyPolicy
+    privacyPolicy,
+    blockPerson,
+    unblockPerson,
+    getListBlokir
   };
   
   export default ProfileServices;

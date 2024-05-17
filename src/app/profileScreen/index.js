@@ -38,7 +38,7 @@ import BadgeGold from '../../assets/images/icon/badge_gold.png';
 import BadgePlatinum from '../../assets/images/icon/badge_platinum.png';
 import BadgeDiamond from '../../assets/images/icon/badge_diamond.png';
 import IconPoinWhite from '../../assets/images/icon/icon_poin_white.png';
-import { rankPoin } from '../../utils/const'
+import { NAMA_APP, NAMA_APP_CAPS, rankPoin } from '../../utils/const'
 
 const ProfileScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -53,8 +53,13 @@ const ProfileScreen = ({navigation}) => {
     const [isModalWhatsappVisible, setModalWhatsappVisible] = useState(false);
     const [isLogoutVisible, setLogoutVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [account, setAccount] = useState([]);
     const status = useSelector((state)=>{
         return state.credential.status;
+    })
+
+    const keaktifan = useSelector((state)=>{
+        return state.credential.keaktifan;
     })
 
     const isReferalOrganization = useSelector((state)=>{
@@ -86,6 +91,12 @@ const ProfileScreen = ({navigation}) => {
         setLogoutVisible(true);
     }
 
+    const loadAccount = (accountStore) => {
+        let account = [];
+        account.push(accountStore.no_hp, "********");
+        setAccount(account);
+    }
+
 
     handlePoinButton = () => {
         navigation.navigate("PoinLeaderboard",  {infoPoin: profileData.infoPoin});
@@ -100,6 +111,7 @@ const ProfileScreen = ({navigation}) => {
         .then(res=> {
             console.log(res.data.data[0].infoPoin.badge);
             if(res.data.message != "Token expired."){
+                loadAccount(res.data.data[0]);
                 setProfileData(res.data.data[0]);
                 setIsLoading(false);
             }
@@ -180,7 +192,7 @@ const ProfileScreen = ({navigation}) => {
         return(
           <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 20}}>
             <View style={{alignItems: 'center'}}>
-              <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service GEN Sat Set</Text>
+              <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Customer Service {NAMA_APP}</Text>
               <View style={{height: 5}}></View>
               <Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>{no_hp_cs}</Text>
             </View>
@@ -226,9 +238,6 @@ const ProfileScreen = ({navigation}) => {
                 <Pressable onPress={()=>navigation.goBack()}>
                     <Image source={IconArrowLeft} style={{width: 36, height: 36}} />
                 </Pressable>
-                {status == "Diterima" ? <Pressable onPress={handleEditButton}>
-                    <Image source={IconSetting} style={{width: 36, height: 36}} />
-                </Pressable> : <></>}
             </View>
             <View style={{height: 20}}></View>
             <View style={styles.boxSection}>
@@ -247,11 +256,11 @@ const ProfileScreen = ({navigation}) => {
             <View style={styles.aksiSection}>
                 <BoxAksi image={IconLaporan} text="KAWAN" jumlah={profileData.total_kawan} imageHeight={18} imageWidth={14} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
-                <BoxAksi image={IconReferral} text="GENSATSET" jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
+                <BoxAksi image={IconReferral} text={NAMA_APP_CAPS} jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
                 <BoxAksi image={IconSurvey} text="SURVEI" jumlah={profileData.total_survey} imageHeight={22} imageWidth={22} />
             </View>
-            <View style={{height: 25}}></View>
+            
         </View> : 
         <View style={styles.boxProfile}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -269,33 +278,63 @@ const ProfileScreen = ({navigation}) => {
     
         <ScrollView>
             <View style={{height: 20}}></View>
-            <Pressable onPress={()=>navigation.navigate("GenSatSetID")} style={{ marginHorizontal: 20
-            }}>
-                <LinearGradient style={{flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'space-between',  borderRadius: 6, borderColor: Color.purple}} start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#F7F2FF', '#ECDDFF']}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}><Ionicons name="qr-code-outline" size={18} color={Color.purple} />
+            <Text style={{...FontConfig.buttonFour, color: Color.neutral70,
+            paddingHorizontal: 20}}>Profil Saya</Text>
+            <View style={{height: 5}}></View>
+            <View style={{borderWidth: 0.55, borderColor: Color.lightBorder}}></View>
+            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('UbahProfile') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="person-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: Color.purple}}>GEN Sat Set ID</Text></View>
-                    <Ionicons name="chevron-forward-outline" size={18} color={Color.purple}  />
-                </LinearGradient>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Data Diri`}</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
             </Pressable>
-            <Pressable onPress={handlePoinButton} style={{flexDirection: 'row', paddingHorizontal: 20,
+            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate("InfoAkunProfile", 
+                                {phone: account[0], password: account[1]}) : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="call-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Info Akun`}</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+            </Pressable>
+            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('KartuAnggota') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="globe-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Organisasi`}</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+            </Pressable>
+            <View style={{height: 18}}></View>
+            <Text style={{...FontConfig.buttonFour, color: Color.neutral70,
+            paddingHorizontal: 20}}>Lainnya</Text>
+            <View style={{height: 5}}></View>
+            <View style={{borderWidth: 0.55, borderColor: Color.lightBorder}}></View>
+            <Pressable onPress={keaktifan == 'Active' ? handlePoinButton : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Image source={IconPoinWhite} style={{height: 18, width: 18}} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Poinku</Text>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>Poinku</Text>
                     <View style={{width: 10}}></View>
-                    { profileData?.infoPoin?.badge == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
+                    {keaktifan == 'Active' ? profileData?.infoPoin?.badge == rankPoin.no_member ? <RankPoin image={BadgeNoMember} rank="Member" /> : 
                     profileData?.infoPoin?.badge == rankPoin.bronze ? <RankPoin image={BadgeBronze} rank="Bronze" /> : 
                     profileData?.infoPoin?.badge == rankPoin.silver ? <RankPoin image={BadgeSilver} rank ="Silver" /> :
                     profileData?.infoPoin?.badge == rankPoin.gold ? <RankPoin image={BadgeGold} rank="Gold" /> : 
                     profileData?.infoPoin?.badge == rankPoin.platinum ? <RankPoin image={BadgePlatinum} rank="Platinum" />:
-        profileData?.infoPoin?.badge == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : 
-            <Skeleton width={90} height={25} style={{borderRadius: 10}} />
+        profileData?.infoPoin?.badge == rankPoin.diamond ? <RankPoin image={BadgeDiamond} rank="Diamond" /> : <></> : <></>
         }
                 </View>
-                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
             </Pressable>
             {/**<Pressable onPress={()=>navigation.navigate('Bantuan')}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
@@ -306,6 +345,16 @@ const ProfileScreen = ({navigation}) => {
                 </View>
                 <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
         </Pressable>**/}
+            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('ListBlokir') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            paddingVertical: 15, alignItems: 'center', 
+            justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Ionicons name="alert-circle-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                    <View style={{width: 10}}></View>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Pengguna diblokir (${profileData.jumlah_pengguna_diblokir})`}</Text>
+                </View>
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+            </Pressable>
             <Pressable onPress={handleKeluarButton} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
@@ -317,14 +366,6 @@ const ProfileScreen = ({navigation}) => {
                 <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
             </Pressable>
             <View style={{height: 20}}></View>
-            <View style={styles.butuhBantuan}>
-                <Ionicons name="call-outline" size={18} color={Color.neutralColorGrayEight} />
-                <View style={{width: 10}}></View>
-                <Text style={{...FontConfig.bodyThree, color: Color.neutralColorGrayEight}}>Butuh bantuan?</Text>
-                <View style={{width: 5}}></View>
-                <Pressable onPress={()=>setModalWhatsappVisible(true)}><Text style={{...FontConfig.buttonThree, color: Color.primaryMain}}>Hubungi Kami</Text>
-                </Pressable>
-            </View>
             <View style={{height: 10}}></View>
             <View style={styles.version}>
                 <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
@@ -419,7 +460,9 @@ const styles = StyleSheet.create({
     aksiSection: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#F5F5FF',
+        borderRadius: 8
     },
     textKodeAnda: {
         ...FontConfig.captionZero,
@@ -439,8 +482,8 @@ const styles = StyleSheet.create({
       },
       garisVertical: {
         borderWidth: 0.5,
-        backgroundColor: '#E51A88', 
-        borderColor: '#E51A88',
+        backgroundColor: '#DFE0F3', 
+        borderColor: '#DFE0F3',
         height: '70%',
       },
       garisVerticalMati: {
