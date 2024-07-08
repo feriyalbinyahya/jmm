@@ -5,6 +5,7 @@ import { Color, FontConfig } from '../../theme'
 import IconApk from '../../assets/images/icon/icon_apk.png'
 import IconApkDisable from '../../assets/images/icon/icon_apk_disable.png'
 import IconAcara from '../../assets/images/icon/icon_acara.png'
+import IconCSR from '../../assets/images/icon/icon_csr.png'
 import IconMarkasKomunitas from '../../assets/images/icon/icon_markas_komunitas.png'
 import IconPosko from '../../assets/images/icon/icon_posko.png'
 import IconFigur from '../../assets/images/icon/icon_figur.png'
@@ -480,12 +481,13 @@ const HomepageScreen = ({navigation}) => {
                             )
                         }
                     }) : <></> }
-                    {status == "Diterima" && statusAktif == 'Active' ? <><Pressable onPress={()=>{ 
+                    {status == "Diterima" && statusAktif == 'Active' ? <>
+                    <Pressable onPress={()=>{ 
                         //saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
-                        navigation.navigate("ListSimpatisan");
+                        navigation.navigate("ListCSR");
                         }} style={styles.itemMenu}>
-                        <Image source={IconSimpatisan} style={styles.iconLaporan} />
-                        <Text style={styles.textMenu}>Simpatisan</Text>
+                        <Image source={IconCSR} style={styles.iconLaporan} />
+                        <Text style={styles.textMenu}>CSR</Text>
                     </Pressable>
                     {/**<Pressable onPress={()=>{ 
                         //saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
@@ -503,10 +505,7 @@ const HomepageScreen = ({navigation}) => {
                     </Pressable>*/}
                     </>
                      :
-                    <View style={styles.itemMenu}>
-                        <Image source={IconSimpatisanDisable} style={styles.iconLaporan} />
-                        <Text style={styles.textMenu}>Simpatisan</Text>
-                    </View>
+                    <></>
                     }
                 </View> : <Skeleton height={100} width={width-40} style={{borderRadius: 8, marginVertical: 16}} />
                 }

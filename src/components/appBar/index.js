@@ -9,6 +9,8 @@ import Logo from '../../assets/images/logo_blue.png';
 import LogoFacebook from '../../assets/images/icon/icon_facebook_monokrom.png';
 import LogoTiktok from '../../assets/images/icon/icon_tiktok_monokrom.png';
 import LogoInstagram from '../../assets/images/icon/icon_instagram_monokrom.png';
+import ChildrenButton from '../customButtonChildren'
+import WaveBackground from '../../assets/images/appbar_wave.png';
 
 const AppBarRelawan = ({navigation, isReferal}) => {
     const imageOrganisasi = "";
@@ -42,18 +44,20 @@ const AppBarRelawan = ({navigation, isReferal}) => {
         navigation.navigate("Notifikasi");
     }
 
+    handleProgram = () => {
+        navigation.navigate("ListCSR");
+    }
+
     console.log(token);
   return (
-    <View>
+    <View style={{backgroundColor: Color.secondaryMain, borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}>
         <View style={styles.container}>
             <View style={styles.leftSection}>
                 <Image style={styles.logo} source={Logo} />
                 <View style={{width: 8}}></View>
-                <Text style={styles.textTitle}>Hai, {nama}</Text>
                 <View style={{width:10}}></View>
             </View>
             <View style={styles.rightSection}>
-                {/**<Pressable onPress={handleNotifikasi}><Ionicons name="notifications-outline" color={Color.hitam} size={22} /></Pressable>*/}
                 <View style={{width:10}}></View>
                 <Pressable style={styles.rightSection} onPress={handleProfile}>
                     
@@ -62,10 +66,23 @@ const AppBarRelawan = ({navigation, isReferal}) => {
                 <View style={{width:16}}></View>
             </View>
         </View>
-        {
-            isReferal == 1 ? 
-            <View style={{height: 20}}></View> : <></>
-        }
+        <View style={{height: 5}}></View>
+        <Text style={styles.textTitle}>Hai, {nama}</Text>
+        <View style={{height: 10}}></View>
+        <View style={{paddingHorizontal: 20, marginHorizontal: 20, marginVertical: 10, paddingVertical: 10,
+            backgroundColor: Color.neutralZeroOne, borderRadius: 8, zIndex: 3}}>
+            <Text style={{...FontConfig.buttonZeroTwo, color: Color.primaryMain,
+                textAlign: 'center'
+            }}>Buat Laporan untuk Program CSR</Text>
+            <ChildrenButton disabled={false} onPress={handleProgram} backgroundColor={Color.palette6} borderRadius={100} borderColor={Color.border} children={<View style={{flexDirection: 'row',
+        alignItems: 'center'}}>
+                <Ionicons name="add-circle-outline" size={18} color={Color.neutralZeroOne} />
+                <Text style={{...FontConfig.button5, color: Color.primaryMain, marginLeft: 5}}>Lihat Semua Program</Text>
+            </View>} />
+        </View>
+        <View style={{height: 10}}></View>
+        <Image source={WaveBackground} style={{position: 'absolute', zIndex: 2, 
+        width: '100%', height: 157, bottom: 5, borderBottomLeftRadius: 20, borderBottomRightRadius: 20}} />
     </View>
   )
 }
@@ -79,7 +96,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 20,
         alignItems: 'center',
-        backgroundColor: Color.neutralZeroOne,
+        backgroundColor: Color.secondaryMain,
+        zIndex: 1
     },
     leftSection: {
         alignItems: 'center',
@@ -92,17 +110,18 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     imageOrganisasi: {
-        width:28,
-        height: 28,
+        width:32,
+        height: 32,
         borderRadius: 20
     },
     logo: {
         width: 33,
         height: 33,
-        borderRadius: 100
     },
     textTitle: {
-        ...FontConfig.titleThree,
-        color: Color.hitam
+        ...FontConfig.buttonZeroTwo,
+        color: Color.neutralZeroOne,
+        paddingHorizontal: 20,
+        paddingTop: 10
     },
 })

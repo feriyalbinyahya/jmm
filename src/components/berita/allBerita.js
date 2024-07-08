@@ -116,7 +116,6 @@ const AllBeritaContainer = ({navigation, title}) => {
     if(dataBerita.length == 0) setIsLoading(true);
     BeritaServices.getAllTerkini(currentPage, "terbaru", selectedMenuBerita == "Terbaru" ? "" : idSelectedMenu, search, 2)
     .then(res=>{
-      
       setTotalPages(res.data.data.totalPages);
       setDataBerita([...dataBerita, ...res.data.data.data]);
       setIsLoading(false);

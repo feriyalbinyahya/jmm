@@ -202,6 +202,10 @@ export const FontConfig = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 12,
   },
+  button3: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 16,
+  },
   buttonSix: {
     fontFamily: 'Poppins-Medium',
     fontSize: 10,
@@ -319,6 +323,10 @@ export const FontConfig = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     fontSize: 10,
   },
+  title5: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 12,
+  },
   titleSix: {
     fontFamily: 'Poppins-Medium',
     fontSize: 24,
@@ -345,7 +353,9 @@ export const Color = {
   neutralZeroFive: '#C2C2C2',
   neutralZeroSix: '#9E9E9E',
   neutralTen: '#0A0A0A',
-  neutral70: '#697586',
+  secondaryMain: "#4744D5",
+  neutral70: '#757575',
+  neutral40: '#E3E8EF',
   neutral100: '#121926',
   linear: '#E02638',
   primaryMain: "#27374D",

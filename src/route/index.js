@@ -79,6 +79,11 @@ import KeluarOrganisasiScreen from '../app/kartuAnggotaScreen/keluarOrganisasi';
 import PindahOrganisasiScreen from '../app/kartuAnggotaScreen/pindahOrganisasi';
 import DiskusiScreen from '../app/diskusiScreen/beritaTerkini';
 import InfoAkunScreen from '../app/profileScreen/infoAkun';
+import CSRScreen from '../app/csrScreen';
+import ProgramBaruScreen from '../app/csrScreen/programBaru';
+import BuatProposalScreen from '../app/csrScreen/programBaru/buatProposal';
+import ProposalTerkirimScreen from '../app/csrScreen/programBaru/proposalTerkirim';
+import ProgramBerjalanScreen from '../app/csrScreen/programBerjalan';
 
 const Stack = createNativeStackNavigator();
 
@@ -208,6 +213,12 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListPertanyaanSurvei" component={ListPertanyaan} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="SurveiTerkirim" component={SurveiTerkirim} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Bantuan" component={BantuanScreen} />
+
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListCSR" component={CSRScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ProgramBaru" component={ProgramBaruScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ProgramBerjalan" component={ProgramBerjalanScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BuatProposal" component={BuatProposalScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ProposalTerkirim" component={ProposalTerkirimScreen} />
 
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="ListMisi" component={ListMisiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="StartMisi" component={StartMisiScreen} />

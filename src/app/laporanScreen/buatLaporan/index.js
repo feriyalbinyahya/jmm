@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLocation, setPhotos, setTeman } from '../../../redux/laporan'
 import CustomBottomSheet from '../../../components/bottomSheet'
 import LaporanServices from '../../../services/laporan'
+import DocumentPicker from 'react-native-document-picker'
 import CapresChoice from '../../../components/bottomSheet/CapresChoice'
 import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomButton from '../../../components/customButton'
@@ -24,6 +25,7 @@ const BuatLaporanScreen = ({navigation, route}) => {
   const [tagNamaTeman, setTagNamaTeman] = useState([]);
   const [judul, setJudul] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
+  const [saran, setSaran] = useState("");
   const [capres, setCapres] = useState("");
   const [idCapres, setIdCapres] = useState(0);
   const [tag, setTag] = useState("");
@@ -44,6 +46,11 @@ const BuatLaporanScreen = ({navigation, route}) => {
   const [perkiraanPartisipan, setPerkiraanPartisipan] = useState("");
   const [isModalTemanVisible, setIsModalTemanVisible] = useState(false);
   const [firstname, setFirstname] = useState("");
+  const [namaFile, setNamaFile] = useState("");
+  const [hapusDoc, setHapusDoc] = useState(false);
+  const [filePdf, setFilePdf] = useState("");
+  const [showAlertYakinKirim, setShowAlertYakinKirim] = useState(false);
+  const [showAlertFileBig, setShowAlertFileBig] = useState(false);
   const desc_required = useSelector((state)=>{
     return state.laporan.jenisLaporan.desc_required;
   });
@@ -61,6 +68,41 @@ const BuatLaporanScreen = ({navigation, route}) => {
   const setOldTag = (data, id) => {
     setTag(data);
     setIdTag(id);
+  }
+
+  const handlePilihDariFileDocument = async () => {
+    try {
+      const results = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.pdf],
+        readContent: true
+      });
+      console.log(results);
+      if(results.size <= 10000000){
+        setNamaFile(results.name);
+        //let filePdfBase64 = await Utils.readFileBase64(results.uri);
+        let fileAtribut = {
+          uri: results.uri,
+          type: results.type,
+          name: results.name,
+        };
+        setFilePdf(fileAtribut);
+      }else{
+        setShowAlertFileBig(true);
+      }
+      
+          
+    }catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+      } else {
+        throw err;
+      }
+    }
+}
+
+  const handleHapusDocument = () =>{
+    setFilePdf("");
+    setNamaFile("");
+    setHapusDoc(true);
   }
 
   handleLanjutkan = () => {
@@ -175,7 +217,7 @@ const BuatLaporanScreen = ({navigation, route}) => {
       <CustomBottomSheet 
       isModalVisible={isModalVisible}
       setModalVisible={setIsModalVisible}
-      title="Pilih Capres"
+      title="Tahapan"
       children={<CapresChoice data={capresData} item={capres} setItem={setCapres} idCapres={idCapres} setIdCapres={setIdCapres} setModalVisible={setIsModalVisible} />}
       />
       <CustomBottomSheet 
@@ -185,7 +227,6 @@ const BuatLaporanScreen = ({navigation, route}) => {
       children={<SelectView isModalVisible={isModalTemanVisible} setIsModalVisible={setIsModalTemanVisible} jumlah={tagTeman.length} />}
       />
       <HeaderWhite navigation={navigation} title="Buat Laporan" />
-      <YellowWarning text="Dalam radius 1 km, kamu hanya dapat membuat laporan dengan capres dan tag yang berbeda." />
       <ScrollView nestedScrollEnabled={true} style={{padding: 20}}>
       {
         photoKegiatan.length == 0 ? 
@@ -225,6 +266,9 @@ const BuatLaporanScreen = ({navigation, route}) => {
         <View style={{height: 30}}></View>
         <Text style={styles.textDetailLaporan}>Detail Laporan</Text>
         <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Tahapan</Text>
+        <DropDownButton onPress={()=>setIsModalVisible(true)} placeholder='Tahapan' text={capres} />
+        <View style={{height: 10}}></View>
         <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Judul Laporan</Text>
         <CustomInput value={judul} setValue={setJudul} placeholder="Judul Kegiatan" />
         <View style={{height: 10}}></View>
@@ -234,24 +278,30 @@ const BuatLaporanScreen = ({navigation, route}) => {
         <Text style={{...styles.textMasukanDeskripsi, color: isDeskripsi ? Color.secondaryText : Color.danger}}>
           {desc_required ? `Masukan deskripsi maksimal 350 karakter.` : `Masukan deskripsi maksimal 350 karakter. (Opsional)`}
         </Text>
+        <View style={{height: 5}}></View>
+        <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText, marginVertical: 5}}>Dokumen Proposal</Text>
+        <View style={{flexDirection: 'row', borderColor: !namaFile ? Color.lightBorder : Color.primaryMain, borderWidth: 1,
+        borderRadius: 4, justifyContent: 'space-between'}}>
+            <View style={{paddingHorizontal: 10, paddingVertical: 5, maxWidth: '70%'}}>
+                <Text style={{ ...FontConfig.bodyFour, marginTop: 7,
+                    color: !namaFile ? Color.disable : Color.blue
+                }}>{!namaFile  ? `Belum ada file terpilih` : namaFile}</Text>
+            </View>
+            {!namaFile ? <CustomButton onPress={handlePilihDariFileDocument} marginVertical={0} text="Unggah" height={40} width='30%'  borderRadius={2} backgroundColor={Color.primaryMain}
+                fontStyles={{...FontConfig.buttonZeroTwo, color: Color.neutralZeroOne}} /> : 
+                <Pressable onPress={handleHapusDocument} style={{marginVertical: 10, marginRight: 5}}><Ionicons name="trash-outline" color={Color.danger} size={22} /></Pressable>
+            }
+        </View>
+          <View style={{height: 5}}></View>
+          <Text style={{...FontConfig.bodyThree, color: Color.secondaryText}}>Hanya menerima format pdf dan ukuran file maksimal 10mb</Text>
         <View style={{height: 10}}></View>
-        <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Capres</Text>
-        <DropDownButton onPress={()=>setIsModalVisible(true)} placeholder='Pilih Capres' text={capres} />
-        <View style={{height: 10}}></View>
-        <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Tag</Text>
-        <DropDownButton onPress={handleTagButton} placeholder='Pilih Tag' text={tag} />
-        <View style={{height: 10}}></View>
-        {is_tag_kawan ? <><Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Tandai Kawan</Text>
-        <DropDownButton onPress={()=>setIsModalTemanVisible(true)} placeholder='Pilih Kawan' text={tagTeman.length != 0 ? tagTeman.length > 1 ? `${tagNamaTeman[0]}, dan ${tagTeman.length-1} Lainnya` : tagNamaTeman[0] : ""} />
-        <View style={{height: 10}}></View></>: <></>}
-        {is_estimasi_partisipan ? <><Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Perkiraan Partisipan</Text>
-        <TextInput value={perkiraanPartisipan} onChangeText={setPerkiraanPartisipan} onBlur={() => setPhoneIsFocused(false)} onFocus={() => setPhoneIsFocused(true)} 
-        style={{...styles.phoneInput, borderColor: (phoneIsFocused || perkiraanPartisipan)? Color.neutralZeroSeven : Color.lightBorder}} 
-        keyboardType='number-pad' placeholder='Masukkan jumlah partisipan' placeholderTextColor={Color.disable} />
-        <View style={{height: 10}}></View></> : <></>}
         <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>Lokasi</Text>
         <DropDownButton onPress={handleLokasiButton} placeholder='Lokasi' text={lokasi} 
         childLeft={<Ionicons name="locate-outline" color={Color.secondaryText} size={16} style={{paddingRight: 5}} />} />
+        <View style={{height: 10}}></View>
+        <Text style={{...FontConfig.bodyTwo, color:Color.secondaryText, paddingBottom: 10}}>{`Saran/Umpan Balik (opsional)`}</Text>
+        <CustomTextArea inputNotWrong={true} value={saran} setValue={setSaran} placeholder="Tulis saran atau umpan balikmu disini..."
+        width='100%' height={100} />
         <View style={{height: 30}}></View>
       </ScrollView>
       <View style={styles.bottomSection}>
@@ -340,7 +390,8 @@ const styles = StyleSheet.create({
   },
   textPastikan: {
     ...FontConfig.captionOne,
-    color: Color.neutralZeroSeven
+    color: Color.neutralZeroSeven,
+    width: '80%'
   },
   textDetailLaporan: {
     ...FontConfig.titleThree,
