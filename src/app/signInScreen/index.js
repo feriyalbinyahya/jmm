@@ -9,7 +9,7 @@ import {
   Border,
   FontConfig,
 } from '../../theme';
-import Logo from '../../assets/images/logo_blue.png';
+import Logo from '../../assets/images/logo_desaraya.png';
 import iconGoogle from '../../assets/images/icon/icon_google.png';
 import { TextInput } from "react-native/Libraries/Components/TextInput/TextInput";
 import CustomInput from "../../components/customInput";
@@ -53,9 +53,7 @@ const SignInPage = ({navigation}) => {
       return await getTokenNotification();
     }
 
-    const no_hp_cs = useSelector((state)=>{
-      return state.pendukung.no_hp_cs;
-    })
+    const no_hp_cs = "0811-1111-1111";
 
     const handleLogin = () => {
       setIsLoading(true);
@@ -398,9 +396,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   logoDashboard:{
-    width: 56,
+    width: 60.95,
     height: 56,
-    borderRadius: 151,
     marginVertical: 20
   },
   masukGoogle: {

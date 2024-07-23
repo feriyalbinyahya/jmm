@@ -34,8 +34,8 @@ const CapresChoice = ({item, setItem, setModalVisible, data, idCapres, setIdCapr
     <View>
       <FlatList
       data={data}
-      renderItem={({item}) => <Item text={item.nama_capres} id={item.id_capres}/>}
-      keyExtractor={item => item.id_capres}
+      renderItem={({item}) => <Item text={item.tahapan} id={item.tahapan}/>}
+      keyExtractor={item => item.tahapan}
        />
        <View style={{marginTop: 5}}>
             <CustomButton onPress={handlePilih} height={44} text='Pilih' backgroundColor={Color.primaryMain} fontStyles={styles.textPilih} />

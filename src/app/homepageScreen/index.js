@@ -59,18 +59,13 @@ import AcaraServices from '../../services/acara'
 import LoginServices from '../../services/login'
 import { VERSION } from '../../utils/environment'
 import CardTopik from '../../components/cardTopik'
+import CardProgram from '../../components/cardProgram'
+import ProgramServices from '../../services/program'
 
 
 const HomepageScreen = ({navigation}) => {
-    const [laporanJenis, setLaporanJenis] = useState([]);
-    const [dataBeritaTerkini, setDataBeritaTerkini] = useState([]);
-    const [dataMisi, setDataMisi] = useState([]);
-    const [dataBeritaOrganisasi, setDataBeritaOrganisasi] = useState([]);
-    const [beritaTerkiniLoading, setBeritaTerkiniLoading] = useState(false);
-    const [beritaOrganisasiLoading, setBeritaOrganisasiLoading] = useState(false);
-    const [laporanLoading, setLaporanLoading] = useState(false);
-    const [surveiLoading, setSurveiLoading] = useState(false);
-    const [allSurvei, setAllSurvei] = useState([]);
+    const [dataProgram, setDataProgram] = useState([]);
+    const [programIsLoading, setProgramIsLoading] = useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
     const [showAlertPrivacyPolicy, setShowAlertPrivacyPolicy] = useState(false);
     const [privacyPolicyDisabled, setPrivacyPolicyDisabled] = useState(true);
@@ -146,162 +141,17 @@ const HomepageScreen = ({navigation}) => {
         );
     }
 
-    const BeritaView = ({data, size}) => {
-        return (
-            <>
-            {data?.map((item, index)=> {
-                return(
-                    <View key={index} style={{width: size}}>
-                        <CardBerita topik={item["kategori"]}
-                        tanggal={item["tanggal"]} 
-                        image={item["cover_berita"]} 
-                        berita={item["judul"]}
-                        id={item["id_berita"]}
-                        navigation={navigation}
-                        />
-                    </View>
-                )
-              })}
-            </>
-        )
-    }
-
-    const DiskusiView = ({data, size}) => {
-        return (
-            <>
-            {data?.map((item, index)=> {
-                return(
-                    <View key={index} style={{width: size}}>
-                        <CardTopik topik={item["kategori"]}
-                        tanggal={item["tanggal"]} 
-                        berita={item["judul"]}
-                        id={item["id_berita"]}
-                        navigation={navigation}
-                        />
-                    </View>
-                )
-              })}
-            </>
-        )
-    }
-
-
-    const MisiView = ({data, size}) => {
-        return (
-            <>
-            {data?.map((item, index)=> {
-                return(
-                    <View key={index} style={{width: size}}>
-                        {item.tingkat_kepentingan == "Sangat Penting" ? 
-                        <CardGradient status={item.status_konfirmasi} navigation={navigation} is_important={true} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} /> :
-                        <CardWhite status={item.status_konfirmasi} navigation={navigation} is_important={false} publish_date={item.tanggal_publish} deskripsi={item.deskripsi} id={item.id_misi} kategori={item.kategori[0].nama_kategori} judul={item.judul} expired_date={item.batas_waktu} />
-                        }
-                    </View>
-                )
-              })}
-            </>
-        )
-    }
-
-    const SurveiView = ({data, size}) => {
-        return (
-            <>
-            {data?.map((item, index)=> {
-                return(
-                    <View key={index} style={{width: size, marginHorizontal: 10}}>
-                        <CardSurvei navigation={navigation} id={item.id_survey} judul={item.judul} image={item.cover_survey} />
-                    </View>
-                )
-              })}
-            </>
-        )
-    }
-
-    const SurveiSkeleton = () => {
-        return (
-            <View style={{padding: 10, alignItems: 'center'}}>
-                <Skeleton style={{borderRadius: 8}} width={150} height={130} />
-                <View style={{height:10}}></View> 
-                <Skeleton style={{borderRadius: 6}} width={150} height={15} />
-                <View style={{height:10}}></View>
-                <Skeleton style={{borderRadius: 10}} width={150} height={30} />
-            </View>
-        )
-    }
-    const BeritaSkeleton = () => {
-        return (
-            <Skeleton style={{borderRadius: 8, marginHorizontal: 8,
-                marginVertical: 5,}} width={width*0.67} height={4*width/3} />
-        )
-    }
-
-    const getLaporanJenisData = () => {
-        setLaporanLoading(true);
-        LaporanServices.getLaporanJenis()
+    const getProgramTerbaru = () => {
+        setProgramIsLoading(true);
+        ProgramServices.getProgramHomepage()
         .then(res=>{
-            if(res.data.message != "Token expired."){
-                setLaporanJenis(res.data.data);
-                setLaporanLoading(false);
-            }else{
-                handleLogout();
-            }
-        })
-        .catch(err=> {
-            console.log(err);
-            setLaporanLoading(false);
-        })
-    }
-
-    const getBeritaTerkini = () => {
-        setBeritaTerkiniLoading(true);
-        BeritaServices.getBeritaHomepage("terkini")
-        .then(res=>{
-            setDataBeritaTerkini(res.data.data);
-            setBeritaTerkiniLoading(false);
-        })
-        .catch(err=>{
-            console.log(err);
-            setBeritaTerkiniLoading(false);
-        })
-    }
-
-    const getBeritaOrganisasi = () => {
-        setBeritaOrganisasiLoading(true);
-        BeritaServices.getBeritaHomepage("organisasi")
-        .then(res=>{
-            setDataBeritaOrganisasi(res.data.data);
-            setBeritaOrganisasiLoading(false);
-        })
-        .catch(err=>{
-            console.log(err);
-            setBeritaOrganisasiLoading(false);
-        })
-    }
-
-    const getAllSurveyData = () => {
-        setSurveiLoading(true);
-        SurveiServices.getAllSurvei()
-        .then(res=> {
-            if(res.data.message != "Token expired."){
-                setAllSurvei(res.data.data);
-                setSurveiLoading(false);
-            }else{
-                handleLogout();
-            }
-        })
-        .catch(err=> {
-            console.log(err);
-            setSurveiLoading(false);
-        })
-    }
-
-    const getAllMisiData = () => {
-        MisiServices.getMisiHomepage()
-        .then(res=>{
-            setDataMisi(res.data.data);
+            console.log(res.data.data);
+            setDataProgram(res.data.data.data);
+            setProgramIsLoading(false);
         })
         .catch(err=>{
             console.log(err.response);
+            setProgramIsLoading(false);
         })
     }
 
@@ -312,12 +162,6 @@ const HomepageScreen = ({navigation}) => {
     const menus = ["Terbaru", "Kesehatan", "Pendidikan", "Politik", "Olahraga"];
     const width = Dimensions.get('window').width;
 
-    const saveJenisLaporan = (id, nama, deskripsi, desc_required, is_estimasi_partisipan_required, is_tag_kawan) => {
-        dispatch(
-            setJenisLaporan({id: id, nama: nama, deskripsi: deskripsi, desc_required: desc_required,
-                is_estimasi_partisipan_required: is_estimasi_partisipan_required, is_tag_kawan: is_tag_kawan})
-        );
-    }
 
     const savePrivacyPolicy = () => {
         dispatch(
@@ -328,14 +172,10 @@ const HomepageScreen = ({navigation}) => {
     const onRefresh = React.useCallback(async () => {
         handleRefreshToken();
         setRefreshing(true);
-        getLaporanJenisData();
         if(status == "Diterima"){
-            getAllSurveyData();
-            getBeritaOrganisasi();
             //fetchAllDataHomepage();
+            getProgramTerbaru();
         }
-        getBeritaTerkini();
-        getAllMisiData();
         getAppVersion();
         getReferalData();
         setRefreshing(false);
@@ -343,15 +183,11 @@ const HomepageScreen = ({navigation}) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            getLaporanJenisData();
             handleRefreshToken();
             if(status == "Diterima"){
-                getAllSurveyData();
-                getBeritaOrganisasi();
                 //fetchAllDataHomepage();
+                getProgramTerbaru();
             }
-            getBeritaTerkini();
-            getAllMisiData();
             getReferalData();
         }, [])
     );
@@ -360,6 +196,7 @@ const HomepageScreen = ({navigation}) => {
     const [isLoadingReferal, setIsLoadingReferal] = useState(false);
     const [isModalVisibleReferal, setModalVisibleReferal] = useState(false);
     const [isPrivacySelected, setIsPrivacySelected] = useState(false);
+    const skeletonProgram = ["1", "2", "3"];
 
     const getReferalData = () =>{
         setIsLoadingReferal(true);
@@ -449,265 +286,28 @@ const HomepageScreen = ({navigation}) => {
                 <View style={{height: 100}}></View>
                 </> : <></>
             }
-            
-            {/** laporan section */}
-            <View style={styles.laporanSection}>
-            <View style={{height: 10}}></View>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Laporan</Text>
-                {!laporanLoading ?  <View style={styles.menuLaporan}>
-                    {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
-                        if(status == "Diterima" && statusAktif == 'Active'){
-                        return (
-                            <Pressable key={index} onPress={()=>{ 
-                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, 
-                                    item.is_estimasi_partisipan_required,
-                                    item.is_tag_kawan);
-                                navigation.navigate("Laporan");
-                                }} style={styles.itemMenu}>
-                                <Image source={item.jenis_laporan == "APK" ?  IconApk : 
-                                item.jenis_laporan == 'Acara' ? IconAcara : item.jenis_laporan == "Markas Komunitas" ? 
-                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : item.jenis_laporan == "Perhitungan Suara" ? IconPemungutanSuara : IconAksi} style={styles.iconLaporan} />
-                                <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                            </Pressable>
-                        )}
-                        else{
-                            return(
-                                <View key={index} style={styles.itemMenu}>
-                                    <Image source={item.jenis_laporan == "APK" ?  IconApkDisable : 
-                                    item.jenis_laporan == 'Acara' ? IconAcaraDisable : item.jenis_laporan == "Markas Komunitas" ? 
-                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={styles.iconLaporan} />
-                                    <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                                </View> 
-                            )
-                        }
-                    }) : <></> }
-                    {status == "Diterima" && statusAktif == 'Active' ? <>
-                    <Pressable onPress={()=>{ 
-                        //saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
-                        navigation.navigate("ListCSR");
-                        }} style={styles.itemMenu}>
-                        <Image source={IconCSR} style={styles.iconLaporan} />
-                        <Text style={styles.textMenu}>CSR</Text>
-                    </Pressable>
-                    {/**<Pressable onPress={()=>{ 
-                        //saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
-                        navigation.navigate("ListFigur");
-                        }} style={styles.itemMenu}>
-                        <Image source={IconFigur} style={styles.iconLaporan} />
-                        <Text style={styles.textMenu}>Figur</Text>
-                    </Pressable>*/
-                    /**<Pressable onPress={()=>{ 
-                        //saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required);
-                        navigation.navigate("LaporanOffline");
-                        }} style={styles.itemMenu}>
-                        <Image source={IconFigur} style={styles.iconLaporan} />
-                        <Text style={styles.textMenu}>Laporan Offline</Text>
-                    </Pressable>*/}
-                    </>
-                     :
-                    <></>
-                    }
-                </View> : <Skeleton height={100} width={width-40} style={{borderRadius: 8, marginVertical: 16}} />
-                }
-            </View>
-            {status == "Diterima" && statusAktif == 'Active' ? <Box style={styles.dataKawan} shadow={1}>
-                <View style={{flexDirection: 'row', paddingHorizontal: 20, 
-                justifyContent: 'space-between', paddingVertical: 5, alignItems: 'center'}}>
-                    <View>
-                        <Text style={{...FontConfig.titleThree, color: Color.neutralZeroOne}}>Ayo datakan Kawanmu</Text>
-                        <Text style={{...FontConfig.captionOne, color: Color.neutralZeroOne}}>Kumpulkan poinnya!</Text>
-                    </View>
-                    <CustomButton onPress={()=>navigation.navigate("ReferalSimpatisan")} borderRadius={16} text="Ajak Kawan" height="85%" width={99} 
-                    backgroundColor={Color.neutralZeroOne}
-                     borderColor={Color.primaryMain} fontStyles={{...FontConfig.buttonThree, color: Color.primaryMain}} />
-                </View>
-            </Box> : 
-            <Box style={styles.dataKawanDisable} shadow={1}>
-                <View style={{flexDirection: 'row', paddingHorizontal: 20, 
-                justifyContent: 'space-between', paddingVertical: 5, alignItems: 'center'}}>
-                    <View>
-                        <Text style={{...FontConfig.titleThree, color: '#757575'}}>Ayo datakan Kawanmu</Text>
-                        <Text style={{...FontConfig.captionOne, color: Color.grayEight}}>Kumpulkan poinnya!</Text>
-                    </View>
-                    <CustomButton borderRadius={16} text="Data Kawan" height={32} width={99} 
-                    backgroundColor={Color.neutralZeroSix}
-                    borderColor={Color.primaryMain} fontStyles={{...FontConfig.buttonThree, color: Color.neutralZeroOne}} />
-                </View>
-            </Box>
-            }
+            <View style={{height: 20}}></View>
+            {!programIsLoading ? <View style={{paddingHorizontal: 20}}>
+                <Text style={{...FontConfig.buttonFour, color: "#111111"}}>Program Sedang Berjalan</Text>
+                {dataProgram.map((item, index)=>{
+                    return(
+                        <CardProgram key={index} berita={item.judul} baru={false} tanggal={item.tanggal_dibuat} id={item.id_csr_program} image={item.cover} navigation={navigation}/>
+                    )
+                })}
 
-            {/** misi section */}
-            { status == "Diterima" && statusAktif == 'Active' ? !surveiLoading ? (dataMisi.length != 0 ?
-            <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row', paddingHorizontal: 15, alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
-                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={190} children={<MisiView size={width*0.75} data={dataMisi} />} size={width*0.5} /></View>
-                {/** <CustomCarousel width={width} height={255} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} />*/}
-            </View> : 
-            <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15,  justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
-                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                <View style={{height: 30}}></View>
-                <View style={{alignItems: 'center', justifyContent:'center',  paddingHorizontal: 20,}}>
-                    <Image source={IconNoMisi} style={{width: 74, height: 54}} />
-                    <View style={{height: 15}}></View>
-                    <Text style={{...FontConfig.titleTwo, color: Color.hitam}}>{`Belum ada misi yang Aktif`}</Text>
-                    <View style={{height: 3}}></View>
-                    <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, misi akan segera ditampilkan</Text>
-                </View>
-            </View>
-            ) : 
-            <View style={styles.surveiSection}>
-                <View style={{flexDirection: 'row',  paddingHorizontal: 15, alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Selesaikan Misi-mu!</Text>
-                    <Pressable onPress={()=>navigation.navigate('ListMisi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={255} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
-            </View> : <></>
-            }
+            </View> :
+            <View style={{paddingHorizontal: 20}}>
+            <Text style={{...FontConfig.buttonFour, color: "#111111"}}>Program Sedang Berjalan</Text>
+            {skeletonProgram.map((item, index)=>{
+                return(
+                    <Skeleton key={index} width={width-40} height={160} style={{borderRadius: 10, marginVertical: 10}} />
+                )
+            })}
 
-            {/** laporan section 
-            <View style={styles.laporanSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Kirim Laporan Yuk</Text>
-                {!laporanLoading ? <View style={styles.menuLaporan}>
-                    {laporanJenis.length != 0 ? laporanJenis.map((item, index) => {
-                        if(status == "Diterima"){
-                        return (
-                            <Pressable key={index} onPress={()=>{ 
-                                saveJenisLaporan(item.id_jenis_laporan, item.jenis_laporan, item.deskripsi, item.desc_required, item.is_estimasi_partisipan_required,
-                                    item.is_tag_kawan);
-                                navigation.navigate("Laporan");
-                                }} style={{...styles.itemMenu, width: (width/5)-10}}>
-                                <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApk : 
-                                item.jenis_laporan == 'Acara' ? IconAcara : item.jenis_laporan == "Markas Komunitas" ? 
-                                IconMarkasKomunitas : item.jenis_laporan == "Posko" ? IconPosko : IconAksi} style={{width: (width/5)-40, height: (width/5)-40}} />
-                                <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                            </Pressable>
-                            
-                        )}
-                        else{
-                            return(
-                                <View key={index} style={styles.itemMenu}>
-                                    <Image source={item.jenis_laporan == "Media Luar Ruang" ?  IconApkDisable : 
-                                    item.jenis_laporan == 'Acara' ? IconAcaraDisable : item.jenis_laporan == "Markas Komunitas" ? 
-                                    IconMarkasKomunitasDisable : item.jenis_laporan == "Posko" ? IconPoskoDisable : IconAksiDisable} style={{width: (width/5)-40, height: (width/5)-40}} />
-                                    <Text style={styles.textMenu}>{item.jenis_laporan}</Text>
-                                </View>
-                            )
-                        }
-                    }) : <></> }
-                </View> : <Skeleton height={100} width={width-40} style={{borderRadius: 8, marginVertical: 16}} /> 
-                }
-            </View> */}
-
-            {/** survei section */}
-            {status == "Diterima" && statusAktif == 'Active' ? !surveiLoading ? (allSurvei.length != 0 ?
-            <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<SurveiView data={allSurvei} size={width*0.6} />} size={width*0.5} /></View>
-            </View> : <></>) : 
-            <View style={styles.surveiSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111', paddingLeft: 20}}>Isi Survei Yuk</Text>
-                <View style={{height: 20}}></View>
-                <View style={{flexDirection: 'row'}}>
-                <View style={{paddingLeft: 10}}><CustomCarousel width={width} height={265} children={<><SurveiSkeleton /><SurveiSkeleton /></>} size={width*0.5} /></View>
-                </View>
-            </View> : <></>
-            }
-
-            {/** diskusi section */}
-            {status == "Diterima" && statusAktif == 'Active' ?
-            !beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15, justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Topik Diskusi Terbaru</Text>
-                    <Pressable onPress={()=>navigation.navigate('Diskusi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                
-                <View style={{height: 15}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel height={200} width={width} children={<DiskusiView data={dataBeritaTerkini} size={width*0.9} />} size={width*0.5} /></View>
-            </View> : <>
-            <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Topik Diskusi Terbaru</Text>
-            <View style={{alignItems: 'center', padding: 20}}>
-                <Image source={IconBerita} style={{width: 123, height: 90}} />
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.titleTwo, color: '#000000'}}>Belum ada berita</Text>
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, diskusi akan segera ditampilkan</Text>
-            </View></> :
-            <View style={styles.beritaSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Topik Diskusi Terbaru</Text>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
-            </View> : <></>
-            }
-
-            {/** berita terkini section */}
-            {!beritaTerkiniLoading ? dataBeritaTerkini.length !=0 ? <View style={styles.beritaSection}>
-                <View style={{flexDirection: 'row', alignItems: 'center',  paddingHorizontal: 15, justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Terkini</Text>
-                    <Pressable onPress={()=>navigation.navigate('BeritaTerkini')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                
-                <View style={{height: 15}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<BeritaView data={dataBeritaTerkini} size={width*0.67} />} size={width*0.5} /></View>
-            </View> : <>
-            <Text style={{...FontConfig.titleTwo, color: '#111111', padding: 20}}>Berita Terkini</Text>
-            <View style={{alignItems: 'center', padding: 20}}>
-                <Image source={IconBerita} style={{width: 123, height: 90}} />
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.titleTwo, color: '#000000'}}>Belum ada berita</Text>
-                <View style={{height: 5}}></View>
-                <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, berita akan segera ditampilkan</Text>
-            </View></> :
-            <View style={styles.beritaSection}>
-                <Text style={{...FontConfig.titleTwo, color: '#111111',  paddingHorizontal: 20,}}>Berita Terkini</Text>
-                <View style={{height: 20}}></View>
-                <View style={{paddingLeft: 10}}><CustomCarousel height={225} width={width} children={<><BeritaSkeleton /><BeritaSkeleton /></>} size={width*0.67} /></View>
             </View>
             }
             
-            {/** berita organisasi section */}
-            <View style={styles.beritaDaerahSection}>
-                {status == "Diterima" && statusAktif == 'Active' ? !beritaOrganisasiLoading ? dataBeritaOrganisasi.length != 0 ?
-                <><View style={{flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between'}}>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Daerahmu</Text>
-                    <Pressable onPress={()=>navigation.navigate('BeritaOrganisasi')}><Text style={styles.textLihatSelengkapnya}>Lihat Selengkapnya</Text></Pressable>
-                </View>
-                <View style={{height: 15}}></View>
-                <BeritaDaerah data={dataBeritaOrganisasi} navigation={navigation} />
-                </> : 
-                <>
-                <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Daerahmu</Text>
-                <View style={{alignItems: 'center', padding: 20}}>
-                    <Image source={IconBerita} style={{width: 123, height: 90}} />
-                    <View style={{height: 5}}></View>
-                    <Text style={{...FontConfig.titleTwo, color: '#000000'}}>Belum ada berita</Text>
-                    <View style={{height: 5}}></View>
-                    <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu yaa, berita akan segera ditampilkan</Text>
-                </View></>
-                 : 
-                <>
-                    <Text style={{...FontConfig.titleTwo, color: '#111111'}}>Berita Daerahmu</Text>
-                    <View style={{height: 20}}></View>
-                    <BeritaDaerahSkeleton />
-                    <View style={{height: 10}}></View>
-                    <BeritaDaerahSkeleton />
-                </>
-                 : <>
-                <Text style={{...FontConfig.headingThree, color: '#111111'}}>Berita Daerahmu</Text>
-                <View style={{alignItems: 'center', padding: 20}}>
-                    <Image source={IconBerita} style={{width: 123, height: 90}} />
-                    <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Tunggu ya, berita akan segera ditampilkan</Text>
-                </View>
-                </>}
-            </View> 
+            
             <View style={{height: 10}}></View>
         </ScrollView>
         <AwesomeAlert

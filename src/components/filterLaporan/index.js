@@ -48,22 +48,6 @@ const FilterLaporan = ({idChoosenTag, setIdChoosenTag, sortby, choosenTag, choos
       },[])
   return (
     <>{!dataTagLoading ? <View style={styles.container}>
-      <Text style={styles.textTag}>Tag Kategori</Text>
-      {
-        dataTag.map((item, index)=> {
-            return (
-                <Pressable key={index} onPress={()=> {handleKategoriSelected(item);}}>
-                    <View style={item.nama === onSelectKategori? styles.selected : styles.unSelected}>
-                        <Text style={styles.title}>{item.nama}</Text>
-                        {item.nama === onSelectKategori? <Ionicons name="checkbox" color={Color.primaryMain} size={22} /> 
-                        : <View style={styles.checkboxOff}></View>}
-                    </View>
-                </Pressable>
-            )
-        })
-      }
-      <View style={{borderWidth:0.5, borderColor: Color.lightBorder}}></View>
-      <View style={{height:15}}></View>
       <Text style={styles.textTag}>Tampilkan Sesuai</Text>
       {
         sortby.map((item)=> {
@@ -82,7 +66,7 @@ const FilterLaporan = ({idChoosenTag, setIdChoosenTag, sortby, choosenTag, choos
       <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
         <CustomButton onPress={onPressResetFilter} text="Reset" backgroundColor={Color.neutralZeroOne} fontStyles={styles.textReset}
         borderColor={Color.primaryMain} height={44} width='40%' borderWidth={1} />
-        <CustomButton onPress={() => onPressFilter(onSelectKategori, onSelectSortBy, idOnSelectKategori)} text="Terapkan" backgroundColor={Color.primaryMain} fontStyles={styles.textTerapkan}
+        <CustomButton onPress={() => onPressFilter(onSelectSortBy)} text="Terapkan" backgroundColor={Color.primaryMain} fontStyles={styles.textTerapkan}
         height={44} width='40%'/>
       </View>
     </View> : <View style={{alignItems: 'center', justifyContent: 'center', height: 350}}><ActivityIndicator size="large" color={Color.grayEight} /></View>}</>

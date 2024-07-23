@@ -84,6 +84,8 @@ import ProgramBaruScreen from '../app/csrScreen/programBaru';
 import BuatProposalScreen from '../app/csrScreen/programBaru/buatProposal';
 import ProposalTerkirimScreen from '../app/csrScreen/programBaru/proposalTerkirim';
 import ProgramBerjalanScreen from '../app/csrScreen/programBerjalan';
+import LaporanDiubahScreen from '../app/laporanScreen/ubahLaporan/laporanDiubah';
+import UbahLaporanScreen from '../app/laporanScreen/ubahLaporan';
 
 const Stack = createNativeStackNavigator();
 
@@ -195,12 +197,14 @@ const AppRoute = () => {
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="HasilLibraryFotoSimpatisan" component={HasilLibraryFotoSimpatisan} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="DataSimpatisanTerkirim" component={DataSimpatisanTerkirim} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="BuatLaporan" component={BuatLaporanScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="UbahLaporan" component={UbahLaporanScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Lokasi" component={LokasiScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="AmbilFotoRegister" component={AmbilFotoScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="KodeOTPRegister" component={KodeOTPScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="UploadPhotoLaporan" component={UploadPhotoScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="PilihTagLaporan" component={PilihTagPage} />
         <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanTerkirim" component={LaporanTerkirimScreen} />
+        <Stack.Screen options={{ headerShown: false, animation: 'slide_from_right' }} name="LaporanDiubah" component={LaporanDiubahScreen} />
 
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="BeritaTerkini" component={BeritaTerkiniScreen} />
         <Stack.Screen options={{ headerShown: false, animation: 'none' }} name="Diskusi" component={DiskusiScreen} />

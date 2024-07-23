@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.gensatset"
+    namespace "com.desaraya"
     defaultConfig {
-        applicationId "com.gensatset"
+        applicationId "com.desaraya"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 33
         versionCode 15

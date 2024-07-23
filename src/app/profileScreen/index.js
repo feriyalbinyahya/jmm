@@ -109,7 +109,7 @@ const ProfileScreen = ({navigation}) => {
         setIsLoading(true);
         ProfileServices.getProfile()
         .then(res=> {
-            console.log(res.data.data[0].infoPoin.badge);
+            console.log(res.data.data[0]);
             if(res.data.message != "Token expired."){
                 loadAccount(res.data.data[0]);
                 setProfileData(res.data.data[0]);
@@ -178,9 +178,7 @@ const ProfileScreen = ({navigation}) => {
         );
     }
 
-    const no_hp_cs = useSelector((state)=>{
-        return state.pendukung.no_hp_cs;
-      })
+    const no_hp_cs = "0811-1111-1111";
 
     const handleWhatsapp = () => {
         var no_hp = no_hp_cs.substring(1);
@@ -210,6 +208,8 @@ const ProfileScreen = ({navigation}) => {
           </View>
         )
     }
+
+    
 
     const RankPoin = ({image, rank}) =>{
         return(
@@ -246,20 +246,20 @@ const ProfileScreen = ({navigation}) => {
                 <View style={{alignItems: 'center', paddingHorizontal: 20}}>
                     <Text style={styles.textNama}>{profileData.nama_lengkap}</Text>
                     <Text style={styles.textUsername}>@{profileData.username}</Text>
-                    <Text style={styles.textPhone}>{profileData.no_hp}</Text>
+                    {/**<Text style={styles.textPhone}>{profileData.no_hp}</Text>
                     <View style={{height: 10}}></View>
-                    <Text style={{...FontConfig.bodyTwo, color: Color.neutralZeroOne}}>{profileData.bio}</Text>
+                    <Text style={{...FontConfig.bodyTwo, color: Color.neutralZeroOne}}>{profileData.bio}</Text>*/}
                 </View>
             </View>
             <View style={{height: 20}}></View>
-            
+            {/** 
             <View style={styles.aksiSection}>
                 <BoxAksi image={IconLaporan} text="KAWAN" jumlah={profileData.total_kawan} imageHeight={18} imageWidth={14} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
                 <BoxAksi image={IconReferral} text={NAMA_APP_CAPS} jumlah={profileData.total_referral} imageHeight={24} imageWidth={24} />
                 <View style={status == "Diterima" ? styles.garisVertical : styles.garisVerticalMati}></View>
                 <BoxAksi image={IconSurvey} text="SURVEI" jumlah={profileData.total_survey} imageHeight={22} imageWidth={22} />
-            </View>
+            </View>*/}
             
         </View> : 
         <View style={styles.boxProfile}>
@@ -286,24 +286,24 @@ const ProfileScreen = ({navigation}) => {
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="person-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                    <Ionicons name="person-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Data Diri`}</Text>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix}}>{`Data Diri`}</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
             </Pressable>
             <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate("InfoAkunProfile", 
                                 {phone: account[0], password: account[1]}) : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="call-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                    <Ionicons name="call-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Info Akun`}</Text>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix}}>{`Info Akun`}</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
             </Pressable>
-            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('KartuAnggota') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            {/**<Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('KartuAnggota') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -312,13 +312,13 @@ const ProfileScreen = ({navigation}) => {
                     <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Organisasi`}</Text>
                 </View>
                 <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
-            </Pressable>
+            </Pressable>*/}
             <View style={{height: 18}}></View>
             <Text style={{...FontConfig.buttonFour, color: Color.neutral70,
             paddingHorizontal: 20}}>Lainnya</Text>
             <View style={{height: 5}}></View>
             <View style={{borderWidth: 0.55, borderColor: Color.lightBorder}}></View>
-            <Pressable onPress={keaktifan == 'Active' ? handlePoinButton : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            {/**<Pressable onPress={keaktifan == 'Active' ? handlePoinButton : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -336,16 +336,17 @@ const ProfileScreen = ({navigation}) => {
                 </View>
                 <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
             </Pressable>
-            {/**<Pressable onPress={()=>navigation.navigate('Bantuan')}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
+            */}
+            <Pressable onPress={()=>setModalWhatsappVisible(true)}  style={{flexDirection: 'row', padding: 20, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="help-outline" color={Color.primaryMain} size={18} />
+                    <Ionicons name="help-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Bantuan</Text>
+                    <Text style={{...FontConfig.buttonOne, color: Color.hitam}}>Bantuan</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
-        </Pressable>**/}
-            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('ListBlokir') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
+            </Pressable>
+            {/**<Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('ListBlokir') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -354,16 +355,16 @@ const ProfileScreen = ({navigation}) => {
                     <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix}}>{`Pengguna diblokir (${profileData.jumlah_pengguna_diblokir})`}</Text>
                 </View>
                 <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.primaryMain : Color.neutralZeroSix} size={18} />
-            </Pressable>
+            </Pressable>*/}
             <Pressable onPress={handleKeluarButton} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="log-out-outline" color={Color.primaryMain} size={18} />
+                    <Ionicons name="log-out-outline" color={Color.danger} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: Color.primaryMain}}>Keluar</Text>
+                    <Text style={{...FontConfig.buttonOne, color: Color.danger}}>Keluar</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={Color.primaryMain} size={18} />
+                <Ionicons name="chevron-forward-outline" color={Color.danger} size={18} />
             </Pressable>
             <View style={{height: 20}}></View>
             <View style={{height: 10}}></View>

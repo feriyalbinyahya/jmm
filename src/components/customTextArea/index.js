@@ -12,6 +12,8 @@ const CustomTextArea = ({inputNotWrong=true, value, setValue, placeholder, type=
           h={height} 
           placeholder={placeholder}
           w={width}
+          _input={{selectionColor: '#30303080',
+            cursorColor: '#303030',}}
           InputLeftElement={childLeft}
           placeholderTextColor={Color.disable}
           onChangeText={setValue}

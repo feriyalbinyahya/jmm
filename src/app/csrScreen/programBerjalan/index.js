@@ -26,6 +26,7 @@ import TentangOrganisasi from '../../kartuAnggotaScreen/tentangOrganisasi'
 import RiwayatOrganisasi from '../../kartuAnggotaScreen/riwayatOrganisasi'
 import TentangCSR from './tentangCSR'
 import RiwayatLaporan from './riwayatLaporan'
+import ProgramServices from '../../../services/program'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -36,65 +37,39 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
     const isFocused = useIsFocused();
     const {id, dataAcara} = route.params;
     const [dataBerita, setDataBerita] = useState([]);
-    const [isLiked, setIsLiked] = useState(false);
-    const [jumlahLike, setJumlahLike] = useState(0);
+    const [dataProgram, setDataProgram] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
-    const deviceTimeZone = RNLocalize.getTimeZone();
-    const [convertedDate, setConvertedDate] = useState("");
-
-    // Make moment of right now, using the device timezone
-    const today = moment().tz(deviceTimeZone);
-
-    // Get the UTC offset in hours
-    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
-    useEffect(()=>{
-        if(dataBerita.length != 0){
-            const convertedToLocalTime = formatTimeByOffset(
-                dataBerita.tanggal,
-                currentTimeZoneOffsetInHours,
-            );
-            setConvertedDate(convertedToLocalTime);
-        }
-    },[dataBerita])
 
 
-    const getDataBerita = () => {
+    const getProgramDetail = () => {
         setIsLoading(true);
-        BeritaServices.getDetailBerita(id)
-        .then(res=> {
+        ProgramServices.getProgramDetail(id)
+        .then(res=>{
             console.log(res.data.data);
-            setDataBerita(res.data.data[0]);
+            setDataProgram(res.data.data);
             setIsLoading(false);
         })
         .catch(err=>{
-            console.log(err.response.data.message);
+            console.log(err.response);
+            setIsLoading(false);
         })
     }
 
-    const value = `<h1 class="ql-align-center">PONGO EDISI TERBARU</h1><p class="ql-align-center"><br></p><iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/11nBqHolLng?showinfo=0" __idm_id__="11804673" width="1367px" height="371" style="display: block; margin: auto;"></iframe><p><br></p> <p>Suspendisse fermentum fermentum ex. Praesent a odio ac tortor bibendum faucibus.</p><p><br></p><p>Pellentesque pulvinar gravida nulla tristique rhoncus. Donec rutrum magna lacus, sed ultrices dui tincidunt sed. Ut quis mauris risus. Cras volutpat tempor ultricies. Pellentesque neque lacus, consequat in tortor ut, fringilla varius quam. Fusce iaculis felis in ullamcorper auctor. Integer lectus libero, ornare sit amet eleifend eu, ornare nec justo. Nam pellentesque vitae erat eu porta. Nam dictum iaculis quam in maximus. Fusce sit amet metus in neque dapibus viverra ut eget eros. Fusce elementum, sapien et cursus consectetur, felis sapien semper turpis, ac sagittis ante augue in nunc.</p><p><br></p><p>Integer eu sapien eu velit feugiat posuere. Morbi at dui quis ante placerat .</p><p><br></p><p>Nunc ut leo quis purus mollis laoreet nec non felis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus libero sed nulla ullamcorper, nec consequat quam elementum. Cras sit amet efficitur metus. Donec ut porta erat. Nam lacus tortor, congue malesuada velit in, mollis faucibus risus. Mauris sit amet justo semper eros varius euismod. Integer sagittis tincidunt elementum. Nunc neque eros, tempor et erat vel, lacinia condimentum metus. Vivamus tempor mollis ligula, euismod rhoncus sem ullamcorper ut. Donec placerat fringilla lorem, ac posuere erat venenatis id. Vestibulum volutpat id ipsum vel pellentesque.</p><p>Morbi elementum ante sit amet augue eleifend, in condimentum lorem posuere. Curabitur a mauris id velit dapibus mollis. Duis nec nulla nisl. Cras vitae velit eget turpis aliquet luctus. Ut sem nunc, ornare sed mattis at, cursus non nisi. Phasellus maximus, tellus dapibus ornare faucibus, nunc nunc aliquam ex, at pellentesque lectus massa eget erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque quis tellus a odio lacinia volutpat at non sem. Sed eget lacinia libero, a egestas massa.</p> </p> `;
-
     const [onSelect, setOnSelect] = useState("");
-    const [idSelect, setIdSelect] = useState(0);
 
       handleSelected = (item, id) => {
         setOnSelect(item);
-        setIdSelect(id);
       }
 
       handlePilih = () => {
         if(onSelect != ''){
             setIsModalVisible(false);
-            navigation.navigate("BuatLaporan", {jenisLaporan: 1})
+            navigation.navigate("BuatLaporan", {jenisLaporan: 1, typeLaporan: onSelect, id: id})
         }
       }
 
-    const onWebViewMessage = (event) => {
-        _editor.current?.enable(false);
-        console.log(`Tinggi : ${event.nativeEvent.data}`);
-        setHeight(Number(event.nativeEvent.data)+150);
-    }
 
     const Item = ({text, id}) => (
         <Pressable onPress={()=> {handleSelected(text, id);}}>
@@ -118,29 +93,10 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
         )
     }
 
-    const generateHtml = (content) => `
-    <!DOCTYPE html>\n
-    <html>
-      <head>
-        <title></title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=320, user-scalable=no">
-        <style type="text/css">
-          body {
-            margin: 0;
-            padding: 0;
-          }
-        </style>
-      </head>
-      <body>
-        ${content}
-      </body>
-    </html>
-    `
     useEffect(()=> {
         if(isFocused){
             setHeight(0);
-            getDataBerita();
+            getProgramDetail();
         }
     },[isFocused]);
 
@@ -153,11 +109,11 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
         children={<LaporanChoice />}
         />
         <View>
-        <HeaderWhite navigation={navigation} title={`CSR BARU`} />
+        <HeaderWhite navigation={navigation} title={`CSR`} />
         {!isLoading ?
-            dataBerita.length != 0 ?
+            dataProgram.length != 0 ?
         <View style={{backgroundColor: Color.neutralZeroOne}}>
-            <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataBerita.cover_berita}`}} />
+            <Image style={styles.imageBerita} source={{uri: `data:image/png;base64,${dataProgram.cover}`}} />
             <View style={styles.container}>
                 <Tab.Navigator 
                 screenOptions={{
@@ -169,10 +125,10 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
                 }}
                 
                 >
-                    <Tab.Screen name="Tentang CSR" component={TentangCSR} initialParams={{judul: dataBerita.judul, deskripsi: dataBerita.deskripsi,
-                        convertedDate: convertedDate
+                    <Tab.Screen name="Tentang CSR" component={TentangCSR} initialParams={{judul: dataProgram.judul, deskripsi: dataProgram.deskripsi,
+                        convertedDate: dataProgram.tanggal_dibuat
                     }}  />
-                    <Tab.Screen name="Riwayat Laporan" component={RiwayatLaporan} initialParams={{navigation: navigation}} />
+                    <Tab.Screen name="Riwayat Laporan" component={RiwayatLaporan} initialParams={{navigation: navigation, idProgram: id}} />
                 </Tab.Navigator>
             </View>
         </View> 
@@ -182,11 +138,11 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
             </View>
         }
         </View>
-        <View style={styles.bottomSection}>
+        {dataProgram.status_csr == "Sedang Berjalan" ?<View style={styles.bottomSection}>
             <View style={styles.buttonContinue}><CustomButton 
             text="Buat Laporan" backgroundColor={Color.primaryMain} onPress={()=>setIsModalVisible(true)}
             height={40} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} /></View>
-        </View>
+        </View> :<></>}
     </SafeAreaView>
   )
 }
@@ -201,11 +157,10 @@ const styles = StyleSheet.create({
     containBeritaSection: {
         paddingVertical: 20,
         flex: 1,
-        height: '100%'
     },
     container: {
         width: '100%',
-        height: '55%',
+        height: '65%',
         paddingHorizontal: 20
       },
     rowInfo: {
@@ -288,7 +243,11 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 2, height: 4},
         shadowRadius: 3,
         shadowColor: 'black',
-        elevation: 10
+        elevation: 10,
+        zIndex: 1,
+        position: 'absolute',
+        bottom: 0,
+        width: '100%'
     },
     buttonContinue: {
         borderRadius: 20, 

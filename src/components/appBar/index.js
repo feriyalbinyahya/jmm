@@ -5,7 +5,7 @@ import ExampleOrganisasi from '../../assets/images/example/exampleOrganisasi.png
 import { Color, FontConfig } from '../../theme'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux'
-import Logo from '../../assets/images/logo_blue.png';
+import Logo from '../../assets/images/logo_desaraya2.png';
 import LogoFacebook from '../../assets/images/icon/icon_facebook_monokrom.png';
 import LogoTiktok from '../../assets/images/icon/icon_tiktok_monokrom.png';
 import LogoInstagram from '../../assets/images/icon/icon_instagram_monokrom.png';
@@ -50,10 +50,10 @@ const AppBarRelawan = ({navigation, isReferal}) => {
 
     console.log(token);
   return (
-    <View style={{backgroundColor: Color.secondaryMain, borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}>
+    <View style={{backgroundColor: Color.primaryMain, borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}>
         <View style={styles.container}>
             <View style={styles.leftSection}>
-                <Image style={styles.logo} source={Logo} />
+                <View style={{backgroundColor: Color.neutralZeroOne, padding: 5, borderRadius: 100}}><Image style={styles.logo} source={Logo} /></View>
                 <View style={{width: 8}}></View>
                 <View style={{width:10}}></View>
             </View>
@@ -71,13 +71,13 @@ const AppBarRelawan = ({navigation, isReferal}) => {
         <View style={{height: 10}}></View>
         <View style={{paddingHorizontal: 20, marginHorizontal: 20, marginVertical: 10, paddingVertical: 10,
             backgroundColor: Color.neutralZeroOne, borderRadius: 8, zIndex: 3}}>
-            <Text style={{...FontConfig.buttonZeroTwo, color: Color.primaryMain,
+            <Text style={{...FontConfig.buttonZeroTwo, color: Color.hitam,
                 textAlign: 'center'
             }}>Buat Laporan untuk Program CSR</Text>
             <ChildrenButton disabled={false} onPress={handleProgram} backgroundColor={Color.palette6} borderRadius={100} borderColor={Color.border} children={<View style={{flexDirection: 'row',
         alignItems: 'center'}}>
                 <Ionicons name="add-circle-outline" size={18} color={Color.neutralZeroOne} />
-                <Text style={{...FontConfig.button5, color: Color.primaryMain, marginLeft: 5}}>Lihat Semua Program</Text>
+                <Text style={{...FontConfig.button5, color: Color.hitam, marginLeft: 5}}>Lihat Semua Program</Text>
             </View>} />
         </View>
         <View style={{height: 10}}></View>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 20,
         alignItems: 'center',
-        backgroundColor: Color.secondaryMain,
+        backgroundColor: Color.primaryMain,
         zIndex: 1
     },
     leftSection: {
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     logo: {
-        width: 33,
-        height: 33,
+        width: 22,
+        height: 20.1,
     },
     textTitle: {
         ...FontConfig.buttonZeroTwo,

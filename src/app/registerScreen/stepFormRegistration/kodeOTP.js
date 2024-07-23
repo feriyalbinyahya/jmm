@@ -93,7 +93,7 @@ const KodeOTPScreen = ({navigation, route}) => {
         }
         <View style={styles.topSection}>
             <Text style={styles.textIsiData}>Masukkan kode verifikasi</Text>
-            <Text style={styles.textLengkapi}>Masukkan kode verifikasi yang telah dikirimkan ke nomor ponsel : 
+            <Text style={styles.textLengkapi}>{`Masukkan kode verifikasi yang telah dikirimkan ke nomor ponsel (Whatsapp) :`} 
                 <Text style={{color: Color.grayTen}}> {phone}</Text>
             </Text>
         </View>

@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     uploadPhoto: {
         photos: [],
-        setPhoto: ()=>{}
+        setPhoto: ()=>{},
+        size: [],
+        setFileSize: ()=>{}
     },
     tagTeman: {
         teman: [],
@@ -38,6 +40,8 @@ export const laporanSlice = createSlice({
     setPhotos: (state, action) => {
       state.uploadPhoto.photos = action.payload.photos;
       state.uploadPhoto.setPhoto = action.payload.setPhoto;
+      state.uploadPhoto.size = action.payload.size;
+      state.uploadPhoto.setFileSize = action.payload.setFileSize;
     },
     setTeman: (state, action) => {
       state.tagTeman = {teman: action.payload.teman, namaTeman: action.payload.namaTeman, 

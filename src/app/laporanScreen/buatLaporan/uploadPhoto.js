@@ -7,16 +7,26 @@ import { useSelector } from 'react-redux'
 import Utils from '../../../utils/Utils'
 
 const UploadPhotoScreen = ({navigation, route}) => {
-    const { imageSource } = route.params;
+    const { imageSource, imageBase64, filesize } = route.params;
 
     const photoKegiatan = useSelector(state => {
         return state.laporan.uploadPhoto;
     });
 
     handleLanjutkan = async() => {
-        const dataImage = await Utils.readFileBase64(`file://${imageSource}`);
-        console.log(dataImage);
+        let dataImage;
+        let fileSize;
+        if(imageBase64 != undefined){
+          dataImage = imageBase64;
+          fileSize = filesize
+        }else{
+          dataImage = await Utils.readFileBase64(`file://${imageSource}`);
+          fileSize = dataImage.length;
+        }
+        console.log(parseInt(fileSize));
         photoKegiatan.setPhoto([...photoKegiatan.photos, dataImage]);
+        photoKegiatan.setFileSize([...photoKegiatan.size, parseInt(fileSize)]);
+        console.log(parseInt(fileSize));
         navigation.goBack();
     }
   return (
@@ -25,7 +35,7 @@ const UploadPhotoScreen = ({navigation, route}) => {
       <View style={styles.section}>
         <Text style={styles.textIsiData}>Hasil Foto</Text>
         <View style={{height: 30}}></View>
-        <Image source={{uri: `file://${imageSource}`}} style={styles.imageSelfie}/> 
+        <Image source={{uri: imageBase64 == undefined ? `file://${imageSource}` : `data:image/png;base64,${imageBase64}`}} style={styles.imageSelfie}/>  
       </View>
       <View style={{height: 50}}></View>
       <View style={styles.bottomSection}>

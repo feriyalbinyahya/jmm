@@ -12,119 +12,104 @@ import Skeleton from '../../../components/skeleton';
 import FilterLaporan from '../../../components/filterLaporan';
 import IconNoData from '../../../assets/images/warning/nodata.png'
 import HeaderSurface from '../../../components/header/headerSurface';
+import moment from 'moment-timezone';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../../utils/Utils';
 
 const RiwayatLaporan = ({route}) => {
-    const {navigation} = route.params;
+    const {navigation, idProgram} = route.params;
     const idJenisLaporan = 1;
     const [isLoading, setIsLoading] = useState(false);
     const key = ["Semua", "Menunggu konfirmasi", "Diterima", "Ditolak"];
     const [currentPage, setCurrentPage] = useState(1);
     const [choosenTag, setChoosenTag] = useState("");
     const [idChoosenTag, setIdChoosenTag] = useState(0);
-    const [choosenSortBy, setChoosenSortBy] = useState('terbaru');
+    const [choosenSortBy, setChoosenSortBy] = useState('Terbaru');
     const [number, setNumber] = useState([0, 0, 0, 0]);
     const [menus, setMenus] = useState([`Semua (0)`, `Menunggu konfirmasi (0)`, `Diterima (0)`,
     `Ditolak (0)`]);
     const [selectedMenu, setSelectedMenu] = useState("Semua");
     const [dataLaporan, setDataLaporan] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
     const sortBy = ["Terbaru", "Terlama"];
     const [isModalVisible, setModalVisible] = useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
     
-    const LaporanItem = ({image, judul, kategori, tanggal, status, id}) => {
-      const [dataImage, setDataImage] = useState("");
-      const [isLoading, setIsLoading] = useState(false);
+    const LaporanItem = ({judul, kategori, tanggal, status, id}) => {
+      const deviceTimeZone = RNLocalize.getTimeZone();
+      const [convertedDate, setConvertedDate] = useState("");
 
-      const getDataImage = () =>{
-        setIsLoading(true);
-        ImageServices.getImage("laporan", image)
-        .then(res=>{
-          setDataImage(res.data.data);
-          setIsLoading(false);
-        })
-        .catch(err=>{
-          console.log(err);
-        })
-      }
+      // Make moment of right now, using the device timezone
+      const today = moment().tz(deviceTimeZone);
 
+      // Get the UTC offset in hours
+      const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
       useEffect(()=>{
-        getDataImage();
-      }, [])
-
+          const convertedToLocalTime = formatTimeByOffset(
+              tanggal,
+              currentTimeZoneOffsetInHours,
+            );
+          setConvertedDate(convertedToLocalTime);
+      },[])
       
       return(
         <Pressable onPress={()=>navigation.navigate("DetailLaporan", {id: id})} style={styles.laporanItem}>
-          {!isLoading ? <Image style={styles.imageLaporan} source={{uri: `data:image/png;base64,${dataImage}`}} /> : 
-          <Skeleton width={100} height={56} style={{borderRadius: 5}} />
-          }
           <View style={{width: 10}}></View>
           <View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '77%'}}>
-              <Text style={{...FontConfig.captionUpperOne, color: Color.graySeven}}>
-                {kategori.toUpperCase()}</Text>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '70%'}}>
-                <View style={{height: 5, width: 5, borderRadius: 5, 
-                  backgroundColor: status == 'Menunggu Konfirmasi' ? Color.goldSix : status == 'Diterima' ? Color.successMain : Color.error}}></View>
-                <View style={{width: 5}}></View>
-                <Text style={{...FontConfig.captionOne, color: Color.primaryText}}>{status}</Text>
-              </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{height: 5, width: 5, borderRadius: 5, 
+                backgroundColor: status == 'Menunggu Persetujuan' ? Color.goldSix : status == 'Diterima' ? Color.successMain : Color.error}}></View>
+              <View style={{width: 5}}></View>
+              <Text style={{...FontConfig.captionZero, color: Color.primaryText}}>{status}</Text>
             </View>
+
             <View style={{height: 5}}></View>
-            <View style={{width: '55%'}}><Text style={styles.textJudulLaporan} numberOfLines={2}>{judul}</Text></View>
+            <View style={{width: '95%'}}><Text style={styles.textJudulLaporan} numberOfLines={2}>{judul}</Text></View>
             <View style={{height: 3}}></View>
-            <Text style={styles.textTanggalLaporan}>{tanggal}</Text>
+
+            <View style={{flexDirection: 'row', width: '77%'}}>
+              <Ionicons name="list-outline" color={Color.title} size={14} />
+              <Text style={{...FontConfig.captionUpperOne, paddingHorizontal: 3, color: kategori == "Laporan Kegiatan" ? '#4644D4' :
+                Color.warning
+              }}>
+                {kategori.split(" ")[1].toUpperCase()}</Text>
+              <View style={{height: '70%', paddingHorizontal:1, marginLeft:2, alignSelf: 'center', borderLeftWidth: 1, width: 1, borderLeftColor: Color.lightBorder}}></View>
+              <Text style={styles.textTanggalLaporan}>{convertedDate}</Text>
+            </View>
           </View>
         </Pressable>
       );
     }
 
-    const getLaporanData = (id, page, sortby, tag, status) => {
+    const getLaporanData = (page, sortby) => {
       if(dataLaporan.length ==0 ) setIsLoading(true);
-      LaporanServices.getListLaporan(id, page, sortby, tag, status)
+      LaporanServices.getListLaporan(idProgram, page, sortby)
       .then(res=> {
-        console.log(res.data.data);
         setDataLaporan([...dataLaporan, ...res.data.data.data]);
         setTotalPages(res.data.data.totalPages);
+        setTotalItems(res.data.data.totalItems);
         setIsLoading(false);
       })
       .catch(err=> {
-        console.log(err);
+        console.log(err.response);
       })
     }
 
-    const getStatusDataLaporan = (id) => {
-      LaporanServices.getStatusLaporan(id)
-      .then(res=>{
-        setMenus([`Semua (${res.data.data.total_semua})`, 
-        `Menunggu konfirmasi (${res.data.data.total_diproses})`, 
-        `Diterima (${res.data.data.total_diterima})`,
-        `Ditolak (${res.data.data.total_ditolak})`]);
-      })
-      .catch(err=>{
-        console.log(err);
-      })
-    }
 
-    const onPressMenu = (status) => {
-      setDataLaporan([]);
-      setCurrentPage(1);
-      setSelectedMenu(status);
-    }
-
-    const onPressFilter = (onSelectKategori, onSelectSortBy, idOnSelectKategori) => {
-      setDataLaporan([]);
-      setCurrentPage(1);
-      setChoosenTag(onSelectKategori);
-      setChoosenSortBy(onSelectSortBy);
-      setIdChoosenTag(idOnSelectKategori);
+    const onPressFilter = ( onSelectSortBy) => {
+      if(onSelectSortBy == choosenSortBy){
+        
+      }else{
+        setDataLaporan([]);
+        setCurrentPage(1);
+        setChoosenSortBy(onSelectSortBy);
+      }
       setModalVisible(false);
     }
 
     const onPressResetFilter = () => {
-      setChoosenTag("");
-      setChoosenSortBy("terbaru");
-      setIdChoosenTag(0);
+      setChoosenSortBy("Terbaru");
       setModalVisible(false);
     }
 
@@ -145,30 +130,22 @@ const RiwayatLaporan = ({route}) => {
     useFocusEffect(
       React.useCallback(() => {
         if(dataLaporan.length != 0){
-          console.log("refresh data laporan");
-          getLaporanData(idJenisLaporan, currentPage, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
+          getLaporanData(currentPage, choosenSortBy == "Terlama" ? 'asc' : 'desc');
         }
         }, [])
     );
 
     useEffect(()=>{
-      console.log("masuk use effect ganti page sama ganti status")
-      getLaporanData(idJenisLaporan, currentPage, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
-    }, [currentPage, selectedMenu])
+      getLaporanData(currentPage, choosenSortBy == "Terlama" ? 'asc' : 'desc');
+    }, [currentPage])
 
-    useFocusEffect(
-      React.useCallback(() => {
-        console.log("status get")
-        getStatusDataLaporan(idJenisLaporan);
-      }, [])
-    );
-
-    const getLaporanDataOnRefresh = (id, page, sortby, tag, status) => {
+    const getLaporanDataOnRefresh = (page, sortby) => {
       if(dataLaporan.length ==0 ) setIsLoading(true);
-      LaporanServices.getListLaporan(id, page, sortby, tag, status)
+      LaporanServices.getListLaporan(idProgram, page, sortby)
       .then(res=> {
         setDataLaporan(res.data.data.data);
         setTotalPages(res.data.data.totalPages);
+        setTotalItems(res.data.data.totalItems);
         setIsLoading(false);
       })
       .catch(err=> {
@@ -180,19 +157,23 @@ const RiwayatLaporan = ({route}) => {
       setRefreshing(true);
       setCurrentPage(1);
       setDataLaporan([]);
-      getLaporanDataOnRefresh(idJenisLaporan, 1, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
+      getLaporanDataOnRefresh(1, choosenSortBy == "Terlama" ? 'asc' : 'desc');
       setRefreshing(false);
     }
 
     useEffect(()=>{
-      getLaporanData(idJenisLaporan, currentPage, choosenSortBy,  idChoosenTag != 0 ? idChoosenTag : "", selectedMenu);
-    }, [choosenTag, choosenSortBy])
+      getLaporanData(currentPage, choosenSortBy == "Terlama" ? 'asc' : 'desc');
+    }, [choosenSortBy])
   return (
     <View style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
+      <CustomBottomSheet children={<FilterLaporan sortby={sortBy} choosenSortBy={choosenSortBy} 
+      onPressFilter={onPressFilter} onPressResetFilter={onPressResetFilter} />} 
+      isModalVisible={isModalVisible} setModalVisible={setModalVisible} 
+      title="Filter" />
       {!isLoading ? <View style={styles.container}>
 
         <View style={styles.rowFilter}>
-          <Text style={styles.textRiwayat}>Riwayat Laporan</Text>
+          <Text style={styles.textRiwayat}>{`Daftar Laporan (${totalItems})`}</Text>
           <Pressable onPress={()=>setModalVisible(true)} 
           style={{...styles.buttonFilter, backgroundColor: idChoosenTag != 0 ? Color.grayFour : Color.neutralZeroOne}}>
             <Text style={{...FontConfig.bodyThree, color: Color.primaryText}}>Filter</Text>
@@ -208,9 +189,9 @@ const RiwayatLaporan = ({route}) => {
         onEndReached={loadMoreItem}
         onEndReachedThreshold={0}
         refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />}
-        style={{height: '78%'}}
-        renderItem={({item}) => <LaporanItem image={item.cover_laporan[0]} judul={item.judul} 
-        kategori={item.tag} status={item.status} tanggal={item.waktu_dibuat} id={item.id_laporan} />
+        style={{height: '100%'}}
+        renderItem={({item}) => <LaporanItem judul={item.judul} 
+        kategori={item.tipe_laporan} status={item.status_laporan} tanggal={item.tanggal_dibuat} id={item.id_csr_laporan} />
         }
         /> : 
         <View style={{height: '83%', alignItems: 'center', justifyContent: 'center'}}>
@@ -241,7 +222,7 @@ const styles = StyleSheet.create({
         color: Color.neutralZeroSeven
     },
     container: {
-        padding: 20,
+        paddingVertical: 20,
         flex: 1,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
@@ -265,7 +246,9 @@ const styles = StyleSheet.create({
     },
     laporanItem: {
       flexDirection: 'row',
-      paddingVertical: 20
+      paddingVertical: 10,
+      borderBottomWidth: 1, 
+      borderBottomColor: Color.lightBorder
     },
     imageLaporan: {
       width: 100,
@@ -279,10 +262,11 @@ const styles = StyleSheet.create({
     textJudulLaporan: {
       ...FontConfig.titleThree,
       color: Color.title,
-      width: '85%'
+      width: '100%'
     },
     textTanggalLaporan: {
       ...FontConfig.captionUpperOne,
-      color: Color.graySeven
+      color: Color.graySeven,
+      paddingHorizontal: 3
     },
 })

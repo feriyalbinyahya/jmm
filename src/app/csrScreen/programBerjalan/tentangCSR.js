@@ -4,6 +4,9 @@ import QuillEditor, { QuillToolbar } from 'react-native-cn-quill';
 import { Color, FontConfig } from '../../../theme'
 import { useIsFocused } from '@react-navigation/native';
 import IconTime from '../../../assets/images/icon/icon_time.png';
+import * as RNLocalize from 'react-native-localize';
+import { formatTimeByOffset } from '../../../utils/Utils';
+import moment from 'moment-timezone';
 
 const TentangCSR = ({route}) => {
     const {judul, deskripsi, convertedDate} = route.params;
@@ -11,12 +14,29 @@ const TentangCSR = ({route}) => {
     const webViewScript = 'window.ReactNativeWebView.postMessage(document.body.scrollHeight)';
     const _editor = React.createRef();
     const isFocused = useIsFocused();
+    const [tanggal, setTanggal] = useState('');
+    const deviceTimeZone = RNLocalize.getTimeZone();
+    const today = moment().tz(deviceTimeZone);
+
+    // Get the UTC offset in hours
+    const currentTimeZoneOffsetInHours = today.utcOffset() / 60;
 
     const onWebViewMessage = (event) => {
         _editor.current?.enable(false);
         console.log(`Tinggi : ${event.nativeEvent.data}`);
         setHeight(Number(event.nativeEvent.data)+150);
     }
+
+    useEffect(()=>{
+      if(convertedDate != ''){
+        const convertedToLocalTime = formatTimeByOffset(
+            convertedDate,
+            currentTimeZoneOffsetInHours,
+        );
+        setTanggal(convertedToLocalTime);
+      }
+    },[])
+
     const generateHtml = (content) => `
     <!DOCTYPE html>\n
     <html>
@@ -44,7 +64,7 @@ const TentangCSR = ({route}) => {
               <Image style={{width: 16, height: 16}} source={IconTime} />
               <View style={{width: 4}}></View>
               <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Program Dibuat : `}</Text>
-              <Text style={{...FontConfig.titleSemiBoldFour, color: '#757575'}}>{convertedDate}</Text>
+              <Text style={{...FontConfig.titleSemiBoldFour, color: '#757575'}}>{tanggal}</Text>
           </View>
         </View>
         <Text style={styles.textJudulBerita}>{judul}</Text>

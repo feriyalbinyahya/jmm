@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     image:{
         aspectRatio: 16/9,
         borderRadius: 4,
+        height: 108,
         overflow: 'hidden'
     },
     textTopik: {

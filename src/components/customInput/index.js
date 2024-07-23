@@ -12,6 +12,8 @@ const CustomInput = ({inputNotWrong=true, value, borderRadius=5, ref=React.useRe
           size={size}
           value={value}
           ref={ref}
+          _input={{selectionColor: '#30303080',
+            cursorColor: '#303030',}}
           InputLeftElement={childLeft}
           placeholderTextColor={Color.disable}
           onChangeText={setValue}

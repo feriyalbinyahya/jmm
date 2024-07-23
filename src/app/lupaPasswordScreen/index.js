@@ -54,7 +54,7 @@ const LupaPasswordScreen = ({navigation}) => {
 
         {/** form nomer ponsel */}
         <View style={{marginVertical: 5}}>
-            <Text style={styles.titleFormInput}>Nomor Ponsel</Text>
+            <Text style={styles.titleFormInput}>{`Nomor Ponsel (Whatsapp)`}</Text>
             <CustomInput value={phone} setValue={setPhone} 
             placeholder="08123456789" type="text" />
             <View style={{height: 30}}></View>
