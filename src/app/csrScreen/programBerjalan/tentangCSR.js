@@ -6,10 +6,11 @@ import { useIsFocused } from '@react-navigation/native';
 import IconTime from '../../../assets/images/icon/icon_time.png';
 import * as RNLocalize from 'react-native-localize';
 import { formatTimeByOffset } from '../../../utils/Utils';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment-timezone';
 
 const TentangCSR = ({route}) => {
-    const {judul, deskripsi, convertedDate} = route.params;
+    const {judul, deskripsi, convertedDate, namaPembuat} = route.params;
     const [height, setHeight] = useState(0);
     const webViewScript = 'window.ReactNativeWebView.postMessage(document.body.scrollHeight)';
     const _editor = React.createRef();
@@ -60,10 +61,17 @@ const TentangCSR = ({route}) => {
     <ScrollView style={{flex:1, backgroundColor: Color.neutralZeroOne}}>
         <View style={{height: 10}}></View>
         <View style={{padding: 10, borderWidth: 1, borderColor: Color.neutral40}}>
-          <View style={{flexDirection: 'row', alignItems: 'row'}}>
-              <Image style={{width: 16, height: 16}} source={IconTime} />
+          <View style={{flexDirection: 'row', alignItems: 'center', }}>
+              <Ionicons name="person-outline" size={16} color={Color.neutral70} />
               <View style={{width: 4}}></View>
               <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Program Dibuat : `}</Text>
+              <Text style={{...FontConfig.titleSemiBoldFour, color: '#757575'}}>{namaPembuat}</Text>
+          </View>
+          <View style={{height: 2}}></View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image style={{width: 16, height: 16}} source={IconTime} />
+              <View style={{width: 4}}></View>
+              <Text style={{...FontConfig.bodyThree, color: Color.neutralZeroSeven}}>{`Tanggal Dibuat : `}</Text>
               <Text style={{...FontConfig.titleSemiBoldFour, color: '#757575'}}>{tanggal}</Text>
           </View>
         </View>

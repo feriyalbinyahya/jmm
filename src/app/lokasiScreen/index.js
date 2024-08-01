@@ -88,12 +88,6 @@ const LokasiScreen = ({navigation}) => {
              lon1: currentLongitude, lon2: region.longitude};
         const option_one = {unit: 'meter',overrideEarthRadius: null}
         const jarak = coordinateDistance(format_region, option_one);
-        //check validation distance
-        if(jarak.distance<=150.0){
-            setIsLocation(true);
-        }else{
-            setIsLocation(false);
-        }
         setChoosenLatitude(region.latitude);
         setChoosenLongitude(region.longitude);
         
@@ -105,7 +99,7 @@ const LokasiScreen = ({navigation}) => {
     }
 
     const loadingAddress = () => {
-        setAddressIsLoading(true);
+        setAddressIsLoading(false);
     }
 
     const getCurrentAddress = (choosenLatitude, choosenLongitude) => {

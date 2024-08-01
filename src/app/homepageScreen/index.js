@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, Pressable, SafeAreaView, Dimensions, Scr
 import React, {useEffect, useState} from 'react'
 import AppBarRelawan from '../../components/appBar'
 import { Color, FontConfig } from '../../theme'
+import IconNoData from '../../assets/images/warning/empty2.png'
 import IconApk from '../../assets/images/icon/icon_apk.png'
 import IconApkDisable from '../../assets/images/icon/icon_apk_disable.png'
 import IconAcara from '../../assets/images/icon/icon_acara.png'
@@ -113,7 +114,6 @@ const HomepageScreen = ({navigation}) => {
     handleRefreshToken = () => {
         ProfileServices.refreshToken({})
         .then(res=> {
-            console.log(res.data);
           if(res.data.message == "Refresh token berhasil."){
             status = res.data.data.status_persetujuan;
             saveCredentials(res.data.data);
@@ -127,8 +127,10 @@ const HomepageScreen = ({navigation}) => {
       }
 
     const saveCredentials = (data) => {
+        console.log("update credential");
+        console.log(data);
         dispatch(
-          setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user,
+          setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user, idRelawan: data.id_relawan,
           isNoHpVerified: data.is_no_hp_verified, fullname: data.nama_user, noHp: data.no_hp, 
           status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization, statusPolicy: data.status_policy})
         );
@@ -145,7 +147,6 @@ const HomepageScreen = ({navigation}) => {
         setProgramIsLoading(true);
         ProgramServices.getProgramHomepage()
         .then(res=>{
-            console.log(res.data.data);
             setDataProgram(res.data.data.data);
             setProgramIsLoading(false);
         })
@@ -230,7 +231,6 @@ const HomepageScreen = ({navigation}) => {
     const handlePrivacyDisabled = () => {
         ProfileServices.privacyPolicy()
         .then(res=>{
-            console.log(res.data);
             savePrivacyPolicy();
         })
         .catch(err=>{
@@ -248,7 +248,6 @@ const HomepageScreen = ({navigation}) => {
 
     useEffect(()=>{
         getAppVersion();
-        console.log(statusPolicy);
         if(statusPolicy == 1 || statusPolicy == "1"){
 
         }else{
@@ -287,7 +286,7 @@ const HomepageScreen = ({navigation}) => {
                 </> : <></>
             }
             <View style={{height: 20}}></View>
-            {!programIsLoading ? <View style={{paddingHorizontal: 20}}>
+            {status == "Diterima" && statusAktif == 'Active' ? !programIsLoading ? <View style={{paddingHorizontal: 20}}>
                 <Text style={{...FontConfig.buttonFour, color: "#111111"}}>Program Sedang Berjalan</Text>
                 {dataProgram.map((item, index)=>{
                     return(
@@ -305,7 +304,9 @@ const HomepageScreen = ({navigation}) => {
             })}
 
             </View>
-            }
+             :
+             <></>
+             }
             
             
             <View style={{height: 10}}></View>
@@ -384,6 +385,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderColor: '#EEEEEE',
+    },
+    imageNoData : {
+        width:120,
+        height: 88
     },
     checkboxOff: {
         borderWidth: 1.5,

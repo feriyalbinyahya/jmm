@@ -20,6 +20,10 @@ const AppBarRelawan = ({navigation, isReferal}) => {
         return state.credential.namaOrganisasi;
     })
 
+    const status = useSelector((state)=>{
+        return state.credential.status;
+    })
+
     const fotoOrganisasi = useSelector((state)=>{
         return state.credential.fotoOrganisasi;
     })
@@ -71,13 +75,13 @@ const AppBarRelawan = ({navigation, isReferal}) => {
         <View style={{height: 10}}></View>
         <View style={{paddingHorizontal: 20, marginHorizontal: 20, marginVertical: 10, paddingVertical: 10,
             backgroundColor: Color.neutralZeroOne, borderRadius: 8, zIndex: 3}}>
-            <Text style={{...FontConfig.buttonZeroTwo, color: Color.hitam,
+            <Text style={{...FontConfig.buttonZeroTwo, color: status == "Diterima" ? Color.hitam : Color.disable,
                 textAlign: 'center'
             }}>Buat Laporan untuk Program CSR</Text>
-            <ChildrenButton disabled={false} onPress={handleProgram} backgroundColor={Color.palette6} borderRadius={100} borderColor={Color.border} children={<View style={{flexDirection: 'row',
+            <ChildrenButton disabled={status == "Diterima" ? false : true} onPress={handleProgram} backgroundColor={Color.palette6} borderRadius={100} borderColor={Color.border} children={<View style={{flexDirection: 'row',
         alignItems: 'center'}}>
                 <Ionicons name="add-circle-outline" size={18} color={Color.neutralZeroOne} />
-                <Text style={{...FontConfig.button5, color: Color.hitam, marginLeft: 5}}>Lihat Semua Program</Text>
+                <Text style={{...FontConfig.button5, color: status == "Diterima" ? Color.hitam : Color.disable, marginLeft: 5}}>Lihat Semua Program</Text>
             </View>} />
         </View>
         <View style={{height: 10}}></View>

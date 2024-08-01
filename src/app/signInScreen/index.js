@@ -59,7 +59,6 @@ const SignInPage = ({navigation}) => {
       setIsLoading(true);
       LoginServices.login({"no_hp": emailphone, "password": password})
       .then(async(res)=> {
-        console.log(res.data.data);
         if(res.data.message == "Login sukses."){
           let fcmToken = await getTokenNotification();
           console.log({"fcmtoken": fcmToken});
@@ -92,7 +91,7 @@ const SignInPage = ({navigation}) => {
 
     const saveCredentials = (data) => {
       dispatch(
-        setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user,
+        setCredentials({fotoOrganisasi: data.foto_organisasi, namaOrganisasi: data.nama_organisasi, idOrganisasi: data.id_organisasi, idUser: data.id_user, idRelawan: data.id_relawan,
         isNoHpVerified: data.is_no_hp_verified, fullname: data.nama_user, noHp: data.no_hp, 
         status: data.status_persetujuan, token: data.token, fotoProfil: data.foto_profil, isReferalOrganization: data.is_referal_organization, statusPolicy: data.status_policy})
       );
@@ -238,7 +237,7 @@ const SignInPage = ({navigation}) => {
               </ScrollView>
           </Box>
           <View style={styles.version}>
-            <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`BETA dev v 1.1.9`}</Text>
           </View>
         </View>
         <AwesomeAlert

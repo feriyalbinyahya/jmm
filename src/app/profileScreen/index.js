@@ -282,26 +282,26 @@ const ProfileScreen = ({navigation}) => {
             paddingHorizontal: 20}}>Profil Saya</Text>
             <View style={{height: 5}}></View>
             <View style={{borderWidth: 0.55, borderColor: Color.lightBorder}}></View>
-            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('UbahProfile') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
+            <Pressable onPress={keaktifan == 'Active' && status == "Diterima" ? ()=>navigation.navigate('UbahProfile') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="person-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
+                    <Ionicons name="person-outline" color={keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix}}>{`Data Diri`}</Text>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix}}>{`Data Diri`}</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix} size={18} />
             </Pressable>
-            <Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate("InfoAkunProfile", 
+            <Pressable onPress={keaktifan == 'Active' && status == "Diterima" ? ()=>navigation.navigate("InfoAkunProfile", 
                                 {phone: account[0], password: account[1]}) : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
             justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: Color.lightBorder}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Ionicons name="call-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
+                    <Ionicons name="call-outline" color={keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix} size={18} />
                     <View style={{width: 10}}></View>
-                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix}}>{`Info Akun`}</Text>
+                    <Text style={{...FontConfig.buttonOne, color: keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix}}>{`Info Akun`}</Text>
                 </View>
-                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' ? Color.hitam : Color.neutralZeroSix} size={18} />
+                <Ionicons name="chevron-forward-outline" color={keaktifan == 'Active' && status == "Diterima" ? Color.hitam : Color.neutralZeroSix} size={18} />
             </Pressable>
             {/**<Pressable onPress={keaktifan == 'Active' ? ()=>navigation.navigate('KartuAnggota') : ()=>{}} style={{flexDirection: 'row', paddingHorizontal: 20,
             paddingVertical: 15, alignItems: 'center', 
@@ -369,7 +369,7 @@ const ProfileScreen = ({navigation}) => {
             <View style={{height: 20}}></View>
             <View style={{height: 10}}></View>
             <View style={styles.version}>
-                <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{VERSION}</Text>
+                <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`BETA dev v 1.1.9`}</Text>
             </View>
             <View style={{height: 20}}></View>
         </ScrollView>

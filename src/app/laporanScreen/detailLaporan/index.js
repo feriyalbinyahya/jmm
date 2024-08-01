@@ -24,6 +24,10 @@ const DetailLaporanScreen = ({navigation, route}) => {
     const [status, setStatus] = useState("Diterima");
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    const idRelawan = useSelector((state)=>{
+        return state.credential.idRelawan;
+    })
+
       const deviceTimeZone = RNLocalize.getTimeZone();
       const [convertedDate, setConvertedDate] = useState("");
   
@@ -37,6 +41,7 @@ const DetailLaporanScreen = ({navigation, route}) => {
         setIsLoading(true);
         LaporanServices.getDetail(id)
         .then(res=>{
+            console.log(res.data.data)
             setDataDetail(res.data.data);
             setMedia(res.data.data.foto_kegiatan);
             setStatus(res.data.data.status_laporan)
@@ -102,8 +107,8 @@ const DetailLaporanScreen = ({navigation, route}) => {
       title={``}
       children={<DeleteView />}
       />
-      <HeaderWhite navigation={navigation} title="Detail Laporan" rightChild={<Pressable
-      onPress={()=>setIsModalVisible(true)}><Ionicons name="trash-outline" color={Color.danger} size={22} /></Pressable>} />
+      <HeaderWhite navigation={navigation} title="Detail Laporan" rightChild={status != "Diterima" && status != "Ditolak" && dataDetail.id_pelapor.includes(idRelawan) ? <Pressable
+      onPress={()=>setIsModalVisible(true)}><Ionicons name="trash-outline" color={Color.danger} size={22} /></Pressable> : <></>} />
       {!isLoading ? <><Swiper activeDotColor={Color.purple} style={{height: '100%'}}>
         {media.map((item, index)=>{
             return (
@@ -132,6 +137,14 @@ const DetailLaporanScreen = ({navigation, route}) => {
         <View style={status == "Diterima" ? styles.boxSuccess : status == "Ditolak" ? styles.boxDitolak : styles.boxMenunggu}>
             <Text style={status == "Diterima" ? styles.textSuccess : status == "Ditolak" ? styles.textDitolak : styles.textMenunggu}>{status}</Text>
         </View>
+        {status == "Ditolak" ?
+            <View style={{backgroundColor: Color.redOne, borderRadius: 10, paddingVertical: 10, paddingHorizontal: 15, marginTop: 5, marginBottom: 15}}>
+                <Text style={{...FontConfig.title5, color: '#0A0A0A'}}>Alasan Ditolak</Text>
+                <Text style={{...FontConfig.captionZero, color: '#757575',
+                    textAlign: 'justify', width: '100%', marginTop: 3
+                }}>{dataDetail.alasan_penolakan}</Text>
+            </View> : <></>
+        }
         <Text style={styles.textSubject}>Judul Laporan</Text>
         <Text style={styles.textContent}>{dataDetail.judul}</Text>
         <View style={{height: 10}}></View>
@@ -139,16 +152,18 @@ const DetailLaporanScreen = ({navigation, route}) => {
         <Text style={styles.textContent}>{dataDetail.deskripsi}</Text>
         <View style={{height: 10}}></View>
         <Text style={styles.textSubject}>Dokumen</Text>
-        <Text style={styles.textDokumen}>{dataDetail.nama_dokumen}</Text>
+        {dataDetail.nama_dokumen != "" && dataDetail.nama_dokumen != null ? <Text style={styles.textDokumen}>{dataDetail.nama_dokumen }</Text> :
+        <Text>-</Text>
+        }
         <Text style={styles.textSubject}>Lokasi</Text>
         <Text style={styles.textContent}>{dataDetail.geotagging_alamat}</Text>
         <View style={{height: 10}}></View>
         <Text style={styles.textSubject}>Saran/Umpan Balik</Text>
-        <Text style={styles.textContent}>{dataDetail.saran}</Text>
+        <Text style={styles.textContent}>{dataDetail.saran != "" && dataDetail.saran != null ? dataDetail.saran : "-"}</Text>
         <View style={{height: 10}}></View>
         <View style={{height: 80}}></View>
       </ScrollView>
-      <View style={styles.bottomSection}>
+      {status != "Diterima" && status != "Ditolak" && dataDetail.id_pelapor.includes(idRelawan) ? <View style={styles.bottomSection}>
             <View style={styles.buttonContinue}><CustomButton 
             text="Ubah Laporan" backgroundColor={Color.primaryMain} onPress={()=>navigation.navigate("UbahLaporan", {
                 jenisLaporan: 1, typeLaporan: dataDetail.tipe_laporan.split(" ")[1], id: dataDetail.id_csr_laporan,
@@ -158,7 +173,7 @@ const DetailLaporanScreen = ({navigation, route}) => {
                 foto_kegiatan: dataDetail.foto_kegiatan
             })}
             height={40} fontStyles={{...FontConfig.buttonOne, color: Color.neutralZeroOne}} /></View>
-        </View>
+        </View> : <></>}
       </> : 
       <View style={{height: '60%', justifyContent: 'center'}}><ActivityIndicator size="large" color={Color.grayEight} /></View>
       }

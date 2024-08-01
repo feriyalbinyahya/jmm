@@ -126,7 +126,7 @@ const ProgramBerjalanScreen = ({navigation, route}) => {
                 
                 >
                     <Tab.Screen name="Tentang CSR" component={TentangCSR} initialParams={{judul: dataProgram.judul, deskripsi: dataProgram.deskripsi,
-                        convertedDate: dataProgram.tanggal_dibuat
+                        convertedDate: dataProgram.tanggal_dibuat, namaPembuat: dataProgram.nama_pembuat
                     }}  />
                     <Tab.Screen name="Riwayat Laporan" component={RiwayatLaporan} initialParams={{navigation: navigation, idProgram: id}} />
                 </Tab.Navigator>

@@ -23,11 +23,11 @@ const InfoAkunScreen = ({navigation, route}) => {
                             <Text style={styles.textSubject}>{item.text}</Text>
                             <Text style={styles.textData}>{account[index]}</Text>
                         </View>
-                        <Pressable onPress={()=> {
+                        {item.text == "Kata Sandi" ? <Pressable onPress={()=> {
                         navigation.navigate(item.editPath, 
                         {phone: phone, onPress: "ubahakun"});
                         }}>
-                        <Image style={styles.iconEdit} source={IconEdit} /></Pressable>
+                        <Image style={styles.iconEdit} source={IconEdit} /></Pressable> : <></>}
                     </View>
                 );
             })}

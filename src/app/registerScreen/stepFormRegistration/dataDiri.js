@@ -53,7 +53,7 @@ const DataDiriScreen = ({navigation}) => {
   const [interest, setInterest] = useState("");
   const [interestData, setInterestData] = useState([]);
   const [interestLoading, setInterestLoading] = useState(false);
-  const [idInterest, setIdInterest] = useState("");
+  const [idInterest, setIdInterest] = useState(1);
 
 
 
@@ -75,7 +75,7 @@ const DataDiriScreen = ({navigation}) => {
   }
 
   handleValidation = () => {
-    if(firstname && lastname && job && gender && dateOfBirth && (instagram || tiktok || facebook || twitter) && bio && interest){
+    if(firstname && lastname && job && gender && dateOfBirth && (instagram || tiktok || facebook || twitter) && bio){
       setIsContinue(true);
     }else{
       setIsContinue(false);
@@ -212,9 +212,6 @@ const DataDiriScreen = ({navigation}) => {
             display="calendar" onChange={handleDateChange} value={new Date(2000, 10, 20)}
              /> : <></>}
             <View style={{height: 10}}></View>
-            <Text style={{...FontConfig.bodyTwo, color: Color.secondaryText}}>Interest</Text>
-            <View style={{height: 5}}></View>
-            <DropDownButton onPress={()=>setIsModalInterestVisible(true)} placeholder='Pilih interest kamu' text={interest} />
             
              {/**Media sosial */}
             <View style={styles.mediaSosial}>

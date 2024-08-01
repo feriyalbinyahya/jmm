@@ -144,7 +144,7 @@ const AlamatLengkapScreen = ({navigation}) => {
             <View style={styles.boxForm}>
                 <Text style={styles.titleFormInput}>Alamat Lengkap</Text>
                 <CustomTextArea inputNotWrong={isAddress} value={address} setValue={setAddress}
-                 placeholder="Contoh: Jl. Relawan, Gg. 01, No. 10" width='100%' />
+                 placeholder="Contoh: Jl. Pembangunan, Gg. 01, No. 10" width='100%' />
                 <Text style={styles.titleFormInput}>Provinsi</Text>
                 <DropDownButton placeholder='Pilih Provinsi' text={provinsi} onPress={handleProvinsiButton} />
                 <Text style={styles.titleFormInput}>Kota / Kabupaten</Text>

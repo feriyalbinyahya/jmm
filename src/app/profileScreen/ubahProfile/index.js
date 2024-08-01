@@ -14,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import IconFacebook from '../../../assets/images/icon/icon_facebook.png';
 import IconTwitter from '../../../assets/images/icon/icon_twitter.png';
 import IconTiktok from '../../../assets/images/icon/icon_tiktok.png';
+import IconEditFoto from '../../../assets/images/icon/edit_foto.png';
 import IconInstagram from '../../../assets/images/icon/icon_instagram.png';
 
 const UbahProfileScreen = ({navigation}) => {
@@ -52,7 +53,7 @@ const UbahProfileScreen = ({navigation}) => {
         if(dataDiriStore.username == ''){
             usernameX = '(Belum diisi)';
         }
-        dataDiri.push(dataDiriStore.nama_lengkap, usernameX, dataDiriStore.bio, dataDiriStore.pekerjaan,
+        dataDiri.push(dataDiriStore.nama_lengkap, usernameX, dataDiriStore.bio != null ? dataDiriStore.bio : "", dataDiriStore.pekerjaan,
             dataDiriStore.jenis_kelamin, dataDiriStore.tanggal_lahir);
 
         setDataDiri(dataDiri);
@@ -69,19 +70,19 @@ const UbahProfileScreen = ({navigation}) => {
         let alamat = [];
         let rt = "";
         let rw = "";
-        if(alamatStore.rt == ""){
+        if(alamatStore.rt == "" || alamatStore.rt == null){
             rt = "-";
         }else{
             rt = alamatStore.rt;
         }
-        if(alamatStore.rw == ""){
+        if(alamatStore.rw == "" || alamatStore.rw == null){
             rw = "-";
         }else{
             rw = alamatStore.rw;
         }
         let rtrw = rt + " / " + rw;
         alamat.push(alamatStore.alamat, alamatStore.provinsi, alamatStore.kabkot, alamatStore.kecamatan,
-            alamatStore.kelurahan, rtrw);
+            alamatStore.kelurahan == "" || alamatStore.kelurahan == null ? "-" : alamatStore.kelurahan, rtrw);
         setAlamat(alamat);
     }
 
@@ -156,8 +157,10 @@ const UbahProfileScreen = ({navigation}) => {
         isModalVisible={isModalVisible} setModalVisible={setModalVisible} 
         title="Ubah Foto Profil" />
         <HeaderRedLinear navigation={navigation} title="Ubah Profil" children={(<View style={styles.headerSection}>
-            <Image source={{uri: `data:image/png;base64,${fotoProfil}`}} style={styles.imageProfile} />
-            <Pressable onPress={()=> setModalVisible(true)}><Text style={styles.textUbahFoto}>Ubah Foto Profil</Text></Pressable>
+            <Pressable onPress={()=> setModalVisible(true)}><Image source={{uri: `data:image/png;base64,${fotoProfil}`}} style={styles.imageProfile} /></Pressable>
+            <Pressable onPress={()=> setModalVisible(true)}><Image source={IconEditFoto} style={{height: 28, width: 28,
+                position: 'absolute', bottom: -10, left: 15
+            }} /></Pressable>
         </View>)} />
         {!isLoading ? <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.containSection}>

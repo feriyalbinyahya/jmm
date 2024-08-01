@@ -13,7 +13,8 @@ const initialState = {
     fotoProfil: '',
     isReferalOrganization: 0,
     statusPolicy: 0,
-    keaktifan: ''
+    keaktifan: '',
+    idRelawan: '',
 
 }
 
@@ -34,6 +35,7 @@ export const credentialSlice = createSlice({
       state.fotoProfil = action.payload.fotoProfil;
       state.isReferalOrganization = action.payload.isReferalOrganization;
       state.statusPolicy = action.payload.statusPolicy;
+      state.idRelawan = action.payload.idRelawan;
     },
     deleteCredentials: (state) => {
         state.idOrganisasi = '';

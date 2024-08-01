@@ -14,7 +14,7 @@ const LaporanDiubahScreen = ({navigation}) => {
         <View style={styles.topSection}>
             <Image source={ImageSuccess} style={styles.imageSuccess} />
             <Text style={styles.textLaporanBerhasil}>Laporan berhasil diubah!</Text>
-            <Text style={styles.textYuk}>Yuk, lebih sering buat laporan untuk tingkatkan poinmu.</Text>
+            <Text style={styles.textYuk}>Yuk, lebih sering buat laporan untuk proposal CSR.</Text>
         </View>
         <View style={styles.bottomSection}>
             <View style={styles.buttonContinue}><CustomButton onPress={handleLanjutkan} text="Selesai" fontStyles={{...FontConfig.buttonOne,

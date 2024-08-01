@@ -14,7 +14,7 @@ const LaporanTerkirimScreen = ({navigation}) => {
         <View style={styles.topSection}>
             <Image source={ImageSuccess} style={styles.imageSuccess} />
             <Text style={styles.textLaporanBerhasil}>Laporan berhasil terkirim!</Text>
-            <Text style={styles.textYuk}>Yuk, lebih sering buat laporan untuk tingkatkan poinmu.</Text>
+            <Text style={styles.textYuk}>Yuk, lebih sering buat laporan untuk proposal CSR.</Text>
         </View>
         <View style={styles.bottomSection}>
             <View style={styles.buttonContinue}><CustomButton onPress={handleLanjutkan} text="Selesai" fontStyles={{...FontConfig.buttonOne,
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
         height: '90%'
     },
     imageSuccess: {
-        width: 142,
-        height: 171
+        width: 232,
+        height: 170
     },
     textLaporanBerhasil: {
         ...FontConfig.titleTwo,
