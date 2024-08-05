@@ -1,11 +1,49 @@
-# ⚠️ Deprecation Notice
-##  This template is no longer maintained. If you are looking for expertise in React Native for your next project, feel free to [contact us](https://qubika.com/about-us/#contact-anchor).
 
-# React Native Template
+# Desa Raya App
 
-[![Moove It](https://circleci.com/gh/moove-it/react-native-template.svg?style=svg)](https://app.circleci.com/pipelines/github/moove-it/react-native-template?branch=master)
+This is a project to build a Desa Raya mobile application using React Native. The Desa Raya application is a mobile application that has features
 
-This project aims to be a strong foundation for react-native applications. It provides a clear and organized structure, core dependencies, and boilerplate to jumpstart development.
+
+
+
+
+## Requirements
+
+- **Setup Environtment:** React Native, Android Studio, React Native CLI, JDK, Node, Xcode, Cocoapods
+- **Thrid Party:** Google Service (Geocoding API, Maps SDK Android, Service Usage API)
+- **Library:** Redux, Moment, React Native Vision Camera, React Native CN Quill (For Webview Editor), Lottie (Splash Screen), React Native Maps
+
+
+
+## Installation
+
+Make sure you have prepared the environment for application development using React Native. For details, check https://reactnative.dev/docs/set-up-your-environment#:~:text=You%20will%20need%20Node%2C%20the,React%20Native%20app%20for%20Android.
+
+Clone project or download ZIP folder project. Go to root folder 'Desaraya' and then install dependencies.
+
+```bash
+  cd Desaraya
+  npm install
+```
+#### How to Run
+
+For Android
+
+If you using Android studio, open the folder and wait for sync the project. Open your simulator device and then run the 'App'.
+
+beside that you should run metro by type in terminal
+```bash
+  npx react-native start
+```
+
+For IOS
+
+Go to terminal and go to /ios from project folder. Execute this command
+```bash
+  pod install
+```
+
+You can open file .xcodeproj after open folder from Xcode and wait for build and sync files. After that you can run the App by select the target and device simulator.
 
 ## Prerequisites
 
@@ -76,10 +114,6 @@ This template follows a very simple project structure:
   - `theme`: Folder to store all the styling concerns related to the application theme.
   - `App.js`: Main component that starts your whole app.
   - `index.js`: Entry point of your application as per React-Native standards.
-
-## Splash screen customization
-
-To customize the splash screen (logo and background color) use the CLI provided in the [official docs](https://github.com/zoontek/react-native-bootsplash#assets-generation).
 
 ## Setup environments
 
@@ -175,18 +209,6 @@ Another important thing is the use of propTypes to check the kind of data that y
 
 To keep an application scalable and organized, the global static resources that are used in the application have to be created in a specific file.
 
-### We manage three main folders for that:
-
-- Assets: Here you can store all the images and icons that you need through the app. You have as an example the icon ic_home.png, to respond with the different device screen densities just create inside the same folder the image and all the scaled versions that you need. RN only handles x1, x2 and x3 in this case, you have.
-
-  - assets
-    - ic_home
-      - ic_home.png
-      - ic_home@2x.png
-      - ic_home@3x.png
-
-- Localization: This folder contains all the locale objects that you need to create a multilingual application. Create a file for each locale, inside define an object then maintain the nesting sorted by the screen that contains the text that you need and the text you want to show. As the last step, remember to create a reference inside the Localization.js file and add it to LocalizedStrings.
-- Theme: Here you can define all the styles that you use on different screens. To make easier the interaction of the application with device options for example you can create here assets as light and dark color palette
 
 ## Redux
 
@@ -194,7 +216,7 @@ Once the components are defined, they are tied to the management of information 
 
 ### Controllers folder and API connection handler
 
-To keep the networking layer simple, the template uses a single Axios instance in the `httpClient.js`. It uses interceptors to define common side effects for the responses.
+To keep the networking layer simple, the template uses a single Axios instance in the `Request.js`. It uses interceptors to define common side effects for the responses.
 
 When you need communication with a service you have to create a function to manage the operation and grouping according to the kind of transaction inside a controller file, please keep all of those inside the controllers' folder.
 
@@ -209,8 +231,5 @@ While the data transfer between the API and the app is working you must use the 
 - Reducers: You have the error and success reducers by default. Create the other classifications and try to keep simple each file. Here you modify the store.
 - Selectors: Create one file for each action classification. Here you define what part of the store you need to see in your interface.
 
-## Screens
-
-In this folder, you have the main objects to apply the composition architecture. Just create a folder for each screen you have in your application, call all the components and static resources you need to render the scene and finally use the corresponding hooks to interact with redux and create behaviors depending on the store.
-
-To keep the structure, extract the styles from the main file and place it in a {namefile.styles.js} do the same for the set of tests needed for each screen with the file {namefile.test.js}
+### Figma Link
+https://www.figma.com/design/aTOXJnNa0ZQaLozD27pyDC/DesaRaya?t=liEs8ilXJGi57g9Q-0
