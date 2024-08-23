@@ -54,7 +54,7 @@ const KodeReferralScreen = ({navigation, route}) => {
             <Text style={styles.textLengkapi}>Masukan kode referral pengurusmu.</Text>
             <View style={{height: '20%'}}></View>
             <View style={{flexDirection: 'row'}}>
-                <View style={{width: '85%'}}><CustomInput value={kodeReferral} setValue={setKodeReferral} placeholder='Masukkan kode referral' /></View>
+                <View style={{width: '85%'}}><CustomInput value={kodeReferral} setValue={(value)=>{setKodeReferral(value.replace(/\s/g, ''))}} placeholder='Masukkan kode referral' /></View>
                 <View style={{width: '5%'}}></View>
                 {/**<Pressable onPress={()=> navigation.navigate('ScanKodeReferralRegister', {setValue: setKodeReferral})}><Image style={styles.iconScan} source={IconScan} /></Pressable>**/}
             </View>

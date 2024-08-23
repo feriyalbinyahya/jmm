@@ -25,7 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import CustomBottomSheet from "../../components/bottomSheet";
 import IconWhatsapp from '../../assets/images/icon/whatsapp.png';
 import ImageWarning from '../../assets/images/warning/empty.png';
-import { VERSION } from '../../utils/environment';
+import { VERSION, VERSION_PROD } from '../../utils/environment';
 import LinearGradient from 'react-native-linear-gradient';
 import { Box } from "native-base";
 import NotifikasiServices from "../../services/notifikasi";
@@ -53,7 +53,7 @@ const SignInPage = ({navigation}) => {
       return await getTokenNotification();
     }
 
-    const no_hp_cs = "0811-1111-1111";
+    const no_hp_cs = "082129742236";
 
     const handleLogin = () => {
       setIsLoading(true);
@@ -237,7 +237,7 @@ const SignInPage = ({navigation}) => {
               </ScrollView>
           </Box>
           <View style={styles.version}>
-            <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`BETA dev v 1.1.9`}</Text>
+            <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`${VERSION_PROD}`}</Text>
           </View>
         </View>
         <AwesomeAlert
@@ -350,7 +350,7 @@ const SignInPage = ({navigation}) => {
             setShowAlertSomethingWrong(false);
           }}
         />
-        <AwesomeAlert
+        {/**<AwesomeAlert
           show={showAlertVersionWrong}
           showProgress={false}
           title="Ikuti terus pembaruan aplikasi terbaru kami!"
@@ -368,7 +368,7 @@ const SignInPage = ({navigation}) => {
           onConfirmPressed={() => {
             openGooglePlay();
           }}
-        />
+        /> */}
     </View>
     );
 };

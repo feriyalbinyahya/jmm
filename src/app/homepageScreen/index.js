@@ -311,7 +311,7 @@ const HomepageScreen = ({navigation}) => {
             
             <View style={{height: 10}}></View>
         </ScrollView>
-        <AwesomeAlert
+        {/**<AwesomeAlert
           show={showAlertPrivacyPolicy}
           showProgress={false}
           title="Butuh Persetujuanmu nih Sebelum Lanjut.."
@@ -373,7 +373,7 @@ const HomepageScreen = ({navigation}) => {
           onConfirmPressed={() => {
             openGooglePlay();
           }}
-        />
+        /> */}
     </SafeAreaView>
   )
 }

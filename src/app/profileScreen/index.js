@@ -24,7 +24,7 @@ import { deleteCredentials } from '../../redux/credentials'
 import ProfileServices from '../../services/profile'
 import Skeleton from '../../components/skeleton'
 import { useFocusEffect } from '@react-navigation/native';
-import { VERSION } from '../../utils/environment';
+import { VERSION, VERSION_PROD } from '../../utils/environment';
 import Logo from '../../assets/images/LogoAplikasi.png';
 import IconArrowLeft from '../../assets/images/icon/button_left.png'
 import IconSetting from '../../assets/images/icon/button_setting.png'
@@ -178,7 +178,7 @@ const ProfileScreen = ({navigation}) => {
         );
     }
 
-    const no_hp_cs = "0811-1111-1111";
+    const no_hp_cs = "082129742236";
 
     const handleWhatsapp = () => {
         var no_hp = no_hp_cs.substring(1);
@@ -369,7 +369,7 @@ const ProfileScreen = ({navigation}) => {
             <View style={{height: 20}}></View>
             <View style={{height: 10}}></View>
             <View style={styles.version}>
-                <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`BETA dev v 1.1.9`}</Text>
+                <Text style={{...FontConfig.bodyThree, color: Color.graySeven}}>{`${VERSION_PROD}`}</Text>
             </View>
             <View style={{height: 20}}></View>
         </ScrollView>
